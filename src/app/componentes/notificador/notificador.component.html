@@ -1,0 +1,19 @@
+
+<div style="color:black;">
+    {{data.type | titlecase}}
+</div>
+<div class="content-style">
+    {{data.message}}
+</div>
+<br>
+@if (data.buttonText!=''){
+  <div style="text-align:center;">
+    <button (click)="snackBarRef.dismiss()">
+        {{data.buttonText}}
+    </button>
+  </div>
+}
+
+
+
+

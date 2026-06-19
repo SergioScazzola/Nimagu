@@ -1,0 +1,115 @@
+/* Estilos para la navbar */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /*padding: 0.8rem 1rem; */  
+  padding: 0.5rem 0.5rem;
+ /* padding-left: 20px;*/
+
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  /*font-weight: 700;*/
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  /*font-size: 1.4rem;*/
+  font-size: 1.0rem;
+  /*margin-right: 2rem;*/
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand i {
+  font-size: 1.3rem;
+}
+
+.nav-item {
+  /*margin: 0 0.3rem;*/
+  margin-left: 10px;
+  position: relative;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  padding: 0.7rem 1rem !important; 
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link i {
+  font-size: 1.1rem;
+ /* margin-right: 0.4rem;*/
+}
+
+.nav-link:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.nav-link:hover i {
+  transform: scale(1.1);
+}
+
+.nav-link.active {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-link.active i {
+  color: #ffffff;
+}
+
+/* Espacio para compensar la navbar fija */
+.navbar-spacer {
+  height: 20px; /* Ajustar según la altura de tu navbar */
+}
+
+/* Estilo para el botón de logout */
+.btn-outline-light {
+  border-width: 2px;
+  font-weight: 200;
+  /*padding: 0.5rem 1.2rem;*/
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.btn-outline-light i {
+  /*font-size: 1.1rem;
+  margin-right: 0.5rem;*/
+  font-size: 0.8rem;
+  margin-right: 0.1rem;
+}
+
+.btn-outline-light:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-light:hover i {
+  transform: translateX(-2px);
+  transition: transform 0.3s ease;
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 768px) {
+  .navbar-collapse {
+    padding: 1rem 0;
+  }
+
+  .nav-item {
+    margin: 0.2rem 0;
+  }
+
+  .navbar-spacer {
+    height: 60px;
+  }
+}

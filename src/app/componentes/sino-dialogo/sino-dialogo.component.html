@@ -1,0 +1,20 @@
+<div class="mensaje">
+<h1 mat-dialog-title>{{ data.title || 'Confirmación' }}</h1>
+<div class="content-style">
+  <p>{{ data.mensaje || '¿Estás seguro?' }}</p>
+</div>
+<div class="botonera">  
+
+  <button          
+         #botonno          
+         class="btn btn-lg btn-secondary"
+         style="margin-right: 150px;"
+         (click)="onCancel()" >No</button>
+  <button          
+        class="btn btn-lg btn-primary"
+        (click)="onConfirm()">Sí</button>
+  
+</div>
+</div>
+
+

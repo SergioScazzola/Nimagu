@@ -1,1 +1,95 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+app-root {
+  display: block;
+  height: 100%;
+}
+
+.warning.mat-snack-bar-container {
+  background: rgb(184, 228, 211);
+  color: black;
+}
+
+.error.mat-snack-bar-container {
+  background: tomato;
+  color: white;
+}
+
+
+.mensaje .mdc-snackbar__surface {
+  background-color: rgb(250, 220, 224) !important;
+  color: black !important;  
+  /*top: 50% !important;  */
+  transform: translateY(-300px) !important;
+  margin: 0 !important;
+  z-index: 10000 !important; 
+}
+
+.mat-mdc-snack-bar-label {
+  color: black !important;
+}
+
+/* Estilos para diálogos personalizados */
+.custom-dialog-container .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 8px;
+  overflow: hidden !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  overflow: hidden !important;
+}
+
+.custom-dialog-container .mat-mdc-dialog-content {
+  max-height: none !important;
+  overflow-y: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.password-change-dialog .mat-mdc-dialog-title {
+  color: #3f51b5;
+  font-weight: 500;
+}
+
+.error-dialog .mat-mdc-dialog-title {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Estilo adicional para campos de formulario en diálogos */
+.mat-mdc-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Quitar scroll innecesario en diálogos */
+.cdk-overlay-pane {
+  max-height: 95vh;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 0 24px 24px !important;
+  margin-bottom: 0 !important;
+}

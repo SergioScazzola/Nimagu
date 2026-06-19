@@ -1,0 +1,134 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.row {
+  width: 100%;
+}
+
+.login-wrap {
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.login-wrap:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.icon {
+  width: 90px;
+  height: 90px;
+  background: #ffffff;
+  border-radius: 50%;
+  font-size: 30px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 2px solid #3498db;
+}
+
+.icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
+}
+
+.logo-img {
+  width: 60%;
+  height: 60%;
+  object-fit: cover;
+}
+
+h3 {
+  color: #333;
+  font-weight: 600;
+}
+
+.login-form .form-group {
+  position: relative;
+}
+
+.login-form .form-control {
+  height: 48px;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  border-radius: 4px;
+  box-shadow: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.login-form .form-control:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.25);
+  border-color: #3498db;
+  background: #fff;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: #3498db;
+  border-color: #3498db;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+  border-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.invalid-feedback {
+  font-size: 12px;
+  margin-top: 0.25rem;
+  color: #e74c3c;
+}
+
+@media (max-width: 767.98px) {
+  .login-wrap {
+    padding: 1.5rem !important;
+  }
+
+  .container {
+    padding: 15px;
+  }
+}
+.img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

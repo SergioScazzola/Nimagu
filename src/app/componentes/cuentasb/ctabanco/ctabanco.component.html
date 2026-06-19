@@ -1,0 +1,135 @@
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4>{{ operacion }}</h4>
+
+  <form [formGroup]="formCta" class="p-3">
+    <!-- Primera fila -->
+    <div class="row g-3">
+      <div class="col-2">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro</mat-label>
+          <input
+            matInput
+            readonly
+            formControlName="idCuenta"
+            style="text-align: center"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Periodo</mat-label>
+          <input
+            matInput      
+            #inputFocus
+            appPeriodoValidator
+            formControlName="periodo"
+            style="text-align: left"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Titular</mat-label>
+          <input
+            matInput            
+            formControlName="titular"
+            style="text-align: left"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Segunda fila -->
+    <div class="row g-3">
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Banco</mat-label>
+          <input matInput formControlName="banco" />
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>CBU</mat-label>
+          <input matInput formControlName="cbu" />
+        </mat-form-field>
+      </div>
+    </div>
+    
+    <!-- Tercera fila -->
+    <div class="row g-3">
+      <div class="col-4">
+         <mat-form-field class="w-100" appearance="fill"> 
+            <input matInput #inputFocus [matDatepicker]="picker"  
+                   placeholder = "Elija una fecha" 
+                   (dateChange)="onFechaChange($event)"
+                   formControlName="fecsaldo" > 
+            <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+            <mat-datepicker #picker> </mat-datepicker>  
+            <mat-hint>{{ formCta.controls['fecsaldo'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+        </mat-form-field >
+      </div>
+      
+      <div class="col-6 ms-auto" >
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Saldo Inicial</mat-label>
+          <input matInput appImporte formControlName="saldoini"
+                 style="text-align: right" />
+        </mat-form-field>
+      </div>
+    </div>
+      <!-- Cuarta fila -->
+    <div class="row g-3">
+      <div class="col-md-4">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Saldo Final</mat-label>
+            <input matInput readonly="true"
+                 [value]="formCta.get('saldofin')?.value  | number : '1.2-2'"
+                 style="text-align: right"
+            />   
+        </mat-form-field>
+      </div>
+      <div class="col-md-8 ms-auto">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Observaciones</mat-label>
+          <input matInput formControlName="observ" />
+        </mat-form-field>
+      </div>
+    </div>
+   
+    <!-- Botonera -->
+    <div class="botonera">
+      <button
+        class="btn btn-outline-primary"
+        [disabled]="formCta.invalid || data.accion != 'A'"
+        (click)="AgregarCuenta()"
+      >
+        Agregar
+      </button>
+      <button
+        class="btn btn-outline-success"
+        [disabled]="formCta.invalid || data.accion != 'M'"
+        (click)="ModificarCuenta()"
+      >
+        Modificar
+      </button>
+      <button
+        class="btn btn-outline-secondary"
+        (click)="Anular()"
+      >
+        Cancelar
+      </button>
+    </div>
+  @if (formCta.get('periodo')?.errors?.['periodoInvalido']){
+   <div class="menserror">
+     Formato válido: AAAA-BBBB
+   </div>
+  }
+  @if (formCta.get('periodo')?.errors?.['periodoNoConsecutivo']){
+   <div class="menserror">
+     El segundo año debe ser consecutivo al primero.
+   </div>
+  }   
+  </form>
+</div>
+}

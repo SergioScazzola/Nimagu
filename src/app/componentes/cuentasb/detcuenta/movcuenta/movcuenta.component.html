@@ -1,0 +1,125 @@
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4>{{ operacion }}</h4>
+
+  <form [formGroup]="formMov" class="p-3">
+    <!-- Primera fila -->
+    <div class="row g-3">
+      <div class="col-2">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.Mov</mat-label>
+          <input
+            matInput
+            readonly
+            formControlName="nromov"
+            style="text-align: center"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <mat-form-field class="w-100" appearance="fill">
+            <input matInput #inputFocus [matDatepicker]="picker"  
+                  placeholder = "Elija una fecha" 
+                  (dateChange)="onFechaChange($event)"
+                  formControlName="fechamov" > 
+            <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+            <mat-datepicker #picker> </mat-datepicker>  
+            <mat-hint>{{ formMov.controls['fechamov'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+        </mat-form-field >
+      </div>
+       <div class="col-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Ingreso/Egreso</mat-label>
+          <mat-select  formControlName="ingegre"
+             (selectionChange)="onSelectionInEg($event)">
+               @for (item of this.ingeg; track item.id){
+                <mat-option [value]="item.id">                 
+                  {{ item.descripcion }}
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+    </div>
+    <!-- Segunda fila -->
+    <div class="row g-3">
+      <div class="col-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Tipo Comprobante</mat-label>
+          <input
+            matInput            
+            formControlName="tipocomp"
+            style="text-align: left"
+          />
+        </mat-form-field>
+      </div>
+        <div class="col-6">
+            <mat-form-field class="w-100" appearance="fill">
+            <mat-label>Nro. Comprobante</mat-label>
+            <input
+                matInput            
+                formControlName="comprob"
+                style="text-align: left"
+            />
+            </mat-form-field>
+        </div>      
+    </div>
+
+    <!-- Tercera fila -->
+    <div class="row g-3">
+      <div class="col-md-8">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Concepto</mat-label>
+          <input matInput formControlName="concepto" />
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Importe</mat-label>
+          <input matInput appImporte formControlName="importe" 
+                 style="text-align: right" />
+
+        </mat-form-field>
+      </div>
+    </div>
+    
+    <!-- Cuarta fila -->
+    <div class="row g-3">
+      <div class="col-10">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Observaciones</mat-label>
+          <input matInput formControlName="coment" />
+        </mat-form-field>
+      </div>           
+    </div>
+    
+    <!-- Botonera -->
+    <div class="botonera">
+      <button
+        class="btn btn-outline-primary"
+        [disabled]="formMov.invalid || data.accion != 'A'"
+        (click)="AgregarMovimiento()"
+      >
+        Agregar
+      </button>
+      <button
+        class="btn btn-outline-success"
+        [disabled]="formMov.invalid || data.accion != 'M'"
+        (click)="ModificarMovimiento()"
+      >
+        Modificar
+      </button>
+      <button
+        class="btn btn-outline-secondary"
+        (click)="Anular()"
+      >
+        Cancelar
+      </button>
+    </div>
+ 
+  </form>
+</div>
+@if (formMov.get('fechamov')?.hasError('validarFecha')){
+  <div>La fecha no se encuentra dentro del período de esta cuenta</div>
+}
+}

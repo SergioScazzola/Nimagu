@@ -1,0 +1,126 @@
+<div class="ctasb-container">
+  <div class="row">
+    <div class="col-4">
+       <div class="header">
+         <h4>Cuentas Bancarias</h4>
+       </div>
+    </div>  
+    <div class="col-4">
+       <input #filtroInput (keyup)="aplicarFiltro(filtroInput.value)" placeholder="Filtrar por Banco">
+    </div>            
+    <div class="col-2">
+      <button class="btn btn-primary add-button" (click)="agCuentaB()">
+        <i class="bi bi-plus-circle me-1"></i>Agregar
+      </button>
+    </div>      
+     <div class="col-2 text-end">
+        <button class="btn btn-sm btn-secondary" (click)="volver()">
+          <i class="bi bi-box-arrow-right me-1"></i>
+          Menu Ppal
+        </button>
+    </div>      
+  </div>
+  @if (cuentasb){
+   <div class="table-container" style="overflow-x: auto">
+     <table
+      mat-table
+      class="mat-elevation-z8"
+      [dataSource]="this.dataSource"
+      style="width: 100%"
+    >
+      <!-- Columna ID Cuenta -->
+      <ng-container matColumnDef="idCuenta">
+        <th mat-header-cell *matHeaderCellDef class="center-col">Nro</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.idCuenta }}</td>
+      </ng-container>
+
+      <!-- Columna periodo -->
+      <ng-container matColumnDef="periodo">
+        <th mat-header-cell *matHeaderCellDef class="center-col">Período</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.periodo }}</td>
+      </ng-container>
+
+      <!-- Columna Titular -->
+      <ng-container matColumnDef="titular">
+        <th mat-header-cell *matHeaderCellDef class="center-col">Titular</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.titular}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="banco">
+        <th mat-header-cell *matHeaderCellDef class="center-col">Banco</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.banco }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="cbu">
+        <th mat-header-cell *matHeaderCellDef class="center-col">CBU</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.cbu }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="saldofin">
+        <th mat-header-cell *matHeaderCellDef class="center-col">SALDO</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.saldofin | number : "1.2-2"}}</td>
+      </ng-container>
+      
+     
+
+      <!-- Columna Detalle de Cuenta -->
+      <ng-container matColumnDef="Det">
+        <th mat-header-cell *matHeaderCellDef>Det</th>
+        <td mat-cell *matCellDef="let renCta">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="ver Cuenta Bancaria"
+              (click)="VerDetalledeCuenta(renCta.idCuenta)"
+            >
+             <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+      <!-- Columna Modificar -->
+      <ng-container matColumnDef="M">
+        <th mat-header-cell *matHeaderCellDef>Mod</th>
+        <td mat-cell *matCellDef="let renCta">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="modificar cuenta"
+              (click)="modificarCuentaB(renCta.idCuenta, renCta.cbu,renCta.banco)"
+            >
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+      <!-- Columna Borrar -->
+      <ng-container matColumnDef="B">
+        <th mat-header-cell *matHeaderCellDef>Bor</th>
+        <td mat-cell *matCellDef="let renCta">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="borrar Factura del cliente"
+              (click)="borrarCuentaB(renCta.idCuenta)"
+            >
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+     
+     
+      <!-- Definición de filas -->
+      <tr mat-header-row *matHeaderRowDef="colCuentas; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index; columns: colCuentas"></tr>
+    </table>
+  </div>--!>
+} @else {
+    <div>No existen Cuentas Bancarias</div>
+}
+  
+  
+

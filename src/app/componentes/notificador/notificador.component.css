@@ -1,0 +1,23 @@
+
+
+.content-style {       
+    border: 1px solid black;   
+    border-radius: 4px;
+    padding: 10px;    
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+}
+
+
+/*.warning.mat-snack-bar-container  {
+    background: rgb(184, 228, 211);    
+    color:black;   
+}
+
+.error.mat-snack-bar-container {
+    background: tomato;
+    color: white;   
+}*/
+
+

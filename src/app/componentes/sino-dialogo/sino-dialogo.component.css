@@ -1,0 +1,29 @@
+.content-style {    
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 10px;
+    color : black;    
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+}
+.mensaje {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 20px;
+    color: black;
+    background-color :#80c4f9;
+}
+.botonera {
+  justify-content:space-between;
+  text-align: center;      
+}
+.secundario {
+  background-color: #6c757d;
+  color:white;
+  margin-right: 100px;
+}
+.primario {
+  background-color: #0d6efd;
+  color : white;  
+}
