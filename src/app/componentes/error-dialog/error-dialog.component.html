@@ -1,0 +1,141 @@
+<div class="error-dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon
+        class="dialog-icon"
+        [ngClass]="{
+          'error-icon': !showPasswordForm,
+          'password-icon': showPasswordForm
+        }"
+      >
+        {{ showPasswordForm ? "lock_reset" : "error_outline" }}
+      </mat-icon>
+      {{ data.title || "Error" }}
+    </h2>
+  </div>
+
+  <mat-dialog-content>
+    @if (!showPasswordForm){
+    <div class="error-content">
+      <p>{{ data.message }}</p>
+    </div>
+    }
+    @if (showPasswordForm){
+    <div class="password-form-container">
+      <p>{{ data.message }}</p>
+      @if (error){
+      <div class="error-message">{{ error }}</div>
+      }
+      <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="newPassword">Nueva Contraseña</label>
+          <div class="input-container">
+            <input
+              [type]="hideNewPassword ? 'password' : 'text'"
+              id="newPassword"
+              formControlName="newPassword"
+              placeholder="Nueva contraseña"
+              autocomplete="new-password"
+            />
+            <mat-icon
+              class="password-toggle"
+              (click)="hideNewPassword = !hideNewPassword"
+            >
+              {{ hideNewPassword ? "visibility_off" : "visibility" }}
+            </mat-icon>
+          </div>
+          @if (f['newPassword'].touched && f['newPassword'].errors){
+          <div            
+            class="error-message"
+          >
+            @if (f['newPassword'].errors?.['required']){
+            <span>
+              La contraseña es obligatoria
+            </span>
+            }
+            @if (f['newPassword'].errors?.['minlength']){
+            <span>
+              La contraseña debe tener al menos 8 caracteres
+            </span>
+            }
+          </div>
+        }
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar Contraseña</label>
+          <div class="input-container">
+            <input
+              [type]="hideConfirmPassword ? 'password' : 'text'"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              placeholder="Confirmar contraseña"
+              autocomplete="new-password"
+            />
+            <mat-icon
+              class="password-toggle"
+              (click)="hideConfirmPassword = !hideConfirmPassword"
+            >
+              {{ hideConfirmPassword ? "visibility_off" : "visibility" }}
+            </mat-icon>
+          </div>
+          @if (f['confirmPassword'].touched && f['confirmPassword'].errors){
+          <div            
+            class="error-message"
+          >
+            @if (f['confirmPassword'].errors?.['required']){
+            <span>
+              Confirmar la contraseña es obligatorio
+            </span>
+            @if (f['confirmPassword'].errors?.['mustMatch']){
+            <span >
+              Las contraseñas no coinciden
+            </span>
+            }
+            }
+          </div>
+          }
+        </div>
+      </form>
+    </div>
+  }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="button-container">
+    @if (showPasswordForm){
+    <button      
+      mat-button
+      type="button"
+      (click)="onClose()"
+    >
+      <mat-icon>close</mat-icon> Cancelar
+    </button>
+    }
+    @if (!showPasswordForm){
+    <button      
+      mat-raised-button
+      color="primary"
+      (click)="onClose()"
+    >
+      <mat-icon>check</mat-icon> Aceptar
+    </button>
+    }
+     @if (showPasswordForm){
+    <button      
+      mat-raised-button
+      color="primary"
+      [disabled]="loading || passwordForm.invalid"
+      (click)="onSubmit()"
+    >
+      @if (loading){
+      <span class="spinner"></span>
+      }
+      @if (!loading){
+      <mat-icon>save</mat-icon>
+      }
+      Cambiar Contraseña
+    </button>
+    }
+   
+  </mat-dialog-actions>
+</div>
