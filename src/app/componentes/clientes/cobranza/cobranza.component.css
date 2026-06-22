@@ -1,0 +1,94 @@
+
+h4 {
+    background-color:rgb(229, 233, 235);
+    text-align: center;
+}
+
+.container {
+    background-color:lightgray;
+    width : 800px;
+    height: 550px;
+
+}
+  .botonera {    
+    background-color:lightgray;
+    display: flex;
+    justify-content:space-around;
+    margin-top   : 15px;
+    margin-bottom: 5px;
+    width: 100%
+}
+
+table {
+    width: 100%;
+    height: fit-content;
+    min-width: 100%;
+    overflow:auto;
+    border-collapse: collapse;
+  }
+ 
+.table-container {
+    flex: 1;
+    overflow: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  .mat-mdc-header-row {
+    background-color: white;
+    height: 24px;
+    font-size: 12px;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+
+  .mat-mdc-row {
+    height: auto;
+    min-height: 40px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+  .mat-mdc-row:nth-child(odd) {
+    background-color: white;
+    color: black;
+  }
+  
+  .mat-mdc-row:nth-child(even) {
+    background-color: #cbd0d8;
+    color: black;
+  }
+  
+  .mat-mdc-row:hover {
+    background-color: #e8edf5;
+  }
+  
+  /* Estilos para las celdas */
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 0 8px;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+
+  /* Ancho de columnas */
+.mat-column-nroitem {
+  max-width: 30px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+  padding-left: 5px !important;
+}
+.mat-column-importe {
+  max-width: 120px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: visible;
+  padding-left: 5px !important;
+}
+  

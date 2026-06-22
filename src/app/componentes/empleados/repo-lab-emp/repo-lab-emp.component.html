@@ -1,0 +1,190 @@
+<div class="laboreos-container">
+    <form  [formGroup]="formInfoTrab" class="row mb-0">        
+      <div class="col-auto">
+        <div class="header">
+           <h4>INFORME DE TRABAJOS</h4>
+        </div>        
+      </div>            
+      <div class="col-auto">        
+            <mat-form-field style="width: 200px;" > 
+              <input matInput [matDatepicker]="picker" 
+                  placeholder = "fecha inicial"                 
+                  (dateChange)="ondFechaChange($event)"                 
+                  formControlName="dfecha">
+            <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+            <mat-datepicker #picker> </mat-datepicker>  
+            <!--mat-hint>{{ formInfoLab.controls['dfecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint--> 
+        </mat-form-field >
+      </div>
+      <div class="col-auto">
+        <mat-form-field style="width: 200px;" > 
+            <input #fechalab matInput #inputFocus [matDatepicker]="pickerh"  
+                  placeholder = "fecha final" 
+                  (dateChange)="onhFechaChange($event)"
+                  formControlName="hfecha" > 
+            <mat-datepicker-toggle  matSuffix [for]="pickerh" > </mat-datepicker-toggle> 
+            <mat-datepicker #pickerh> </mat-datepicker>  
+            <!--mat-hint>{{ formInfoLab.controls['hfecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint--> 
+        </mat-form-field >      
+      </div>
+      <!--div class="col-1">        
+      </div-->
+      <div class="col">
+        <button class="btn btn-primary btn-sm add-button" (click)="generarInforme()"
+        [disabled]="!geninfo">
+          Generar Informe
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-secondary btn-sm add-button" (click)="mostrarDetalle()"
+          [disabled]="cinfoTrabajos==null||cinfoTrabajos==undefined||cinfoTrabajos.length==0">
+          Detalle Trabajos
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-sm add-button" style="background-color:  rgb(142, 134, 236);color:white;" (click)="mostrarResumen()"
+         [disabled]="cresuTrab==null||cresuTrab==undefined||cresuTrab.length==0">
+          Resumen Trabajos
+        </button>
+      </div>    
+      
+      <div class="col">
+        <button 
+          [disabled]="cinfoTrabajos==undefined || cinfoTrabajos.length==0"
+          mat-icon-button
+          class="action-btn ml-10"
+          title="imprimir informe de trabajos"
+          (click)="generarPDF('det')"
+        >
+         <i class="bi bi-printer"></i>               
+        </button>
+        <button 
+          [disabled]="cresuTrab==undefined || cresuTrab.length==0"
+          mat-icon-button
+          class="action-btn-res"
+          title="imprimir Resumen de Trabajos"
+          (click)="generarTablaResumenaPDF()"
+        >
+         <i class="bi bi-printer"></i>               
+        </button>
+      </div>        
+      
+  </form>   
+  @if (ctrabsubt.length>0 && showdet){
+  <div class="table-container" style="overflow-x: auto">
+    @if (ctrabsubt){
+    <table  
+           mat-table
+           class="mat-elevation-z8"
+           [dataSource]="ctrabsubt"
+           style="width: 100%"
+        >
+        <ng-container matColumnDef="nomEmpleado">
+          <th mat-header-cell *matHeaderCellDef>Empleado</th>
+          <td mat-cell *matCellDef="let renInfo">{{ renInfo.nomEmpleado }}</td>
+        </ng-container>
+        <ng-container matColumnDef="idLaboreo">
+          <th mat-header-cell *matHeaderCellDef>NL</th>
+          <td mat-cell *matCellDef="let renInfo">{{ renInfo.idLaboreo }}</td>
+        </ng-container>
+        <ng-container matColumnDef="ncampo">
+          <th mat-header-cell *matHeaderCellDef>Campo</th>
+          <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncampo }}</td>
+        </ng-container>
+          <ng-container matColumnDef="potreros">
+        <th mat-header-cell *matHeaderCellDef>Potreros</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.potreros }}</td>
+      </ng-container>
+       <ng-container matColumnDef="hasTrab">
+        <th mat-header-cell *matHeaderCellDef>Has.Laboreo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ncultivo">
+        <th mat-header-cell *matHeaderCellDef>Cultivo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncultivo }}</td>
+      </ng-container>
+       <ng-container matColumnDef="nlabor">
+        <th mat-header-cell *matHeaderCellDef>Labor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.nlabor }}</td>
+      </ng-container>
+     
+      <ng-container matColumnDef="hasTrabajadas">
+        <th mat-header-cell *matHeaderCellDef>Has.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrabajadas | number : "1.2-2"  }}</td>
+      </ng-container>
+       <ng-container matColumnDef="vxHectTrab">
+        <th mat-header-cell *matHeaderCellDef>V.x Hect.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.vxHectTrab | number : "1.2-2"}}</td>
+      </ng-container>
+       <ng-container matColumnDef="vTrabajo">
+        <th mat-header-cell *matHeaderCellDef>Valor Trabajo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.vTrabajo | number : "1.2-2" }}</td>
+      </ng-container>      
+      <!-- Definición de filas -->
+      <tr mat-header-row *matHeaderRowDef="colTrabajos; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colTrabajos"
+                [ngClass]="{'fila-totales':  ctrabsubt[index].idLaboreo===0}"></tr>
+    </table>
+    }
+  </div>
+  }
+   <!-- Resumen de Trabajos x Empleado-->
+  @if (cresuTrab.length>0 && showres){  
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+      @if (cresuTrab.length>0){
+      <div class="table-container">
+        @if (cresuTrab){
+        <table  
+         mat-table
+         class="mat-elevation-z8"
+         [dataSource]="cresuTrab"
+         style="width: 80%"
+      >
+      <ng-container matColumnDef="nomEmpleado">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Empleado</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.nomEmp }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ctrab">
+        <th mat-header-cell *matHeaderCellDef>Cant.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ctrab }}</td>
+      </ng-container>
+      <ng-container matColumnDef="hasTrab" style="text-align: center;">
+        <th mat-header-cell *matHeaderCellDef>Has.Trabajadas</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2"}}</td>
+      </ng-container>
+        <ng-container matColumnDef="valorTrabajo">
+        <th mat-header-cell *matHeaderCellDef>Valor Trabajo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorTrab | number : "1.2-2" }}</td>
+      </ng-container>
+     
+       
+      <tr mat-header-row *matHeaderRowDef="colResuTxE; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colResuTxE"
+          [ngClass]="{'fila-totales':  cresuTrab[index].nomEmp==='TOTALES'}"></tr>
+    </table>
+    }
+    </div>
+    }
+   </div> 
+  </div> 
+  }
+   <!-- Sección inferior fija -->
+  @if (ctrabsubt.length>0 && showdet){
+  <div class="fixed-section footer-container">
+      <div class="footer">
+          <div class="total">
+             $Trabajos =><span>$ {{ this.totalvtrab | number : "1.2-2" }}     --     </span>
+             Cant.Trabajos =><span>{{ canttrab }}     --    </span>
+             Cant.Hectáreas Trabajadas =><span>{{ totalhast | number : "1.2-2"}}     --     </span>
+             Cant.Hectáreas Laboreos   =><span>{{ totalhasl | number : "1.2-2"}}</span>
+         </div>
+         <div class="actions">
+           <button class="btn btn-secondary" (click)="Cancelar()">
+             <i class="bi bi-arrow-left me-1"></i>Volver
+           </button>
+         </div>
+      </div> 
+  </div>
+  }
+</div>

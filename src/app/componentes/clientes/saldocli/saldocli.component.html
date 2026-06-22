@@ -1,0 +1,56 @@
+<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    <h4 mat-dialog-title >{{operacion}}</h4>  
+      <form [formGroup]="formSal" >        
+         <div class="row mt-1" >
+          <div class="col-auto">
+            <mat-form-field style="width:100px;"  appearance="fill">
+              <mat-label>Nro.Cliente</mat-label>
+              <input matInput [readonly]="true" formControlName="nrocli" style="text-align: center;">	
+             </mat-form-field>      
+          </div>    
+           <div class="col-auto">
+            <mat-form-field style="width:80px;"  appearance="fill">
+              <mat-label>Nro.Saldo</mat-label>
+              <input matInput [readonly]="true" formControlName="nrosaldo" style="text-align: center;">	
+             </mat-form-field>      
+          </div>    
+          <div class="col-auto">
+            <mat-form-field style="width:160px;"> 
+                <input  matInput #inputFocus [matDatepicker]="picker" 
+                        placeholder = "Elija una fecha" 
+                        (dateChange)="onFechaChange($event)"
+                        formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>                  
+                <mat-hint>{{ formSal.controls['fecha'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
+            </mat-form-field >                               
+         </div> 
+        </div> 
+        <div class="row">
+         <div class="col-auto">
+          <mat-form-field style="width:200px;"  appearance="fill">
+            <mat-label>Saldo</mat-label>                
+            <input matInput  selecText formControlName="saldo" style="text-align: right;"	   
+               [value]="formSal.controls['saldo'].value"
+               (blur)="formatearComoMoneda()"
+               (focus)="quitarFormatoMoneda()"  >        
+           </mat-form-field>        
+        </div>  
+        </div>        
+      
+        <div class="row">
+            <div class="botonera">           
+                <button class="btn btn-sm btn-outline-primary me-5" 
+                         [disabled]="formSal.invalid || data.accion!='A' ||
+                                    formSal.controls['saldo'].value==0" 
+                         (click)="GrabarSaldo()">Grabar Saldo</button>   
+                <button class="btn btn-sm btn-outline-success me-5" 
+                       [disabled]="formSal.invalid || (data.accion!='I' && data.accion!='M') ||
+                                    formSal.controls['saldo'].value==0" 
+                       (click)="ModificarSaldo()">Modificar Saldo</button>                                                                      
+                <button class="btn btn-sm btn-outline-secondary"                
+                         (click)="Anular()">Cancelar</button>                       
+            </div>  
+      </div>
+  </form>
+</div>

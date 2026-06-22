@@ -1,0 +1,66 @@
+<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formProv">        
+       <div class="row justify-content-md-left">
+        <div class="col-auto">           
+           <mat-form-field style="width:100px;"  appearance="fill">
+                 <mat-label>Nro Proveedor</mat-label>
+                 <input matInput [readonly]="true" formControlName="idProv" style="text-align: center;">	
+            </mat-form-field>    
+        </div>
+
+        <div class="col-auto">
+           <mat-form-field style="width:400px;"  appearance="fill">
+                <mat-label>Nombre del Proveedor</mat-label>
+                <input #nombrecliente matInput #inputFocus formControlName="nombre" style="text-align: left;">	
+            </mat-form-field>    
+        </div>   
+      </div>
+      <div class="row justify-content-md-left">
+        <div class="col-auto">
+              <mat-form-field style="width:250px;text-align:left;" appearance="fill">
+                <mat-label>Domicilio</mat-label>
+                <input matInput formControlName="domicilio">	
+               </mat-form-field>                   
+        </div> 
+        <div class="col-auto">
+                <mat-form-field style="width:200px;text-align:left;" appearance="fill">
+                  <mat-label>Localidad</mat-label>
+                  <input matInput formControlName="localidad">	
+                 </mat-form-field>                   
+              </div> 
+        <div class="col-auto">
+                <mat-form-field style="width:250px;text-align:left;" appearance="fill">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput formControlName="telefono">	
+                 </mat-form-field>                   
+        </div> 
+      </div> 
+      <div class="row justify-content-md-left">
+             <div class="col-auto">
+                <mat-form-field style="width:300px;text-align:left;" appearance="fill">
+                  <mat-label>E-Mail</mat-label>
+                  <input matInput formControlName="email">	
+                 </mat-form-field>                   
+              </div> 
+            <div class="col-auto">
+                <mat-form-field style="width:420px;text-align:left;" appearance="fill">
+                  <mat-label>Notas</mat-label>
+                  <input matInput formControlName="notas">	
+                 </mat-form-field>                   
+              </div>       
+      </div>
+      <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formProv.invalid || datass.accion!='A'" 
+                       (click)="agregarProveedor()">Agregar</button>                                
+              <button class="btn btn-sm btn-outline-success me-5" 
+                       [disabled]="formProv.invalid || datass.accion!='M'" 
+                       (click)="modificarProveedor()">Modificar</button>  
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Anular()">Cancelar</button>                       
+      </div>  
+          
+    </form>
+</div>

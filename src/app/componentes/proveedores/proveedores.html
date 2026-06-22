@@ -1,0 +1,130 @@
+<div class="proveedores-container">
+   <div class="row">
+      <div class="col">
+        <div class="header">
+          <h4>PROVEEDORES</h4>
+        </div>
+      </div>      
+      <div class="col">
+       <input #filtroInput (keyup)="aplicarFiltro(filtroInput.value)" placeholder="Filtrar por nombre">
+      </div>          
+      <div class="col">
+        <button class="btn btn-warning btn-sm" (click)="informeSaldos()">
+           Informe de Saldos
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-primary btn-sm" (click)="informePagos()">
+           Informe de Pagos
+        </button>
+      </div>
+      <div class="col-3">        
+      </div>
+      <div class="col">
+        <button class="btn btn-primary btn-sm add-button" (click)="agProveedor()">
+          <i class="bi bi-plus-circle me-1"></i>Agregar
+        </button>
+      </div>
+  </div>  
+  <div class="table-container" style="overflow-x: auto">
+    <table
+      mat-table
+      class="mat-elevation-z8"
+      [dataSource]="this.dataSource"
+      style="width: 100%"
+    >
+      <!-- Columna ID Proveedor -->
+      <ng-container matColumnDef="idProv">
+        <th mat-header-cell *matHeaderCellDef>Nro</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.idProv }}</td>
+      </ng-container>
+      <!-- Columna Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.nombre }}</td>
+      </ng-container>
+
+      <!-- Columna Domicilio -->
+      <ng-container matColumnDef="domicilio">
+        <th mat-header-cell *matHeaderCellDef>Domicilio</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.domicilio }}</td>
+      </ng-container>
+
+      <!-- Columna Localidad -->
+      <ng-container matColumnDef="localidad">
+        <th mat-header-cell *matHeaderCellDef>Localidad</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.localidad }}</td>
+      </ng-container>
+
+      <!-- Columna Telefono -->
+      <ng-container matColumnDef="telefono">
+        <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.telefono }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>E-Mail</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.email }}</td>
+      </ng-container>
+
+      <!-- Columna Notas -->
+      <ng-container matColumnDef="notas">
+        <th mat-header-cell *matHeaderCellDef>Notas</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.notas }}</td>
+      </ng-container>
+
+      <!-- Columna Modificar -->
+      <ng-container matColumnDef="M">
+        <th mat-header-cell *matHeaderCellDef>Mod</th>
+        <td mat-cell *matCellDef="let renProv">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="modificar proveedor"
+              (click)="modificarProveedor(renProv.idProv, renProv.nombre)"
+            >
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Columna Borrar -->
+      <ng-container matColumnDef="B">
+        <th mat-header-cell *matHeaderCellDef>Bor</th>
+        <td mat-cell *matCellDef="let renProv">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="borrar cliente"
+              (click)="borrarProveedor(renProv.idProv)"
+            >
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="CC">
+        <th mat-header-cell *matHeaderCellDef>CC</th>
+        <td mat-cell *matCellDef="let renProv">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="Cuenta Corriente"
+              (click)="cuentaCorriente(renProv.idProv,renProv.nombre)"
+            >
+            <i class="bi bi-card-list"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+      <!-- Definición de filas -->
+      <tr mat-header-row *matHeaderRowDef="colProveedores; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index; columns: colProveedores"></tr>
+    </table>
+  </div>
+</div>

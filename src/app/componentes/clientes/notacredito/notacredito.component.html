@@ -1,0 +1,81 @@
+@if (!isloading) {
+ <div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4>{{ operacion }}</h4>
+  <form [formGroup]="formCredito" class="p-3">
+    <!-- Primera fila -->
+    <div class="row g-3 mb-3">
+       <div class="col-4">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro Crédito</mat-label>
+          <input matInput formControlName="nrocred"
+            style="text-align: center"/>
+        </mat-form-field>
+      </div>
+       <div class="col-4">
+          <mat-form-field style="width:160px;"> 
+            <input  matInput #inputFocus [matDatepicker]="picker" 
+                placeholder = "Elija una fecha" 
+                (dateChange)="onFechaChange($event)"
+                        formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>                  
+                <mat-hint>{{ formCredito.controls['fecha'].value| date : "dd/MM/yyyy"}}</mat-hint>
+            </mat-form-field >                               
+        </div> 
+     </div>    
+     <!-- Segunda fila -->
+     <div class="row g-3 mb-3">
+       <div class="col-4">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Numero</mat-label>
+         <input
+            matInput readonly="true" formControlName="idCliente"
+             style="text-align: center"/>   
+             
+         </mat-form-field>
+      </div>
+      <div class="col-8">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Cliente</mat-label>
+         <input
+            matInput readonly="true" formControlName="nomcliente"
+             style="text-align: left"/>   
+             
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Tercera fila -->
+    <div class="row g-3 mb-3">
+      <div class="col-md-12">
+         <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Descripción</mat-label>
+          <input matInput formControlName="descrip" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6 text-end">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Importe</mat-label>
+          <input  matInput appImporte formControlName="importe" style="text-align: right" />
+        </mat-form-field>
+      </div>     
+    </div>   
+    <!-- Botonera -->
+    <div class="botonera">
+      <button
+        class="btn btn-outline-primary"
+        [disabled]="formCredito.invalid || data.accion != 'A'"
+        (click)="AgregarCredito()"
+      >Agregar</button>
+   
+      <button
+        class="btn btn-outline-secondary"
+        (click)="Anular()">
+        Cancelar
+      </button>
+    </div>       
+  </form>
+</div>
+}

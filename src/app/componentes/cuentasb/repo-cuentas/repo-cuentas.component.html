@@ -1,0 +1,346 @@
+ <div class="laboreos-container">
+    <form  [formGroup]="formInfoLab" class="row mt-1">        
+      <div class="col-auto">
+        <div class="header">
+           <h4>INF.DE LABOREOS</h4>
+        </div>        
+      </div>            
+      <div class="col-auto">        
+            <mat-form-field style="width: 160px;font-size: 16px;" > 
+              <input matInput [matDatepicker]="picker" 
+                  placeholder = "fecha inicial"                 
+                  (dateChange)="ondFechaChange($event)"                 
+                  formControlName="dfecha">
+            <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+            <mat-datepicker #picker> </mat-datepicker>  
+            <!--mat-hint>{{ formInfoLab.controls['dfecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint--> 
+        </mat-form-field >
+      </div>
+      <div class="col-auto">
+        <mat-form-field style="width: 160px;font-size: 16px;" > 
+            <input #fechalab matInput #inputFocus [matDatepicker]="pickerh"  
+                  placeholder = "fecha final" 
+                  (dateChange)="onhFechaChange($event)"
+                  formControlName="hfecha" > 
+            <mat-datepicker-toggle  matSuffix [for]="pickerh" > </mat-datepicker-toggle> 
+            <mat-datepicker #pickerh> </mat-datepicker>  
+            <!--mat-hint>{{ formInfoLab.controls['hfecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint--> 
+        </mat-form-field >      
+      </div>
+      <!--div class="col-3">        
+      </div-->
+       <div class="col">
+        <mat-form-field style="width:200px;margin-left:30px;font-size: 14px;">
+          <mat-label>Tipo Informe</mat-label>
+          <mat-select  formControlName="tipoinfo"            
+               (selectionChange)="onSelectionChangeInforme($event)">
+               @for (tinfo of this.tipoinforme; track $index;let i = $index){
+                 <mat-option [value]="i">
+                {{ tipoinforme[i] }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+      <div class="col">
+        <mat-form-field style="width:200px;margin-left:30px;font-size: 14px;">
+          <mat-label>Cliente</mat-label>
+          <mat-select  formControlName="clte"            
+               (selectionChange)="onSelectionChangeCliente($event)">
+               @for (cli of this.cclientes; track cli.idCliente){
+                 <mat-option [value]="cli.idCliente">
+                {{ cli.nombre }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+   
+      <div class="col">
+        <button class="btn btn-primary btn-sm add-button" (click)="desplegarInforme()">
+          Det X Cliente
+        </button>
+      </div>
+      <div class="col-auto">
+        <button 
+          [disabled]="eligiocli || clabosubt==undefined || clabosubt.length==0"
+          mat-icon-button
+          class="action-btn ml-10"
+          title="imprimir informe de laboreos"
+          (click)="generarPDF('')"
+        >
+         <i class="bi bi-printer"></i>               
+        </button>
+      </div>  
+      <div class="col-auto">
+        <button 
+          [disabled]="!eligiocli || clabosubt==undefined || clabosubt.length==0"
+          mat-icon-button
+          class="action-btn-cli ml-10"                
+          title="informe de laboreos del cliente"
+          (click)="generarPDF(clabosubt[0].ncliente)"
+        >
+         <i class="bi bi-printer"></i>               
+        </button>
+      </div>  
+  </form>   
+  <!-- Tabla de detalle -->
+  @if (clabosubt.length>0){
+  <div class="table-container" style="overflow-x: auto">
+     @if (clabosubt){
+     <table  
+      mat-table
+      class="mat-elevation-z8"
+      [dataSource]="clabosubt"
+      style="width: 100%"
+      >
+      <ng-container matColumnDef="idLaboreo">
+        <th mat-header-cell *matHeaderCellDef>Nro</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.idLaboreo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.fecha | date  : "dd/MM/yyyy" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ncliente">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Cliente</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncliente }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ncampo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Campo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncampo }}</td>
+      </ng-container>
+       <ng-container matColumnDef="hasTrab">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Has.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2"}}</td>
+      </ng-container>
+      <ng-container matColumnDef="potreros">
+        <th mat-header-cell *matHeaderCellDef>Potreros</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.potreros }}</td>
+      </ng-container>
+     
+      <ng-container matColumnDef="nlabor">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Labor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.nlabor }}</td>
+      </ng-container>
+       <ng-container matColumnDef="ncultivo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Cultivo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncultivo }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="nmaquina">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Máquina</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.nmaquina  }}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorxHect">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">V.x Hect</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorxHect | number : "1.2-2" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorLaboreo">
+        <th mat-header-cell *matHeaderCellDef>Valor Laboreo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorLaboreo | number : "1.2-2"  }}</td>
+      </ng-container>
+      
+        <!-- Definición de filas -->
+      <tr mat-header-row *matHeaderRowDef="colLaboreos; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colLaboreos"
+                [ngClass]="{'fila-totales':  clabosubt[index].idLaboreo===0}"></tr>
+    </table>
+    }
+  </div>
+  }
+  <!-- Resumen de Laboreos x Cultivo-->
+   @if (cresucult.length>0){
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+      @if (cresucult.length>0){
+      <div class="table-container">
+        @if (cresucult){
+        <table  
+         mat-table
+         class="mat-elevation-z8"
+         [dataSource]="cresucult"
+         style="width: 50%"
+      >
+      <ng-container matColumnDef="ncultivo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Cultivo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncultivo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="clab">
+        <th mat-header-cell *matHeaderCellDef>Cant.Lab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.clab }}</td>
+      </ng-container>
+      <ng-container matColumnDef="hasTrab" style="text-align: right;">
+        <th mat-header-cell *matHeaderCellDef>Has.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2"}}</td>
+      </ng-container>
+        <ng-container matColumnDef="valorNeto">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Neto S/Iva</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorNeto | number : "1.2-2" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorLaboreo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Valor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorLaboreo | number : "1.2-2" }}</td>
+      </ng-container>
+       
+      <tr mat-header-row *matHeaderRowDef="colresuCult; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colresuCult"
+          [ngClass]="{'fila-totales':  cresucult[index].ncultivo==='TOTALES'}"></tr>
+    </table>
+    }
+    </div>
+  }
+  </div> 
+  </div> 
+  }
+   <!-- Resumen de Laboreos x Labor-->
+  @if (cresulab.length>0){
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+      @if (cresulab.length>0){
+      <div class="table-resu-container" style="overflow-x: auto">
+        @if (cresulab){
+        <table  
+         mat-table
+         class="mat-elevation-z8"
+         [dataSource]="cresulab"
+         style="width: 50%"
+      >
+      <ng-container matColumnDef="nlabor">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Labor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.nlabor }}</td>
+      </ng-container>
+      <ng-container matColumnDef="clab">
+        <th mat-header-cell *matHeaderCellDef>Cant.Lab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.clab }}</td>
+      </ng-container>
+      <ng-container matColumnDef="hasTrab" style="text-align: right;">
+        <th mat-header-cell *matHeaderCellDef>Has.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2"}}</td>
+      </ng-container>
+        <ng-container matColumnDef="valorNeto">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Neto S/Iva</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorNeto | number : "1.2-2" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorLaboreo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Valor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorLaboreo | number : "1.2-2" }}</td>
+      </ng-container>
+       
+      <tr mat-header-row *matHeaderRowDef="colresuLab; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colresuLab"
+          [ngClass]="{'fila-totales':  cresulab[index].nlabor==='TOTALES'}"></tr>
+    </table>
+    }
+    </div>
+    }
+  </div> 
+  </div> 
+  }
+  <!-- Resumen de Laboreos x Campo-->
+  @if (cresucamp.length>0){ 
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+      @if (cresucamp.length>0){ 
+      <div class="table-container">
+        @if (cresucamp){ 
+        <table  
+         mat-table
+         class="mat-elevation-z8"
+         [dataSource]="cresucamp"        
+      >
+      <ng-container matColumnDef="ncampo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Campo</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncampo }}</td>
+      </ng-container>
+      <ng-container matColumnDef="clab">
+        <th mat-header-cell *matHeaderCellDef>Cant.Lab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.clab }}</td>
+      </ng-container>
+      <ng-container matColumnDef="hasTrab" style="text-align: right;">
+        <th mat-header-cell *matHeaderCellDef>Has.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2"}}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorNeto">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Neto S/Iva</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorNeto | number : "1.2-2" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorLaboreo">
+        <th mat-header-cell *matHeaderCellDef style="text-align: center;">Valor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorLaboreo | number : "1.2-2" }}</td>
+      </ng-container>
+       
+      <tr mat-header-row *matHeaderRowDef="colresuCampo; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colresuCampo"
+          [ngClass]="{'fila-totales':  cresucamp[index].ncampo==='TOTALES'}"></tr>
+    </table>
+    }
+    </div>
+    }
+  </div> 
+  </div>  
+  }
+   <!-- Resumen de Laboreos x Máquina-->
+  @if (cresumaq.length>0){   
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+      @if (cresumaq.length>0){ 
+      <div class="table-container">
+        @if (cresumaq){ 
+        <table  
+         mat-table
+         class="mat-elevation-z8"
+         [dataSource]="cresumaq"        
+      >
+      <ng-container matColumnDef="nmaquina1">
+        <th mat-header-cell *matHeaderCellDef  style="text-align: center;">Máquina</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.nmaquina }}</td>
+      </ng-container>
+      <ng-container matColumnDef="clab">
+        <th mat-header-cell *matHeaderCellDef>Cant.Lab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.clab }}</td>
+      </ng-container>
+      <ng-container matColumnDef="hasTrab" style="text-align: right;">
+        <th mat-header-cell *matHeaderCellDef>Has.Trab</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.hasTrab | number : "1.2-2"}}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorNeto">
+        <th mat-header-cell *matHeaderCellDef  style="text-align:center;">Neto S/Iva</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorNeto | number : "1.2-2" }}</td>
+      </ng-container>
+      <ng-container matColumnDef="valorLaboreo">
+        <th mat-header-cell *matHeaderCellDef  style="text-align:center;">Valor</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.valorLaboreo | number : "1.2-2" }}</td>
+      </ng-container>
+       
+      <tr mat-header-row *matHeaderRowDef="colresuMaq; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colresuMaq"
+         [ngClass]="{'fila-totales':  cresumaq[index].nmaquina==='TOTALES'}"></tr>
+    </table>
+    }
+    </div>
+    }
+  </div> 
+  </div>  
+  }
+ 
+  <!-- Sección inferior fija -->
+  @if (clabosubt.length>0){ 
+  <div class="fixed-section footer-container">
+      <div class="footer">
+          <div class="total">
+             $Laboreos =><span>$ {{ totallabor | number : "1.2-2" }}  --  </span>
+             Cant.Laboreos =><span>{{ cantlab }}  --  </span>
+             Cant.Hectáreas =><span>{{ totalhect | number : "1.2-2"}}</span>
+         </div>
+         <div class="actions">
+           <button class="btn btn-secondary" (click)="Cancelar()">
+             <i class="bi bi-arrow-left me-1"></i>Volver
+           </button>
+         </div>
+      </div> 
+  </div>
+  }
+</div>
+
+   

@@ -1,0 +1,24 @@
+
+h4 {
+    background-color:lightblue;
+    text-align: center;
+}
+
+
+  .botonera {    
+    background-color:lightgray;
+    display: flex;
+    justify-content:space-around;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    width: 100%
+}
+
+.menserror {
+   color : red
+}
+/* Esta clase se la envia camiones cuando llama, es la panelClass*/
+.custom-dialog-container {
+  background-color:lightgray;  /*quita el fondo blanco */
+  border-radius: 0px;
+}

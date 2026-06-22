@@ -1,0 +1,126 @@
+/* Contenedor principal */
+.laboreos-container {
+  width: 100%;
+  height: calc(100vh - 70px); /* Restar altura de navbar */
+  display: flex;
+  flex-direction: column;
+  /*padding: 5px;*/
+  margin-top: 40px;
+  overflow: hidden;
+}
+
+/* Cabecera con título y botón */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+.header h4 {
+  background-color: #b6c1dd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.fila-totales {
+  background-color: #053966; /* Celeste claro, cambia a tu gusto */
+  font-weight: bold;
+}
+/* Contenedor de la tabla */
+.table-container {
+  flex: 1;
+  overflow: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos de la tabla */
+.mat-mdc-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.mat-mdc-header-row {
+  background-color: #b6c1dd;
+  height: 48px;
+  font-size: 14px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mat-mdc-row {
+  height: auto;
+  min-height: 40px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.mat-mdc-row:nth-child(odd) {
+  background-color: white;
+  color: black;
+}
+
+.mat-mdc-row:nth-child(even) {
+  background-color: #cbd0d8;
+  color: black;
+}
+
+.mat-mdc-row:hover {
+  background-color: #e8edf5;
+}
+
+/* Estilos para las celdas */
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  padding: 0 8px;
+}
+
+/* Asegurar que los encabezados no se truncan */
+.mat-mdc-header-cell {
+  white-space: nowrap;
+  overflow: visible !important;
+  text-overflow: clip;
+  padding: 0 8px;
+}
+
+/* Ancho de columnas */
+.mat-column-nomemp {
+  text-align: left;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: visible;
+  padding-left: 5px !important;
+}
+
+.mat-column-fecha {
+  max-width: 100px;
+  text-align: center;
+}
+
+.mat-column-idPagoemp {
+  max-width: 50px;
+  text-align: center;
+}
+
+.mat-column-mediopago {
+  text-align: left;
+  max-width: 100px;
+}
+.mat-column-nrompago {
+  text-align: left;
+  max-width: 150px;
+}
+
+.mat-column-banco {
+  text-align: left;
+  max-width: 100px;
+}
+
+.mat-column-importe {
+    text-align: right;
+  max-width: 150px;
+}

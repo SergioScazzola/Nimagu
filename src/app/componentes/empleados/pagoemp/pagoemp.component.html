@@ -1,0 +1,116 @@
+<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    <h4 mat-dialog-title >{{operacion}}</h4>  
+      <form [formGroup]="formPag" >        
+         <div class="row mt-1" >
+          <div class="col-auto">
+            <mat-form-field style="width:100px;"  appearance="fill">
+              <mat-label>Nro.Pago</mat-label>
+              <input matInput [readonly]="true" formControlName="nropag" style="text-align: center;">	
+             </mat-form-field>      
+          </div>    
+          <div class="col-auto">
+            <mat-form-field style="width:160px;"> 
+                <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
+                        placeholder = "Elija una fecha" 
+                        (dateChange)="onFechaChange($event)"
+                        formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>                  
+                <mat-hint>{{ formPag.controls['fecha'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
+            </mat-form-field >                               
+          </div>
+         
+        <div class="col-auto">
+          <mat-form-field style="width:300px;margin-left: 150px;"  appearance="fill">
+            <mat-label>Empleado</mat-label>
+            <input matInput [readonly]="true" formControlName="nempleado" style="text-align: left;">	
+           </mat-form-field>      
+        </div>  
+      </div>  
+      <div class="row">                                     
+          <div class="col-auto">
+            <mat-form-field   style="width:350px;">
+              <mat-label>Laboreo</mat-label>
+              <mat-select formControlName="nrolaboreo"    
+                  (selectionChange)="onSelectionChangeLaboreo($event)">      
+                  @for (labo of this.claboreos; track labo.idLaboreo){
+                  <!--mat-option *ngFor="let labo of this.claboreos; let i = index" [value]="labo.idLaboreo"-->
+                    <mat-option [value]="labo.idLaboreo">
+                    {{ labo.idLaboreo+" - "+labo.ncampo+" - "+labo.nlabor+" - "+labo.ncultivo}}
+                    </mat-option>            
+                  }
+              </mat-select>
+            </mat-form-field>
+          </div>          
+          <div class="col-auto">
+            <mat-form-field   style="width:180px;margin-left: 85px;">
+              <mat-label>Medio de Pago</mat-label>
+              <mat-select formControlName="mediopago"    
+                  (selectionChange)="onSelectionChangeMedioPago($event)">   
+                  @for (mpag of this.cmediospago; track mpag.idmpago){   
+                  <mat-option [value]="mpag.idmpago">
+                    {{ mpag.mediodepago }}
+                  </mat-option>            
+                  }
+              </mat-select>
+            </mat-form-field>
+          </div> 
+        </div> 
+        <div class="row">  
+          <div class="col-auto">
+            <mat-form-field style="width:180px;"  appearance="fill">
+              <mat-label>Nro.Medio de Pago</mat-label>
+              <input matInput formControlName="nrompago">	
+             </mat-form-field> 
+          </div> 
+          <div class="col-auto">
+            <mat-form-field style="width:150px;"  appearance="fill">
+            <mat-label>Banco</mat-label>
+            <input matInput formControlName="banco">	
+           </mat-form-field> 
+          </div> 
+      
+          <div class="col-auto">
+            <mat-form-field style="width:200px;margin-left: 80px;"  appearance="fill">
+              <mat-label>Importe del Pago</mat-label>                
+              <input matInput selecText
+                     [value]="formPag.controls['importe'].value"
+                     (blur)="formatearComoMoneda()"
+                     (focus)="quitarFormatoMoneda()" 
+                     formControlName="importe" style="text-align: right;"	>
+           </mat-form-field>        
+          </div>           
+        </div>           
+        <div class="row">
+          <div class="col-auto">
+              <mat-form-field style="width:400px;"  appearance="fill">
+                <mat-label>Observaciones</mat-label>
+                <input matInput formControlName="observ">	
+               </mat-form-field> 
+          </div>   
+           <div class="col-auto">         
+            <mat-checkbox 
+                [checked]="imprimeconcepto"
+                (change)="updatechecked($event.checked)"
+                >Imprimir concepto en el Recibo
+            </mat-checkbox>
+        </div>
+        </div>
+        
+        <div class="row">
+          <div class="botonera">           
+            <button class="btn btn-sm btn-outline-primary me-5" 
+                     [disabled]="formPag.invalid || data.accion!='A'" 
+                     (click)="GrabarPago()">Agregar Pago</button>                                
+            <button class="btn btn-sm btn-outline-success me-5" 
+                     [disabled]="formPag.invalid || data.accion!='M'" 
+                     (click)="ModificarPago()">Modificar Pago</button>  
+            <button class="btn btn-sm btn-outline-info me-5" 
+                     [disabled]="formPag.invalid || data.accion!='M'" 
+                     (click)="generarReciboPDF()">Imprimir Recibo</button>                       
+            <button class="btn btn-sm btn-outline-secondary"                
+                     (click)="Anular()">Cancelar</button>                       
+        </div>  
+      </div>  
+    </form>
+  </div>  

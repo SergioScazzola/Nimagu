@@ -1,0 +1,168 @@
+<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    <h4 mat-dialog-title >{{operacion}}</h4>  
+      <form [formGroup]="formCob" >        
+         <div class="row mt-1" >
+          <div class="col-auto">
+            <mat-form-field style="width:100px;"  appearance="fill">
+              <mat-label>Nro.Cobro</mat-label>
+              <input matInput [readonly]="true" formControlName="nrocob" style="text-align: center;">	
+             </mat-form-field>      
+          </div>    
+          <div class="col-auto">
+            <mat-form-field style="width:160px;"> 
+                <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
+                        placeholder = "Elija una fecha" 
+                        (dateChange)="onFechaChange($event)"
+                        formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>                  
+                <mat-hint>{{ formCob.controls['fecha'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
+            </mat-form-field >            
+          </div>
+         
+        <div class="col-auto">
+          <mat-form-field style="width:300px;"  appearance="fill">
+            <mat-label>Cliente</mat-label>
+            <input matInput [readonly]="true" formControlName="ncliente" style="text-align: left;">	
+           </mat-form-field>      
+        </div>  
+      </div>  
+      <div class="row">                             
+          <div class="col-auto">
+            <mat-form-field   style="width:350px;">
+              <mat-label>Laboreo</mat-label>
+              <mat-select formControlName="nrolab"    
+                  (selectionChange)="onSelectionChangeLaboreo($event)">      
+                  <mat-option *ngFor="let labo of this.claboreos; let i = index" [value]="labo.idLaboreo">
+                    {{ labo.idLaboreo+" - "+labo.ncampo+" - "+labo.nlabor+" - "+labo.ncultivo}}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>          
+
+          <div class="col-auto">
+              <mat-form-field style="width:350px;"  appearance="fill">
+                <mat-label>Observaciones</mat-label>
+                <input matInput formControlName="observ">	
+               </mat-form-field> 
+          </div>   
+         
+        </div>    
+        <div class="row">
+          
+          <div class="col-auto">
+            <mat-form-field style="width:200px;"  appearance="fill">
+              <mat-label>Nro. Factura</mat-label>
+              <input matInput formControlName="nfactura">	
+             </mat-form-field> 
+        </div>
+          <div class="col-auto">
+            <mat-form-field style="width:200px;margin-left: 50px;"  appearance="fill">
+              <mat-label>Importe del Cobro</mat-label>                
+              <input matInput [readonly]="true" formControlName="importe" style="text-align: right;"	>
+             </mat-form-field>        
+         </div>           
+         <div class="col-auto">
+          <button class="btn btn-primary  btn-sm add-button" (click)="agItemCobro()"
+             [disabled]="data.accion==='M'">
+            <i class="bi bi-plus-circle me-1"></i>Agregar Item Cobro
+          </button>
+        </div>
+      </div>              
+       <div class="row">
+        <div class="col-auto">         
+            <mat-checkbox 
+                [checked]="imprimeconcepto"
+                (change)="updatechecked($event.checked)"
+                >Imprimir concepto en el Recibo
+            </mat-checkbox>
+        </div>
+      </div>
+     @if (cdetcobro.length>0){
+      <div class="table-container" style="overflow-x: auto">
+        <div>Detalle del Cobro</div>      
+        <table mat-table class="mat-elevation-z8" [dataSource]="this.cdetcobro">
+              <ng-container matColumnDef="nroitem">
+                <th mat-header-cell *matHeaderCellDef>Item</th>
+                <td mat-cell *matCellDef="let renDC">
+                  {{ renDC.nroitem }}
+                </td>
+              </ng-container>             
+        
+             <ng-container matColumnDef="fecha">
+               <th mat-header-cell *matHeaderCellDef>Fecha</th>
+               <td mat-cell *matCellDef="let renDC">
+                 {{  renDC.fecha | date : "dd/MM/yyyy"}}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="nmpago">
+               <th mat-header-cell *matHeaderCellDef>M.Pago</th>
+               <td mat-cell *matCellDef="let renDC">
+                  {{ renDC.nmpago }}
+               </td>
+            </ng-container>
+            <ng-container matColumnDef="nrompago">
+              <th mat-header-cell *matHeaderCellDef>Nro M.Pago</th>
+              <td mat-cell *matCellDef="let renDC">
+                {{ renDC.nrompago }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="banco">
+              <th mat-header-cell *matHeaderCellDef>Banco</th>
+              <td mat-cell *matCellDef="let renDC">
+                {{ renDC.banco }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="fecvto">
+              <th mat-header-cell *matHeaderCellDef>
+                Fec.Vto
+              </th>
+              <td mat-cell *matCellDef="let renDC" >
+                {{  renDC.fecvto | date : "dd/MM/yyyy"}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="importe">
+              <th mat-header-cell *matHeaderCellDef>Importe</th>
+              <td mat-cell *matCellDef="let renDC" >
+                {{ renDC.importe | number : "1.2-2" }}
+              </td>
+            </ng-container>
+            <!-- Columna Modificar -->
+            <ng-container matColumnDef="M">
+              <th mat-header-cell *matHeaderCellDef>Mod</th>
+              <td mat-cell *matCellDef="let renDC">
+                <div class="text-center">
+                   <button
+                     mat-icon-button
+                     class="action-btn"
+                     title="modificar item cobranza"
+                     (click)="modificarItemCobranza(renDC.idCobro,renDC.nroitem)"
+                    >
+                    <i class="bi bi-pencil-fill"></i>
+                   </button>
+                </div>
+              </td>
+            </ng-container>
+          <tr mat-header-row *matHeaderRowDef="colDCobros"></tr>
+          <tr mat-row *matRowDef="let row; let index; columns: colDCobros"></tr>          
+      </table>    
+    </div>   
+    }   
+    <div class="row">
+        <div class="botonera">           
+            <button class="btn btn-sm btn-outline-primary me-5" 
+                     [disabled]="formCob.invalid || data.accion!='A' || this.totcobro==0" 
+                     (click)="GrabarCobro()">Agregar Cobro</button>                                
+            <button class="btn btn-sm btn-outline-success me-5" 
+                     [disabled]="formCob.invalid || data.accion!='M'" 
+                     (click)="ModificarCobro()">Modificar Cobro</button>  
+            <button class="btn btn-sm btn-outline-info me-5" 
+                     [disabled]="formCob.invalid || data.accion!='M'" 
+                     (click)="generarReciboPDF()">Imprimir Recibo</button>  
+            <button class="btn btn-sm btn-outline-secondary"                
+                     (click)="Anular()">Cancelar</button>         
+
+        </div>  
+      </div>
+    </form>
+  </div>    

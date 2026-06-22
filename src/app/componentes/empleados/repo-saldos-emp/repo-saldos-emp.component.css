@@ -1,0 +1,164 @@
+.saldos-container {
+  width: 100%;
+  height: calc(100vh - 70px); /* Restar altura de navbar */
+  display: flex;
+  flex-direction: column;
+  padding: 1px;
+  margin-top: 40px;
+  overflow: hidden;
+}
+.table-container {
+  flex: 1;
+  overflow: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+/* Cabecera con título y botón */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+.header h4 {
+  background-color: #b6c1dd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de la tabla */
+.mat-mdc-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.mat-mdc-header-row {
+  background-color: #b6c1dd;
+  height: 48px;
+  font-size: 14px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mat-mdc-row {
+  height: auto;
+  min-height: 40px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.mat-mdc-row:nth-child(odd) {
+  background-color: white;
+  color: black;
+}
+
+.mat-mdc-row:nth-child(even) {
+  background-color: #cbd0d8;
+  color: black;
+}
+
+.mat-mdc-row:hover {
+  background-color: #e8edf5;
+}
+.ultima-fila {
+  background-color: #053966; /* Celeste claro, cambia a tu gusto */
+  font-weight: bold;
+}
+
+/* Estilos para las celdas */
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  padding: 0 8px;
+}
+
+/* Asegurar que los encabezados no se truncan */
+.mat-mdc-header-cell {
+  white-space: nowrap;
+  overflow: visible !important;
+  text-overflow: clip;
+  padding: 0 8px;
+}
+
+/* Ancho de columnas */
+.mat-column-idEmpleado {
+  /*padding-left: 10px !important;*/
+  width: 50px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.mat-column-nomEmpleado {
+  padding-left: 0;
+  width: 250px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mat-column-hast {
+  max-width: 70px;
+  text-align: center;
+}
+
+.mat-column-vtrab,
+.mat-column-vpag,
+.mat-column-saldoini,
+.mat-column-saldo {
+  text-align: right;
+  max-width: 120px;
+}
+.mat-column-ctrab,
+.mat-column-cpag { 
+  max-width: 70px;
+  text-align: center;
+}
+ .fixed-section {
+    flex-shrink: 0; /* Evita que la sección se encoja */
+    width: 100%;
+    padding: 1px;
+    background-color:white;
+    z-index: 2; /* Asegurar que esté por encima de la tabla */
+  }
+ /* Contenedor específico para el footer */
+.footer-container {
+  padding-top: 0;
+  padding-bottom: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+  position: relative; /* Para que el z-index funcione */
+  background-color: #fff; /* Asegurar que el fondo sea visible */
+}
+/* Pie de página con info adicional */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 15px;
+  /*background-color: #f5f7fa;*/
+  background-color: #b6c1dd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.total {
+  font-size: 16px;
+  font-weight: 600;
+}
+.action-btn {
+  background-color: rgb(130, 130, 141) !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 2px !important;
+}
