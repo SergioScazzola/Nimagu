@@ -12,7 +12,7 @@
 
 .login-wrap {
   margin: 0 auto;
-  background: #ffffff;
+  background:white
   border-radius: 10px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -46,8 +46,15 @@
 
 .logo-img {
   width: 60%;
-  height: 60%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
+}
+
+.img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 h3 {
@@ -127,8 +134,4 @@ h3 {
     padding: 15px;
   }
 }
-.img-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+

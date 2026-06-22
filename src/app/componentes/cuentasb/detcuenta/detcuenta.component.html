@@ -3,7 +3,11 @@
     <!-- Sección superior fija -->
     <div class="fixed-section">
       <div class="header mt-3">
-        <h4>CUENTA BANCARIA</h4>       
+        <h4>Detalle de Cuenta</h4>   
+        
+        <div class="col-4">
+           <input #filtroInput (keyup)="aplicarFiltro(filtroInput.value)" placeholder="Filtrar por descripción">
+        </div>   
         <button 
                 mat-icon-button
                 class="action-btn"
@@ -62,14 +66,10 @@
          <table
            mat-table
            class="mat-elevation-z8"
-           [dataSource]="this.dispcta"
+           [dataSource]="this.dataSource"
            style="width: 100%" >
 
-      <!-- Columna Numero Movimiento     
-       <ng-container matColumnDef="nromov">
-        <th mat-header-cell *matHeaderCellDef>Nro</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.nromov }}</td>
-      </ng-container-->
+    
       <!-- Columna Fecha -->
       <ng-container matColumnDef="fecha">
         <th mat-header-cell *matHeaderCellDef >Fecha</th>

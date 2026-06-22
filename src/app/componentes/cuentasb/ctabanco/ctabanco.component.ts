@@ -134,6 +134,7 @@ export class CtabancoComponent {
         fecsaldo    : [new Date],
         saldoini    : [0],
         saldofin    : [0],
+        cantmovs    : [0],
         observ      : ['']    
       
       })
@@ -149,6 +150,7 @@ export class CtabancoComponent {
     this.formCta.controls["fecsaldo"].setValue(this.ctab.fecsaldo), 
     this.formCta.controls["saldoini"].setValue(this.ctab.saldoini),
     this.formCta.controls["saldofin"].setValue(this.ctab.saldofin),  
+    this.formCta.controls["cantmovs"].setValue(this.ctab.cantmovs),
     this.formCta.controls["observ"].setValue(this.ctab.observ) 
       
    }
@@ -164,6 +166,7 @@ export class CtabancoComponent {
         fecsaldo     : this.formCta.controls["fecsaldo"].value,
         saldoini     : this.formCta.controls["saldoini"].value,
         saldofin     : this.formCta.controls["saldofin"].value,
+        cantmovs     : this.formCta.controls["cantmovs"].value,
         observ       : this.formCta.controls["observ"].value
  
     }   
@@ -204,7 +207,8 @@ export class CtabancoComponent {
         fecsaldo     : this.formCta.controls["fecsaldo"].value,
         saldoini     : this.formCta.controls["saldoini"].value,
         saldofin     : this.formCta.controls["saldofin"].value,
-        observ       : this.formCta.controls["saldofin"].value 
+        cantmovs     : this.formCta.controls["cantmovs"].value,
+        observ       : this.formCta.controls["observ"].value 
     }    
     var resu    : string;
     var subs : Subscription;

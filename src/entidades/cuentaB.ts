@@ -7,6 +7,7 @@ export interface cuentaB {
    fecsaldo         : Date,
    saldoini         : number,
    saldofin         : number,
+   cantmovs         : number,
    observ           : string    
 }
 

@@ -21,6 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (
 
   // Si hay un token, clonamos la petición y añadimos el header de autorización
   if (token) {
+    console.log('Token encontrado en localStorage:', token);
     const authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,

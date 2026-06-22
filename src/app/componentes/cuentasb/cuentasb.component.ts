@@ -35,7 +35,7 @@ export class CuentasbComponent {
   cantctas          : number;
   formcta           : boolean;
   ctamod            : number;
-  colCuentas : string[] = ["idCuenta","periodo","titular","banco","cbu","saldofin","Det","M","B"];
+  colCuentas : string[] = ["idCuenta","periodo","titular","banco","cbu","saldofin","cantmovs","Det","M","B"];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";

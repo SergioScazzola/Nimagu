@@ -4,7 +4,7 @@
   height: calc(100vh - 70px); /* Restar altura de navbar */
   display: flex;
   padding: 1px;
-  margin-top: 40px;
+  margin-top: 45px;
   flex-direction: column;
   overflow: hidden;
 }
@@ -111,6 +111,13 @@
 }
 
 .mat-column-periodo {
+  padding-left: 10px !important;
+  width: 50px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+}
+.mat-column-cantmovs {
   padding-left: 0;
   width: 150px;
   text-align: center;
@@ -121,7 +128,7 @@
 .mat-column-titular {
   padding-left: 0;
   width: 300px;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -130,7 +137,7 @@
 .mat-column-banco {
   padding-left: 0;
   width: 200px;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,7 +146,7 @@
 .mat-column-cbu {
   padding-left: 0;
   width: 150px;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

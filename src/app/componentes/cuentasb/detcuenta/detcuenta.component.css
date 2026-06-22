@@ -5,7 +5,7 @@
     flex-direction: column;
     overflow: hidden; /* Evita scroll en el contenedor principal */
     position: fixed; /* Fijar todo el contenedor */
-    top: 0;
+    top: 5px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -167,15 +167,7 @@ table {
     text-align: center;
     margin: 20px 0;
   }
-  /*.mat-column-cob {
-   width: 50px !important;
-   min-width: 50px !important;
-   max-width: 50px !important;
-   padding: 0 !important;
-   flex: 0 0 50px !important;
-   text-align: center !important;
-   overflow: visible !important;
- }*/
+ 
   /* Contenedor específico para el footer */
 .footer-container {
   padding-top: 0;
@@ -252,7 +244,6 @@ table {
 }
 .mat-column-impingre,
 .mat-column-impegre{
-
   max-width: 60px;
   text-align: right;  
 }

@@ -32,8 +32,7 @@ export class DetcuentaComponent {
   public cuentab   : cuentaB;
   public dispcta   : dispmovcta[]=[];
 
-
-  filter            : string;
+  filtrorec         : string;
   cantmovs          : number;
   formmovcta        : boolean;
   movmod            : number;
@@ -46,7 +45,7 @@ export class DetcuentaComponent {
   hfecha            : string;
   isloading         : boolean = true;
   proxnromov        : number;
-  cargandoCta               : boolean = false;
+  cargandoCta       : boolean = false;
   
  
   colMovsCta : string[] = ["fecha","tipocomp","comprob","concepto","impingre","impegre","saldo","coment","M"];
@@ -73,38 +72,21 @@ export class DetcuentaComponent {
      // Extraer parámetros de la ruta
      this.rutaActiva.paramMap.subscribe((params) => {
        this.nrocuenta      = Number(params.get('idcuenta'));             
-       this.filter         = params.get('filtro')||'';
-       if (this.inputRef) {
-          this.inputRef.nativeElement.value = this.filter;   
+      var fil              = params.get('filtro')||'';
+      this.filtro          = fil;
+      this.filtrorec       = fil; 
+      if (this.inputRef) {
+          this.inputRef.nativeElement.value = this.filtro;   
       }       
-      this.leerDetalleCuenta(this.nrocuenta);
-      //this.armarCuentaBancaria();
+      this.leerDetalleCuenta(this.nrocuenta,0);// sin actualizar saldo
+     
      
      })
    }
 
-   leerCuenta(nroc : number){
-    var subs : Subscription;
-    subs = this.ctaService.leerCuentaB(nroc)
-        .pipe(finalize(()=> {
-          console.log("Datos de cuenta"+JSON.stringify(this.cuentab));
-           this.periodo = this.cuentab.periodo;
-           this.titular = this.cuentab.titular;
-           this.banco   = this.cuentab.banco;
-           console.log("CCCCCCCCCCCCCC : "+this.cuentab);
-           const [ anioi,aniof ] = this.periodo.split('-').map(Number);
-                      
-           var feci = new Date(anioi,6,1);   // inicial 1 de Julio del anio inicial
-           var fecf = new Date(aniof,5,30);   // final 30 de Junio del anio final
-           console.log("fechas : "+nroc+"-"+feci+"-"+fecf);      
-           this.dfecha = this.datepipe.transform(feci,"yyyy-MM-dd")+"T00:05";
-           this.hfecha = this.datepipe.transform(fecf,"yyyy-MM-dd")+"T23:59";
-        }))     
-        .subscribe((data : any): void => {
-                this.cuentab = data});  
-   }
+  
 
-   leerDetalleCuenta(nroc : number){
+   leerDetalleCuenta(nroc : number,actualizaSaldo : number ){
    // lee la cuenta "nroc" y el detalle de movimientos de la cuenta "nroc"
 
    this.cmovscta = [];
@@ -112,16 +94,16 @@ export class DetcuentaComponent {
     var subs : Subscription;
     subs = this.ctaService.leerCuentaB(nroc)
         .pipe(finalize(()=> {
-          console.log("Datos de cuenta"+JSON.stringify(this.cuentab));
+          
            this.periodo = this.cuentab.periodo;
            this.titular = this.cuentab.titular;
            this.banco   = this.cuentab.banco;
-           console.log("CCCCCCCCCCCCCC : "+this.cuentab);
+          
            const [ anioi,aniof ] = this.periodo.split('-').map(Number);
                       
            var feci = new Date(anioi,6,1);   // inicial 1 de Julio del anio inicial
            var fecf = new Date(aniof,5,30);   // final 30 de Junio del anio final
-           console.log("fechas : "+nroc+"-"+feci+"-"+fecf);      
+          
            this.dfecha = this.datepipe.transform(feci,"yyyy-MM-dd")+"T00:05";
            this.hfecha = this.datepipe.transform(fecf,"yyyy-MM-dd")+"T23:59";
 
@@ -133,18 +115,31 @@ export class DetcuentaComponent {
             if (this.cantmovs==0){
                this.notiServicio.showNotification("No hay movimientos para la cuenta bancaria de "+this.titular,"Aceptar","mensaje",3000);
                this.proxnromov = 1;           
+               this.isloading = false;
+               this.cdr.detectChanges();
             } else {
                var subs2 : Subscription;
                subs2 = this.ctaService.getMaxMovCuenta(nroc)  // para obtener el nro.del ultimo movimiento
                .pipe(finalize(()=> {
-                 subs2.unsubscribe();
-                 this.proxnromov += 1;
+                   this.armarCuentaBancaria(actualizaSaldo);
+                  // arma el array "dispcta" con los movimientos para mostrar en el html
+                   this.dataSource.data = this.dispcta;         
+                   this.dataSource.filterPredicate = (dato : dispmovcta, fil : string) => {
+                      return dato.concepto.toLowerCase().includes(fil);
+                   };    
+                   // Aplica filtro si hay uno
+                   if (this.filtro!=='') {                                 
+                     this.dataSource.filter = this.filtro;                                                                       
+                     this.inputRef.nativeElement.value = this.filtro;//setAttribute('value', this.filtro);
+                   }
+                   subs2.unsubscribe();
+                   this.proxnromov += 1;                  
+                   this.isloading = false;
+                   this.cdr.detectChanges();
               }))
               .subscribe((data : any): void => {
                   this.proxnromov = data });
-                  this.armarCuentaBancaria(); // arma el array "dispcta" con los movimientos para mostrar en el html
-                  this.isloading = false;
-                  this.cdr.detectChanges();
+                 
             }
       }))
       .subscribe((data : any): void => {
@@ -158,8 +153,9 @@ export class DetcuentaComponent {
 
       
        
-  armarCuentaBancaria(){
+  armarCuentaBancaria(actualizaSaldo : number){
     // Arma el array dispcta con los movimientos en cuenta de "cmovscta" para mostrar en el html
+    // y actualiza el saldo final y cant.de movimientos en cabecera de cuenta
      this.dispcta     = []; // se borra para que el html tome los cambios
      this.banco       = this.cuentab.banco;   
      var saldocte     = this.cuentab.saldoini;
@@ -181,7 +177,12 @@ export class DetcuentaComponent {
            coment    : this.cmovscta[i].coment
         };
         this.dispcta.push(rendisp);          
-      };   
+      }; 
+      console.log("Movs. Cuenta bancaria : ",JSON.stringify(this.dispcta));
+      if (actualizaSaldo==1){
+          this.grabarSaldoActualizado(); // actualiza el saldo final en cabecera de cuenta
+      }
+     
   }
       
   
@@ -207,9 +208,8 @@ export class DetcuentaComponent {
     const dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 
           (datas:any) => { if (datas.clicked === 'Alta'){                   
-                 this.leerDetalleCuenta(this.cuentab.idCuenta); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                       
-                 this.armarCuentaBancaria(); // recalcular el saldo y actualizar la tabla con el nuevo movimiento               
-                 this.grabarSaldoActualizado(); // actualiza el saldo final en cabecera de cuenta
+                 this.leerDetalleCuenta(this.cuentab.idCuenta,1); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                                       
+                
                        }})  
   }
   modificarMovCuentaB( nmov : number){
@@ -230,18 +230,17 @@ export class DetcuentaComponent {
     const dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
     dialogRef.afterClosed().subscribe( // 
           (datas:any) => { if (datas.clicked === 'Modi'){                   
-                 this.leerDetalleCuenta(this.cuentab.idCuenta); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                       
-                 this.armarCuentaBancaria(); // recalcular el saldo y actualizar la tabla con el nuevo movimiento                            
-                 this.grabarSaldoActualizado(); // actualiza el saldo final en cabecera de cuenta
+                 this.leerDetalleCuenta(this.cuentab.idCuenta,1); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                       
+                
                        }})  
   }
 
   grabarSaldoActualizado(){
 
-    console.log(JSON.stringify(this.dispcta));
-    console.log(JSON.stringify(this.cmovscta));
-    var ultimo = this.dispcta.length-1;
+    var ultimo = this.dispcta.length - 1;
+
     this.cuentab.saldofin = this.dispcta[ultimo].saldo;    
+    this.cuentab.cantmovs = this.cmovscta.length;
     
     var subs1 : Subscription;
     var resu = "";
@@ -255,8 +254,13 @@ export class DetcuentaComponent {
          .subscribe((datas : any): void => {
                 resu = datas });
   }
+
+  aplicarFiltro(valor : string)  {
+    this.dataSource.filter = valor.trim().toLowerCase();
+  }
+
   Volver(){
-     this.router.navigate(['/cuentas',this.filter]);
+     this.router.navigate(['/cuentas',this.filtrorec]);
   }
 }
 
