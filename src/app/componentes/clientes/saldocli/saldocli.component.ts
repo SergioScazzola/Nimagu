@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ServiciosService } from '../../../services/servicios.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { intSaldoCli } from '../../../../entidades/intSaldoCli';
+import { intSaldoCli } from '../../../../entidades/saldoCliDTO';
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';

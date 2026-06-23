@@ -8,6 +8,9 @@ export interface clienteDTO {
         notas     : string; 
         saldoini  : number;
 }
-export interface clientes {
-    clientes : clienteDTO[];
+export interface intCliente {
+   nrocliente : number;
+   nomcli     : string;
+   accion     : string
+   
 }

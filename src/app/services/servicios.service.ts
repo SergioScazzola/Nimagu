@@ -9,6 +9,11 @@ import { environment } from '../../environments/environment';
 import { empleadoDTO } from '../../entidades/empleadoDTO';
 import { cuentaB } from '../../entidades/cuentaB';
 import { movcta } from '../../entidades/movcta';
+import { saldoCliDTO } from '../../entidades/saldoCliDTO';
+import { infoSCli } from '../../entidades/infoSCli';
+import { saldoEmpDTO } from '../../entidades/saldoEmpDTO';
+import { infoSEmp } from '../../entidades/infoSEmp';
+import { proveedorDTO } from '../../entidades/proveedorDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +32,9 @@ export class ServiciosService {
   public getClientes() {
     return this.http.get<clienteDTO[]>(this.apiUrl + `clientes/clientes`);
   }
+ public getSaldosCliente(nrocli : number) {
+    return this.http.get<saldoCliDTO[]>(this.apiUrl + `clientes/saldosxcli?nrocli=`+nrocli);
+  }
 
   public leerCliente(nrocli: number) {
     return this.http.get<clienteDTO>(
@@ -43,8 +51,26 @@ export class ServiciosService {
     return this.http.post<clienteDTO>(
       this.apiUrl + `clientes/cliente/nuevo`,clte);
   }
+ public AgregarSaldoCliente(saldoc : saldoCliDTO) {
+    return this.http.post<saldoCliDTO>(this.apiUrl + `clientes/saldo/nuevo`,saldoc);
+  }
 
-  
+   public actualizarSaldoInicial(salc : saldoCliDTO) {
+    return this.http.put<saldoCliDTO>(
+      environment.apiUrl + `clientes/actsaldoini`,salc);
+  }
+ public leerSaldoDelCliente(nroc : number, nros : number){
+    return this.http.get<saldoCliDTO>(this.apiUrl + `clientes/cliente/saldo?idcliente=`+nroc+`&nrosaldo=`+nros);
+  }
+
+  public actualizarSaldoCliente(salc : saldoCliDTO) {
+    return this.http.put<saldoCliDTO>( environment.apiUrl + `clientes/actsaldocli`,salc);
+  }
+
+   public infoSaldosClientes() {
+    return this.http.get<infoSCli[]>(this.apiUrl + `clientes/infosaldos`);
+  }
+
 
   public updateCliente(nrocli: number, clte: clienteDTO) {
     return this.http.put<clienteDTO>(
@@ -79,6 +105,24 @@ export class ServiciosService {
       empl
     );
   }
+    public AgregarSaldoEmpleado(saldoe : saldoEmpDTO) {
+    return this.http.post<saldoEmpDTO>(this.apiUrl + `empleados/saldo/nuevo`,saldoe);
+  }
+    public actualizarSaldoInicialEmp(salc : saldoEmpDTO) {
+    return this.http.put<saldoEmpDTO>( environment.apiUrl + `empleados/actsaldoini`,salc);
+  }
+  
+  public actualizarSaldoEmpleado(sale : saldoEmpDTO) {
+    return this.http.put<saldoEmpDTO>( environment.apiUrl + `empleados/actsaldoemp`,sale);
+  }
+
+  public leerSaldoDelEmpleado(nroe : number, nros : number){
+    return this.http.get<saldoEmpDTO>(this.apiUrl + `empleados/empleado/saldo?idempleado=`+nroe+`&nrosaldo=`+nros);
+  }
+ public infoSaldosEmpleados() {
+    return this.http.get<infoSEmp[]>(this.apiUrl + `empleados/infosaldos`);
+  }
+
   public updateEmpleado(nroemp: number, empl: empleadoDTO) {
     return this.http.put<empleadoDTO>(
       environment.apiUrl + `empleados/empleado/actualizar?id=` + nroemp,
@@ -91,6 +135,25 @@ export class ServiciosService {
     );
   }
 
+// PROVEEDORES
+ public getProveedores() {
+    return this.http.get<proveedorDTO[]>(this.apiUrl + `provs/proveeds`);
+  }
+ public leerProveedor(nrop: number) {
+    return this.http.get<proveedorDTO>(this.apiUrl + `provs/prov?id=` + nrop);
+  }
+ public agregarProveedor(prove: proveedorDTO) {
+    return this.http.post<proveedorDTO>( this.apiUrl + `provs/prov/nuevo`,prove);
+}
+public updateProveedor(prove : proveedorDTO) {
+    return this.http.put<proveedorDTO>(environment.apiUrl + `provs/prov/actualizar`,prove);
+}
+public elimProveedor(idprov: number) {
+    return this.http.delete(environment.apiUrl + `provs/prov/delete?id=` +idprov);
+}
+public getMaxIdProveedores() {
+    return this.http.get<number>(this.apiUrl + `provs/maxid`);    
+  }
 
 
 

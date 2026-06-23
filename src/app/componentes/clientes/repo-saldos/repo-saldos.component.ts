@@ -124,7 +124,7 @@ generarPDF():void{
     const pageSize = doc.internal.pageSize;
     const text = `Página ${i} de ${totalPages}`;
     doc.setFontSize(10);
-    doc.text("Degros S.A.", 10, 15, { align: 'left' });
+    doc.text("Nimagu S.A.", 10, 15, { align: 'left' });
 
      // Título centrado
     doc.setFontSize(10);

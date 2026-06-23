@@ -8,8 +8,8 @@ import { CommonModule } from '@angular/common';
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
 import { clienteDTO } from '../../../../entidades/clienteDTO';
 import { finalize, Subscription } from 'rxjs';
-import { campoDTO } from '../../../../entidades/campoDTO';
-import { intCliente } from '../../../../entidades/intCliente';
+
+import { intCliente } from '../../../../entidades/clienteDTO';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -37,8 +37,7 @@ export class ClienteComponent {
   resumod          : string;
   nclialta         : number;
   maxcli           : number;
-  maxcampo         : number;
-  ccampos          : campoDTO[]=[];
+
   public habcampo  : boolean;
   private cliente  : clienteDTO;
  
@@ -60,7 +59,7 @@ export class ClienteComponent {
           contacto   : [''],   
           cuit       : ['',[Validators.pattern("^(20|23|24|25|27|30|33|34|40|41|45|46|47|49|55)-[0-9]{8}-[0-9]{1}$" )]],          
           notas      : [''],    
-          campo      : [''],      
+   
         })
       var subscri : Subscription;
       subscri = this.cliService.getCantClientes()
@@ -84,34 +83,22 @@ export class ClienteComponent {
   }
   actualizarControles(){
     // Actualiza controles para modificar
-         var subscri1 : Subscription;
-         subscri1 =  this.cliService.getCamposCliente(this.datass.nrocliente)
-              .pipe(finalize(() => {          
-                if (this.ccampos.length>0){
-                     this.habcampo = false;
-                } else {
-                  this.habcampo = true;
-                }
-                console.log("Habilitado : "+this.habcampo);
-                subscri1.unsubscribe;
-                
-                var subscri : Subscription;                  
-                subscri =  this.cliService.leerCliente(this.datass.nrocliente)
-                .pipe(finalize(() => {          
+     
+    var subscri : Subscription;                  
+    subscri =  this.cliService.leerCliente(this.datass.nrocliente)
+    .pipe(finalize(() => {          
                  
-                  this.formCli.controls["nrocli"].setValue(this.cliente.idCliente), 
-                  this.formCli.controls["nombre"].setValue(this.cliente.nombre), 
-                  this.formCli.controls["telefono"].setValue(this.cliente.telefono),                    
-                  this.formCli.controls["contacto"].setValue(this.cliente.contacto),   
-                  this.formCli.controls["cuit"].setValue(this.cliente.cuit),   
-                  this.formCli.controls["notas"].setValue(this.cliente.notas),                  
-                  subscri.unsubscribe;
-                }))                                              
-                .subscribe((data : any): void => {
-                       this.cliente = data});
-              }))                                              
-              .subscribe((data : any): void => {
-                     this.ccampos = data});                     
+     this.formCli.controls["nrocli"].setValue(this.cliente.idCliente), 
+     this.formCli.controls["nombre"].setValue(this.cliente.nombre), 
+     this.formCli.controls["telefono"].setValue(this.cliente.telefono),                    
+     this.formCli.controls["contacto"].setValue(this.cliente.contacto),   
+     this.formCli.controls["cuit"].setValue(this.cliente.cuit),   
+     this.formCli.controls["notas"].setValue(this.cliente.notas),                  
+     subscri.unsubscribe();
+     }))                                              
+     .subscribe((data : any): void => {
+        this.cliente = data});
+                                                                                      
    }
 
    AgregarCliente(){
