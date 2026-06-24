@@ -12,11 +12,13 @@ import { es } from 'date-fns/locale';
 import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { ServiciosService } from '../../../services/servicios.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { intItCobro } from '../../../../entidades/intItCobro';
+import { intItCobro } from '../../../../entidades/cobroDTO';
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, Subscription } from 'rxjs';
-import { medioPagoDTO } from '../../../../entidades/medioPagoDTO';
-import { dcobroDTO } from '../../../../entidades/dcobroDTO';
+
+import { dcobroDTO } from '../../../../entidades/cobroDTO';
+import { cuentaB } from '../../../../entidades/cuentaB';
+import { medioPago } from '../../../../entidades/medioPago';
 
 export const DATE_FORMATS : MatDateFormats = {
 
@@ -58,7 +60,8 @@ export class ItemcobroComponent {
 
 operacion       : string;
 formItCob       : FormGroup;
-public  cmpago  : medioPagoDTO[]=[];
+cmpago          : medioPago[]=[];
+cctasb          : cuentaB[]=[];
 mpagoSel        : number;
 hoy             : Date = new Date;
 importeformat   : string = "";
@@ -74,7 +77,32 @@ itcobro         : dcobroDTO;
 
   ngOnInit(){
     //this.mostrarHora();
-    this.formItCob = this.fb.group({        
+   
+    this.initFormulario();
+    var subscri : Subscription;      
+    subscri = this.servicio.getMediosPago()
+      .pipe(finalize(() => {            
+        if (this.data.accion==="A"){  // Alta de Item de Cobro                                                                
+           this.operacion = "Agregar Item de Cobro Nro. : "+this.data.nroitem+
+                           " al Cliente : "+this.data.nomcli;
+                  subscri.unsubscribe();
+                  this.prepararAlta(); 
+                } else {
+                  if (this.data.accion=="M"){
+                    this.operacion = "Modificar Item de Cobro Nro. : "+this.data.dcobro.nroitem+
+                                     " al Cliente : "+this.data.nomcli;
+                    subscri.unsubscribe();
+                    console.log("Cobro : "+this.data.dcobro.idCobro+" item : "+this.data.dcobro.nroitem); 
+                    this.prepararModi();   
+                  }   // "M" Modifica item de cobro     
+                }}))               
+              .subscribe((datas : any): void => {
+                 this.cmpago = datas});      
+    
+    
+  }
+  initFormulario(){
+     this.formItCob = this.fb.group({        
       nrocob     : [''], 
       nroitem    : [''], 
       nmpago     : ['',[Validators.required]], 
@@ -83,30 +111,10 @@ itcobro         : dcobroDTO;
       banco      : [''],              
       fecvto     : [''],         
       importe    : ['',[Validators.required]],
+      ctadest    : [0],
       coment     : ['']
     })    
-   
-    var subscri : Subscription;      
-    subscri = this.servicio.getMediosdePago()
-              .pipe(finalize(() => {            
-                 if (this.data.accion==="A"){  // Alta de Item de Cobro                                                                
-                  this.operacion = "Agregar Item de Cobro Nro. : "+this.data.nroitem+
-                                   " al Cliente : "+this.data.nomcli;
-                  subscri.unsubscribe();
-                  this.prepararAlta(); 
-                } else {   // "M" Modifica item de cobro
-                    this.operacion = "Modificar Item de Cobro Nro. : "+this.data.dcobro.nroitem+
-                                     " al Cliente : "+this.data.nomcli;
-                     subscri.unsubscribe
-                    console.log("Cobro : "+this.data.dcobro.idCobro+" item : "+this.data.dcobro.nroitem); 
-                     this.prepararModi();        
-                }}))               
-              .subscribe((datas : any): void => {
-                 this.cmpago = datas});      
-    
-    
   }
-
   prepararAlta(){
     this.formItCob.controls['nrocob'].setValue(this.data.nrocobro);
     this.formItCob.controls['nroitem'].setValue(this.data.nroitem);

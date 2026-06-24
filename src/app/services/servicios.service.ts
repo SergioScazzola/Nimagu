@@ -14,6 +14,9 @@ import { infoSCli } from '../../entidades/infoSCli';
 import { saldoEmpDTO } from '../../entidades/saldoEmpDTO';
 import { infoSEmp } from '../../entidades/infoSEmp';
 import { proveedorDTO } from '../../entidades/proveedorDTO';
+import { ingresoDTO } from '../../entidades/ingresoDTO';
+import { cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
+import { medioPago } from '../../entidades/medioPago';
 
 @Injectable({
   providedIn: 'root',
@@ -209,5 +212,30 @@ public delMovCuentaB(idcuenta: number, idmov: number) {
     return this.http.delete(environment.apiUrl + `cuentab/delmov?idcuenta=`+idcuenta+`&idmov=`+idmov);
 }
 
+// Ingresos
+
+/* @RequestMapping(value ="/ingresosxcli" , params={"idcliente"} )*/
+public getIngresosXCli(idcliente : number){
+   return this.http.get<ingresoDTO[]>(this.apiUrl + `ingreso/ingresosxcli?idcliente=`+idcliente); 
 }
 
+public getMaxCobranza() {
+    return this.http.get<number>(this.apiUrl + `cobranza/max`);    
+}
+ 
+ public leerCobro(idcobro: number) {
+    return this.http.get<cobroDTO>(this.apiUrl + `cobranza?id=`+idcobro);    
+} 
+
+
+public updateCobro( cobro : cobroDTO) {
+    return this.http.put<cobroDTO>(environment.apiUrl + `cobranza/actualizar`,cobro);
+}
+
+public getDetalleCobro(idcob:Number) {
+    return this.http.get<dcobroDTO[]>(this.apiUrl + `cobranza/detalle=`+idcob);
+}
+public getMediosPago() {
+    return this.http.get<medioPago[]>(this.apiUrl + `ingreso/mediospago`);
+  }
+}

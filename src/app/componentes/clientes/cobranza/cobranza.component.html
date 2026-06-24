@@ -3,13 +3,13 @@
       <form [formGroup]="formCob" >        
          <div class="row mt-1" >
           <div class="col-auto">
-            <mat-form-field style="width:100px;"  appearance="fill">
+            <mat-form-field class="w-100" appearance="fill">
               <mat-label>Nro.Cobro</mat-label>
               <input matInput [readonly]="true" formControlName="nrocob" style="text-align: center;">	
              </mat-form-field>      
           </div>    
           <div class="col-auto">
-            <mat-form-field style="width:160px;"> 
+            <mat-form-field class="w-100" appearance="fill"> 
                 <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
                         placeholder = "Elija una fecha" 
                         (dateChange)="onFechaChange($event)"
@@ -21,62 +21,52 @@
           </div>
          
         <div class="col-auto">
-          <mat-form-field style="width:300px;"  appearance="fill">
+          <mat-form-field class="w-100" appearance="fill">
             <mat-label>Cliente</mat-label>
             <input matInput [readonly]="true" formControlName="ncliente" style="text-align: left;">	
            </mat-form-field>      
         </div>  
       </div>  
-      <div class="row">                             
-          <div class="col-auto">
-            <mat-form-field   style="width:350px;">
-              <mat-label>Laboreo</mat-label>
-              <mat-select formControlName="nrolab"    
-                  (selectionChange)="onSelectionChangeLaboreo($event)">      
-                  <mat-option *ngFor="let labo of this.claboreos; let i = index" [value]="labo.idLaboreo">
-                    {{ labo.idLaboreo+" - "+labo.ncampo+" - "+labo.nlabor+" - "+labo.ncultivo}}
-                  </mat-option>            
-              </mat-select>
-            </mat-form-field>
-          </div>          
-
-          <div class="col-auto">
-              <mat-form-field style="width:350px;"  appearance="fill">
-                <mat-label>Observaciones</mat-label>
-                <input matInput formControlName="observ">	
+      <div class="row">           
+        <div class="col-auto">
+              <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Nro.Factura</mat-label>
+                <input matInput formControlName="nfactura">	
                </mat-form-field> 
           </div>   
-         
-        </div>    
-        <div class="row">
-          
           <div class="col-auto">
-            <mat-form-field style="width:200px;"  appearance="fill">
-              <mat-label>Nro. Factura</mat-label>
-              <input matInput formControlName="nfactura">	
-             </mat-form-field> 
-        </div>
-          <div class="col-auto">
-            <mat-form-field style="width:200px;margin-left: 50px;"  appearance="fill">
+            <mat-form-field class="w-100" appearance="fill">
               <mat-label>Importe del Cobro</mat-label>                
               <input matInput [readonly]="true" formControlName="importe" style="text-align: right;"	>
              </mat-form-field>        
-         </div>           
+         </div>                  
+          <div class="col-auto">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Venta</mat-label>
+              <mat-select formControlName="nrolab"    
+                  (selectionChange)="onSelectionChangeVenta($event)">      
+                  <mat-option *ngFor="let ingre of this.cingcli; let i = index" [value]="ingre.IdIngreso">
+                    {{ ingre.ncliente+" - "+ingre.categoria+" - "+ingre.importe| number : "1.2-2"}}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>                           
+        </div>    
+        <div class="row">
+                                     
          <div class="col-auto">
           <button class="btn btn-primary  btn-sm add-button" (click)="agItemCobro()"
              [disabled]="data.accion==='M'">
             <i class="bi bi-plus-circle me-1"></i>Agregar Item Cobro
           </button>
         </div>
-      </div>              
-       <div class="row">
-        <div class="col-auto">         
+         <div class="col-auto">         
             <mat-checkbox 
                 [checked]="imprimeconcepto"
                 (change)="updatechecked($event.checked)"
                 >Imprimir concepto en el Recibo
             </mat-checkbox>
-        </div>
+        </div>           
       </div>
      @if (cdetcobro.length>0){
       <div class="table-container" style="overflow-x: auto">

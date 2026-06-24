@@ -14,15 +14,15 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { finalize, forkJoin, Observable, Subscription } from 'rxjs';
 import { clienteDTO } from '../../../../entidades/clienteDTO';
-import { intCobranza } from '../../../../entidades/intCobranza';
-import { laboreoDTO } from '../../../../entidades/laboreoDTO';
-import { dcobroDTO } from '../../../../entidades/dcobroDTO';
+import { intCobranza } from '../../../../entidades/cobroDTO';
+
+import { dcobroDTO } from '../../../../entidades/cobroDTO';
 import { MatTableModule } from '@angular/material/table';
 import { es } from 'date-fns/locale';
 import {registerLocaleData } from '@angular/common';
 import localeEsAR from '@angular/common/locales/es-AR';
 import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
-import { intItCobro } from '../../../../entidades/intItCobro';
+import { intItCobro } from '../../../../entidades/cobroDTO';
 import { ItemcobroComponent } from '../itemcobro/itemcobro.component';
 import { cobroDTO } from '../../../../entidades/cobroDTO';
 import { format } from 'date-fns';
@@ -31,6 +31,7 @@ import { FechaService } from '../../../services/fecha.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UtilService } from '../../../services/util.service';
+import { ingresoDTO } from '../../../../entidades/ingresoDTO';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -73,19 +74,19 @@ export const DATE_FORMATS : MatDateFormats = {
   styleUrl: './cobranza.component.css'
 })
 export class CobranzaComponent {
- 
+ // Cobranza de clientes
   
   public  cdetcobro          : dcobroDTO[]=[];
   public  cdetcobaux         : dcobroDTO[]=[];
   public  cclientes          : clienteDTO[]=[];
-  public  claboreos          : laboreoDTO[]=[];
+  public  cingcli            : ingresoDTO[]=[];
   public  totcobro           : number = 0;
   public  cobro              : cobroDTO;
   cobpalta                   : number;
   maxcob                     : number;
   formCob!                   : FormGroup;
   public operacion           : string;
-  laboSel                    : number;
+  ventaSel                   : number;
   hoy                        : Date = new Date;
   mostrarDetalle             : boolean = false;
   private grabada            : number = 0;
@@ -119,78 +120,62 @@ export class CobranzaComponent {
 
    ngOnInit(){
     registerLocaleData(localeEsAR, 'es-AR');
-   
-    this.formCob = this.fb.group({        
-      nrocob     : [''], 
-      fecha      : [''],           
-      ncliente   : ['',[Validators.required]],    
-      nfactura   : ['',[Validators.required]],              
-      nrolab     : ['',[Validators.required]],         
-      importe    : [''],
-      observ     : [''],      
-    }) 
-   
+    this.initFormulario();      
     if (this.data.accion==="A"){  // Alta de Cobro
       this.mostrarHora();
-      var subscri : Subscription;      
-      subscri = this.servicio.getCantCobros()
-          .pipe(finalize(() => {            
-              this.cobpalta =  this.maxcob==undefined?1:this.maxcob+1;                                                       
-              this.operacion = "Agregar Cobro "+this.cobpalta+" al Cliente : "+this.data.nomcliente;
-              subscri.unsubscribe();
-              var subs : Subscription;
-              subs = this.servicio.getInfoLaboreosxCliNumero(this.data.nrocliente)
-              .pipe(finalize(() => {  
-                console.log("laboreos leidos : "+this.claboreos.length);
-                subs.unsubscribe;
-               
-                console.log("Cobros : "+this.cdetcobro.length);                                
-                this.prepararAlta(); 
-              }))              
-              .subscribe((datas:any):void =>{
-                 this.claboreos = datas
-              })
-                            
-            }))
-          .subscribe((datas : any): void => {
-             this.maxcob = datas});      
-    } else {   // Modificación de un cobro  -> Lee el cobro y el detalle del cobro
-        var subs2 : Subscription;
-        subs2 = this.servicio.getInfoLaboreosxCliNumero(this.data.nrocliente)
-          .pipe(finalize(() => {  
+
+      forkJoin({  
+                     
+          maxcob    :  this.servicio.getMaxCobranza(),          
+          clientes  : this.servicio.getClientes(), 
+          ingxcli   :  this.servicio.getIngresosXCli(this.data.nrocliente),
+   
+         }).subscribe(res2 => {
+            this.cobpalta =  res2.maxcob==undefined?1:res2.maxcob + 1,
+            this.cclientes = res2.clientes,
+            this.cingcli   = res2.ingxcli
+        
+            this.operacion = "Agregar Cobro "+this.cobpalta+" al Cliente : "+this.data.nomcliente;
+            this.prepararAlta(); 
+         })  
+     } else {
+      if (this.data.accion=="M"){   // Modificación de un cobro  -> Lee el cobro y el detalle del cobro
+         forkJoin({  
+                     
+          cobroo     : this.servicio.leerCobro(this.data.nrocobr),
+          detcobroo  : this.servicio.getDetalleCobro(this.data.nrocobr),    
+          clientes   : this.servicio.getClientes(), 
+          ingxcli    :  this.servicio.getIngresosXCli(this.data.nrocliente),
+   
+         }).subscribe(res2 => {
+            this.cobro     =  res2.cobroo,
+            this.cdetcobro =  res2.detcobroo,
+            this.cclientes = res2.clientes,
+            this.cingcli   = res2.ingxcli
+
             this.operacion = "Modificar Cobro Nro.: "+this.data.nrocobr+" al Cliente : "+this.data.nomcliente;
-            console.log("laboreos leidos : "+this.claboreos.length);
-            subs2.unsubscribe;
-            var subs : Subscription;
-            subs = this.servicio.leerCobranza(this.data.nrocobr)
-               .pipe(finalize(() => {  
-                    subs.unsubscribe;
-                    var subs1 : Subscription;
-                    subs1 = this.servicio.getDetalleCobro(this.data.nrocobr)
-                      .pipe(finalize(() => {  
-                        subs1.unsubscribe;
-                        this.maxcob = this.cdetcobro.length;
-                        this.prepararModificacion();
-                      }))
-                      .subscribe((datas:any):void =>{
-                         this.cdetcobro = datas
-                      })                                              
-                  }))              
-                .subscribe((datas:any):void =>{
-                   this.cobro = datas
-                })   
-              }))              
-            .subscribe((datas:any):void =>{
-               this.claboreos = datas
-            })  
+            this.maxcob = this.cdetcobro.length;
+            this.prepararModificacion();
+         })
+      }
            
       }   
 
    }
   
-   
-   onSelectionChangeLaboreo(event:any){
-     this.laboSel = event.value;
+   initFormulario(){
+    this.formCob = this.fb.group({        
+      nrocob     : [''], 
+      fecha      : [''],           
+      ncliente   : ['',[Validators.required]],    
+      nfactura   : ['',[Validators.required]],                            
+      importe    : [''],
+      nroventa   : [0,[Validators.required]],
+      observ     : [''],      
+    }) 
+   }
+   onSelectionChangeVenta(event:any){
+     this.ventaSel = event.value;
    }
 prepararAlta(){
   this.formCob.controls['nrocob'].setValue(this.cobpalta);
@@ -200,13 +185,14 @@ prepararAlta(){
 }
 
 prepararModificacion(){
+ var inding = this.cingcli.findIndex(p=>p.idcobro==this.cobro.idCobro);
  var importe = this.currencyPipe.transform(this.cobro.importe, '$', 'symbol', '1.2-2', 'es-AR');
  this.formCob.controls['nrocob'].setValue(this.data.nrocobr); 
  this.formCob.controls['fecha'].setValue(this.cobro.fecha); 
  this.formCob.controls['ncliente'].setValue(this.cobro.nomcliente); 
  this.formCob.controls['nfactura'].setValue(this.cobro.nrofactura);
- this.formCob.controls['nrolab'].setValue(this.cobro.nrolaboreo);  
  this.formCob.controls['importe'].setValue(importe); 
+  this.formCob.controls['nroventa'].setValue(this.cingcli[inding].IdIngreso);  
  this.formCob.controls['observ'].setValue(this.cobro.observaciones); 
  var fecloc : string  = this.cobro.fecha!.toLocaleDateString('es-AR');
  console.log("fecha : "+fecloc);
@@ -223,17 +209,16 @@ ModificarCobro(){
     fecha           : this.formCob.controls['fecha'].value,
     idCliente       : this.data.nrocliente,
     nomcliente      : this.data.nomcliente,
-    nrofactura      : this.formCob.controls['nfactura'].value,
-    nrolaboreo      : this.formCob.controls['nrolab'].value,   
-    nroaporte       : 0,   
+    nrofactura      : this.formCob.controls['nfactura'].value,   
     importe         : Number(impo),
+    nroventa        : this.formCob.controls['nroventa'].value,     
     observaciones   : this.formCob.controls['observ'].value
   }
   var resu : number;
   var subs : Subscription;
-  subs = this.servicio.updateCobranza(cobro)
+  subs = this.servicio.updateCobro(cobro)
   .pipe(finalize(() => {        
-    this.notiService.showNotification("La Cobranza Nro : "+cobro.idCobro+" del cliente "+cobro.nomcliente+"("+resu+
+    this.notiService.showNotification("El Cobro Nro : "+cobro.idCobro+" del cliente "+cobro.nomcliente+"("+resu+
                                       ") ha sido modificada con éxito",'Aceptar','mensaje',500);     
     this.grabada = 1; 
     subs.unsubscribe();
@@ -247,7 +232,8 @@ ModificarCobro(){
           nrompago   : item.nrompago,
           banco      : item.banco,
           fecvto     : item.fecvto,
-          importe    : item.importe,       
+          importe    : item.importe,   
+          ctadest    : item.ctadest,    
           comentario : item.comentario
         };
         return this.servicio.updateItemCobranza(itcobro)});
@@ -288,7 +274,8 @@ agItemCobro(){
       nrompago     : "",
       banco        : "",
       fecvto       : null,
-      importe      : 0,       
+      importe      : 0,    
+      ctadest      : 0,   
       comentario   : "",   
 
      }
@@ -312,6 +299,7 @@ agItemCobro(){
              banco        : data.dcobro.banco,
              fecvto       : data.dcobro.fecvto,
              importe      : data.dcobro.importe,
+             ctadest      : data.dcobro.ctadest,
              comentario   : data.dcobro.comentario
         };      
         this.cdetcobro = [...this.cdetcobro, dcob]; // forzar la creacion del array para que detecte el cambio                           
@@ -364,7 +352,8 @@ modificarItemCobranza(nrocob : number,nroit  : number){
       nrompago     : this.cdetcobro[nroit-1].nrompago,
       banco        : this.cdetcobro[nroit-1].banco,
       fecvto       : this.cdetcobro[nroit-1].fecvto,
-      importe      : this.cdetcobro[nroit-1].importe,       
+      importe      : this.cdetcobro[nroit-1].importe,    
+      ctadest      : this.cdetcobro[nroit-1].ctadest,    
       comentario   : this.cdetcobro[nroit-1].comentario
 
      }
@@ -386,6 +375,7 @@ modificarItemCobranza(nrocob : number,nroit  : number){
                           this.cdetcobro[indm].banco     = data.dcobro.banco;
                           this.cdetcobro[indm].fecvto    = data.dcobro.fecvto;
                           this.cdetcobro[indm].importe   = data.dcobro.importe;
+                          this.cdetcobro[indm].ctadest   = data.dcobro.ctadest;
                           this.cdetcobro[indm].comentario= data.dcobro.comentario;
 
                            this.cdetcobro = [...this.cdetcobro]; // forzar la creacion del array para que detecte el cambio
@@ -441,7 +431,8 @@ GrabarCobro() {
                   nrompago   : item.nrompago,
                   banco      : item.banco,
                   fecvto     : item.fecvto,
-                  importe    : item.importe,       
+                  importe    : item.importe,  
+                  ctadest    : item.ctadest,     
                   comentario : item.comentario
                };
             return this.servicio.agregarItemCobro(itcobro)});
