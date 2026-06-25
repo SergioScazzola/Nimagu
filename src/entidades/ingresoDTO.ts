@@ -15,3 +15,10 @@ export interface ingresoDTO {
   idcobro         : number;
   observ          : number;
 }
+export interface intVenta {
+     nrocliente : number; // 
+     nroing     : number;
+     nomcliente : string;
+     accion     : string;
+   
+}

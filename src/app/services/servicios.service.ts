@@ -17,6 +17,9 @@ import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
 import { cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
 import { medioPago } from '../../entidades/medioPago';
+import { Dcobxcli } from '../../entidades/Dcobxcli';
+import { categoria } from '../../entidades/categoria';
+import { procedencia } from '../../entidades/procedencia';
 
 @Injectable({
   providedIn: 'root',
@@ -213,11 +216,23 @@ public delMovCuentaB(idcuenta: number, idmov: number) {
 }
 
 // Ingresos
+public getMaxIngresos() {
+  // devuelve el nro del último movimiento registrado en la tabla de ingresos
+    return this.http.get<number>(this.apiUrl + `ingreso/max`);
+}
 
-/* @RequestMapping(value ="/ingresosxcli" , params={"idcliente"} )*/
+public getCategorias() {
+    return this.http.get<categoria[]>(this.apiUrl + `ingreso/categorias`);
+  }
+
+public getProcedencias() {
+    return this.http.get<procedencia[]>(this.apiUrl + `ingreso/procedencias`);
+  }
+
 public getIngresosXCli(idcliente : number){
    return this.http.get<ingresoDTO[]>(this.apiUrl + `ingreso/ingresosxcli?idcliente=`+idcliente); 
 }
+
 
 public getMaxCobranza() {
     return this.http.get<number>(this.apiUrl + `cobranza/max`);    
@@ -227,9 +242,24 @@ public getMaxCobranza() {
     return this.http.get<cobroDTO>(this.apiUrl + `cobranza?id=`+idcobro);    
 } 
 
-
+public agregarCobro(cobro : cobroDTO) {
+    return this.http.post<cobroDTO>( this.apiUrl + `cobranza/nuevo`,cobro);
+}
 public updateCobro( cobro : cobroDTO) {
     return this.http.put<cobroDTO>(environment.apiUrl + `cobranza/actualizar`,cobro);
+}
+
+public getCobrosxCliyF(idcliente : number, feci : String, fecf : String){
+ return this.http.get<Dcobxcli[]>(this.apiUrl + `cobranza/detCobXCli=`+idcliente+`&feci=`+
+                                  feci+`&fecf=`+fecf);
+}
+/*@PostMapping(value="/detalle/nuevo") */
+public agregarItemCobro(itcobro : dcobroDTO) {
+    return this.http.post<dcobroDTO>( this.apiUrl + `cobranza/detalle/nuevo`,itcobro);
+}
+
+public updateItemCobranza(itcobro : dcobroDTO) {
+    return this.http.put<dcobroDTO>(environment.apiUrl + `cobranza/detalle/actualizar`,itcobro);
 }
 
 public getDetalleCobro(idcob:Number) {

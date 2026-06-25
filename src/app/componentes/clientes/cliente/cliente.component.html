@@ -1,55 +1,51 @@
-<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <h4 mat-dialog-title>{{operacion}}</h4>  
     <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
-     <form [formGroup]="formCli">        
-       <div class="row justify-content-md-left">
-        <div class="col-auto">           
-           <mat-form-field style="width:70px;"  appearance="fill">
+     <form [formGroup]="formCli" class="p-3">        
+      <div class="row g-3 mb-3">
+        <div class="col-4">           
+           <mat-form-field class="w-100" appearance="fill">
                  <mat-label>Nro</mat-label>
                  <input matInput [readonly]="true" formControlName="nrocli" style="text-align: center;">	
             </mat-form-field>    
         </div>
 
-        <div class="col-auto">
-           <mat-form-field style="width:350px;"  appearance="fill">
+        <div class="col-8">
+           <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Nombre del Cliente</mat-label>
                 <input #nombrecliente matInput #inputFocus formControlName="nombre" style="text-align: left;">	
             </mat-form-field>    
         </div>   
         </div>
-        <div class="row justify-content-md-left">
-            <div class="col-auto">
-              <mat-form-field style="width:250px;text-align:left;" appearance="fill">
+        <div class="row g-3 mb-3">
+            <div class="col-4">
+              <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Teléfono</mat-label>
                 <input matInput formControlName="telefono">	
                </mat-form-field>                   
             </div> 
-            <div class="col-auto">
-                <mat-form-field style="width:200px;text-align:left;" appearance="fill">
+            <div class="col-4">
+                <mat-form-field class="w-100" appearance="fill">
                   <mat-label>CUIT</mat-label>
-                  <input matInput formControlName="cuit">	
+                  <input matInput cuitFormat formControlName="cuit"
+                    (blur)="MostrarCuit()" >	
                  </mat-form-field>                   
               </div> 
-            <div class="col-auto">
-                <mat-form-field style="width:250px;text-align:left;" appearance="fill">
+            <div class="col-4">
+                <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Contacto</mat-label>
                   <input matInput formControlName="contacto">	
                  </mat-form-field>                   
               </div> 
         </div> 
-        <div class="row justify-content-md-left">
-            <div class="col-auto">
-                <mat-form-field style="width:600px;text-align:left;" appearance="fill">
+          <div class="row g-3 mb-3">
+            <div class="col-8">
+                <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Notas</mat-label>
                   <input matInput formControlName="notas">	
                  </mat-form-field>                   
               </div> 
-              <div class="col-auto">
-                <mat-form-field style="width:150px;text-align:left;" appearance="fill">
-                  <mat-label>Campo</mat-label>
-                  <input matInput [readonly]="!this.habcampo" formControlName="campo">	
-                 </mat-form-field>                   
-              </div> 
+            
         </div>
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 
@@ -61,6 +57,21 @@
               <button class="btn btn-sm btn-outline-secondary"                
                        (click)="Anular()">Cancelar</button>                       
         </div>  
+          @if(formCli.controls['cuit'].hasError('cuitFormato')){
+    <div class="menserror">    
+         El CUIT debe tener 11 dígitos    
+    </div>
+    }
+    @if(formCli.controls['cuit'].hasError('cuitPrefijo')){
+    <div class="menserror">
+       Prefijo de CUIT inválido
+    </div>
+    }
+    @if(formCli.controls['cuit'].hasError('cuitInvalido')){
+    <div class="menserror">
+         El CUIT no es válido
+    </div>
+    }
           
     </form>
 </div>

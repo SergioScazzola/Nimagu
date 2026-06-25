@@ -103,17 +103,32 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="CC">
-        <th mat-header-cell *matHeaderCellDef>CC</th>
+      <ng-container matColumnDef="IN">
+        <th mat-header-cell *matHeaderCellDef>IN</th>
         <td mat-cell *matCellDef="let renCli">
           <div class="text-center">
             <button
               mat-icon-button
               class="action-btn"
-              title="Cuenta Corriente"
-              (click)="cuentaCorriente(renCli.idCliente,renCli.nombre)"
+              title="Venta al Cliente"
+              (click)="IngresarVenta(renCli.idCliente,renCli.nombre)"
             >
-            <i class="bi bi-card-list"></i>
+            <i class="bi bi-arrow-down"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="COB">
+        <th mat-header-cell *matHeaderCellDef>Cob</th>
+        <td mat-cell *matCellDef="let renCli">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="Cobro del Cliente"
+              (click)="IngresarCobro(renCli.idCliente,renCli.nombre)"
+            >
+            <i class="bi bi-currency-dollar"></i>
             </button>
           </div>
         </td>

@@ -42,12 +42,13 @@ app-root {
 /* Estilos para diálogos personalizados */
 .custom-dialog-container .mat-mdc-dialog-container {
   padding: 0 !important;
-  border-radius: 8px;
+  border-radius: 0px !important;
   overflow: hidden !important;
 }
 
 .mat-mdc-dialog-container .mdc-dialog__surface {
   overflow: hidden !important;
+   border-radius: 0px !important;
 }
 
 .custom-dialog-container .mat-mdc-dialog-content {

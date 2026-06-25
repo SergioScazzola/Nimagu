@@ -155,7 +155,8 @@
 /* Estilos para columnas de acción M, B */
 .mat-column-M,
  .mat-column-B,
-  .mat-column-CC{
+  .mat-column-IN,
+  .mat-column-COB{
   width: 50px !important;
   min-width: 50px !important;
   max-width: 50px !important;

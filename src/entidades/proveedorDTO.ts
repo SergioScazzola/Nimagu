@@ -8,3 +8,9 @@ export interface proveedorDTO {
   notas      : string;
   saldoini   : number;
 }
+export interface intProv {
+   nroprove    : number;   
+   nomprov     : string;
+   accion      : string
+   
+}

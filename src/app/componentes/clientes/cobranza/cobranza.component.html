@@ -43,7 +43,7 @@
           <div class="col-auto">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Venta</mat-label>
-              <mat-select formControlName="nrolab"    
+              <mat-select formControlName="nroventa"    
                   (selectionChange)="onSelectionChangeVenta($event)">      
                   <mat-option *ngFor="let ingre of this.cingcli; let i = index" [value]="ingre.IdIngreso">
                     {{ ingre.ncliente+" - "+ingre.categoria+" - "+ingre.importe| number : "1.2-2"}}

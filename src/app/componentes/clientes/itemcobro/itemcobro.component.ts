@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
+import { ImporteDirective } from '../../../Directivas/importeDirective';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatFormField, MatLabel, MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,6 +21,7 @@ import { dcobroDTO } from '../../../../entidades/cobroDTO';
 import { cuentaB } from '../../../../entidades/cuentaB';
 import { medioPago } from '../../../../entidades/medioPago';
 
+
 export const DATE_FORMATS : MatDateFormats = {
 
   
@@ -36,17 +38,17 @@ export const DATE_FORMATS : MatDateFormats = {
   selector: 'app-itemcobro',
   standalone: true,
   imports: [MatFormField,
-                  MatLabel,         
-                  MatInputModule,                 
-                  ReactiveFormsModule,
-                  MatDatepickerModule,
-                  MatNativeDateModule,    
-                  MatIconModule,
-                  CommonModule,
-                  FormsModule,
-                  MatSelectModule,
-                  DragDropModule,
-                  SelecTextDirective],
+    MatLabel,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+    CommonModule,
+    FormsModule,
+    MatSelectModule,
+    DragDropModule,
+    SelecTextDirective, ImporteDirective],
  providers : [
       CurrencyPipe,
     { provide : DateAdapter, useClass: DateFnsAdapter },
@@ -135,6 +137,7 @@ itcobro         : dcobroDTO;
     this.formItCob.controls['fecvto'].setValue(this.data.dcobro.fecvto);        
     this.mpagoSel = indmp; 
     this.formItCob.controls['importe'].setValue(this.data.dcobro.importe);       
+    this.formItCob.controls['ctadest'].setValue(this.data.dcobro.ctadest);       
     this.formItCob.controls['coment'].setValue(this.data.dcobro.comentario);       
         
   }
@@ -155,6 +158,7 @@ itcobro         : dcobroDTO;
       banco     : this.formItCob.controls['banco'].value,
       fecvto    : this.formItCob.controls['fecvto'].value,
       importe   : Number(this.formItCob.controls['importe'].value.replaceAll('$','').replaceAll(',','')),
+      ctadest   : this.formItCob.controls['ctadest'].value,
       comentario: this.formItCob.controls['coment'].value,   
     }
     this.data.dcobro.idCobro    = itcob.idCobro;
@@ -192,6 +196,7 @@ itcobro         : dcobroDTO;
      
       importe : esnum?this.formItCob.controls['importe'].value:
                 Number(this.formItCob.controls['importe'].value.replaceAll('$','').replaceAll(',', '')),
+      ctadest : this.formItCob.controls['ctadest'].value,
       comentario: this.formItCob.controls['coment'].value,   
     }
     

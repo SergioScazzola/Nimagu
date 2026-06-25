@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { proveedorDTO } from '../../../../entidades/proveedorDTO';
 import { ServiciosService } from '../../../services/servicios.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { intProv } from '../../../../entidades/intProv';
+import { intProv } from '../../../../entidades/proveedorDTO';
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, Subscription } from 'rxjs';
 import { DragDropModule } from '@angular/cdk/drag-drop';

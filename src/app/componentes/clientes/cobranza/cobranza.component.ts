@@ -407,14 +407,13 @@ GrabarCobro() {
         idCliente       : this.data.nrocliente,
         nomcliente      : this.data.nomcliente,
         nrofactura      : this.formCob.controls['nfactura'].value,
-        nrolaboreo      : this.formCob.controls['nrolab'].value,   
-        nroaporte       : 0,   
+        nroventa        : this.formCob.controls['nrolab'].value,           
         importe         : Number(impo),
         observaciones   : this.formCob.controls['observ'].value
       };
       var resu : number;
       var subs : Subscription;  
-      subs = this.servicio.AgregarCobranza(this.cobro)
+      subs = this.servicio.agregarCobro(this.cobro)
          .pipe(finalize(() => {        
            this.notiService.showNotification("La Cobranza Nro : "+this.cobro.idCobro+" del cliente "+this.cobro.nomcliente+"("+resu+
                                         ") se ha agregado con éxito",'Aceptar','mensaje',500);     
@@ -454,7 +453,7 @@ GrabarCobro() {
                
     const doc = new jsPDF('p','mm','A4');
    
-    var indl  =  this.claboreos.findIndex(p=>p.idLaboreo==this.cobro.nrolaboreo);//  laboreo del cobro
+    //var indl  =  this.claboreos.findIndex(p=>p.idLaboreo==this.cobro.nrolaboreo);//  laboreo del cobro
     const title = 'RECIBO DE COBRO NRO. '+this.data.nrocobr;
     
 
@@ -526,10 +525,10 @@ GrabarCobro() {
              this.currencyPipe.transform(this.cobro.importe, '$','code','1.2-2'),10,45,{align:'left'});
     doc.setFontSize(10);         
     if (this.imprimeconcepto){
-        doc.text('En concepto de trabajos de '+this.claboreos[indl].nlabor+' - '+
+       /* doc.text('En concepto de trabajos de '+this.claboreos[indl].nlabor+' - '+
              this.claboreos[indl].ncultivo+' - Campo : '+this.claboreos[indl].ncampo+' - lotes : '+
              this.claboreos[indl].potreros+' - '+
-             this.claboreos[indl].hasTrab+' Hectáreas',10,50,{align:'left'})
+             this.claboreos[indl].hasTrab+' Hectáreas',10,50,{align:'left'})*/
     }
     doc.setFontSize(10);    
      var cadimpo = this.currencyPipe.transform(this.cobro.importe, 'ARS','code','1.2-2')?.replace('ARS','');

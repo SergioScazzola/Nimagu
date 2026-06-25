@@ -8,8 +8,12 @@ import { NotiserviceService } from '../../services/notiservice.service';
 import { finalize, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatTableModule,MatTableDataSource } from '@angular/material/table';
+
 import { ClienteComponent } from "./cliente/cliente.component";
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { intCobranza } from '../../../entidades/cobroDTO';
+import { CobranzaComponent } from './cobranza/cobranza.component';
+import { VentaComponent } from './venta/venta.component';
 
 @Component({
   selector: 'app-clientes',
@@ -33,7 +37,7 @@ export class ClientesComponent {
   cantcli          : number;
   formcli          : boolean;
   climod           : number;
-  colClientes: string[] = ["idCliente" , "nombre", "telefono", "contacto","cuit","notas","M","B","CC" ];
+  colClientes: string[] = ["idCliente" , "nombre", "telefono", "contacto","cuit","notas","M","B","IN","COB" ];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -86,7 +90,12 @@ ngOnInit(){
     const dialogConfig = new MatDialogConfig();   
     dialogConfig.autoFocus = false;
     dialogConfig.data = data;
-    dialogConfig.panelClass = "";
+    dialogConfig.width =  '900';         // ancho máximo de la ventana
+    dialogConfig.maxWidth = '95vw';      
+    dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+    dialogConfig.panelClass = 'custom-dialog-container';
+    dialogConfig.disableClose =  false; // opcional según necesidad
+
     const dialogRef =  this.dialog.open(ClienteComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 
           (data:any) => { if (data.clicked === 'Alta'){                   
@@ -172,9 +181,44 @@ ngOnInit(){
       this.router.navigate(['/clientes','infocobros']);
    }
 
-  cuentaCorriente(nrocliente : number,nomcliente : string){
-    var filter = this.inputRef.nativeElement.value;
-    this.router.navigate(['/clientes', nrocliente,nomcliente,filter,'ctactec']);
+  IngresarVenta(nrocliente : number,nomcliente : string){
+      const data : intCobranza = {
+        nrocliente : nrocliente,
+        nrocobr    : 0,
+        nomcliente : nomcliente,
+        accion     : "A"
+      }       
+      const dialogConfig = new MatDialogConfig();   
+      dialogConfig.autoFocus = false;
+      dialogConfig.data = data;
+      dialogConfig.panelClass = "";
+      const dialogRef =  this.dialog.open(VentaComponent, dialogConfig);
+            dialogRef.afterClosed().subscribe( // 
+            (data:any) => { if (data.clicked === 'Alta'){        // Agregó un cobro           
+                  this.notiServicio.showNotification("Venta agregada con éxito ",'Aceptar','mensaje',500);                                            
+                             }
+                            })
+
+  }
+
+   IngresarCobro(nrocliente : number,nomcliente : string){
+     const data : intCobranza = {
+        nrocliente : nrocliente,
+        nrocobr    : 0,
+        nomcliente : nomcliente,
+        accion     : "A"
+      }       
+      const dialogConfig = new MatDialogConfig();   
+      dialogConfig.autoFocus = false;
+      dialogConfig.data = data;
+      dialogConfig.panelClass = "";
+      const dialogRef =  this.dialog.open(CobranzaComponent, dialogConfig);
+            dialogRef.afterClosed().subscribe( // 
+            (data:any) => { if (data.clicked === 'Alta'){        // Agregó un cobro           
+                  this.notiServicio.showNotification("Cobro agregado con éxito ",'Aceptar','mensaje',500);                                            
+                             }
+                            })
+
   }
 
   aplicarFiltro(valor : string)  {
