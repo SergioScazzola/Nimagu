@@ -182,19 +182,23 @@ ngOnInit(){
    }
 
   IngresarVenta(nrocliente : number,nomcliente : string){
-      const data : intCobranza = {
+      const datas : intCobranza = {
         nrocliente : nrocliente,
         nrocobr    : 0,
         nomcliente : nomcliente,
         accion     : "A"
       }       
       const dialogConfig = new MatDialogConfig();   
-      dialogConfig.autoFocus = false;
-      dialogConfig.data = data;
-      dialogConfig.panelClass = "";
+     dialogConfig.autoFocus = false;
+     dialogConfig.data = datas;
+     dialogConfig.width =  '900';         // ancho máximo de la ventana
+     dialogConfig.maxWidth = '95vw';      
+     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+     dialogConfig.panelClass = 'custom-dialog-container';
+     dialogConfig.disableClose =  false; // opcional según necesidad
       const dialogRef =  this.dialog.open(VentaComponent, dialogConfig);
             dialogRef.afterClosed().subscribe( // 
-            (data:any) => { if (data.clicked === 'Alta'){        // Agregó un cobro           
+            (datass:any) => { if (datass.clicked === 'Alta'){        // Agregó un cobro           
                   this.notiServicio.showNotification("Venta agregada con éxito ",'Aceptar','mensaje',500);                                            
                              }
                             })
@@ -209,9 +213,13 @@ ngOnInit(){
         accion     : "A"
       }       
       const dialogConfig = new MatDialogConfig();   
-      dialogConfig.autoFocus = false;
-      dialogConfig.data = data;
-      dialogConfig.panelClass = "";
+     dialogConfig.autoFocus = false;
+     dialogConfig.data = data;
+     dialogConfig.width =  '900';         // ancho máximo de la ventana
+     dialogConfig.maxWidth = '95vw';      
+     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+     dialogConfig.panelClass = 'custom-dialog-container';
+     dialogConfig.disableClose =  false; // opcional según necesidad
       const dialogRef =  this.dialog.open(CobranzaComponent, dialogConfig);
             dialogRef.afterClosed().subscribe( // 
             (data:any) => { if (data.clicked === 'Alta'){        // Agregó un cobro           

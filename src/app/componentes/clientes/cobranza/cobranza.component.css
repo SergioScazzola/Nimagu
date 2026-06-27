@@ -1,14 +1,23 @@
 
+.custom-dialog-container {
+  background-color:lightgray;  /*quita el fondo blanco */
+
+}
+
 h4 {
-    background-color:rgb(229, 233, 235);
+    background-color:lightblue;
     text-align: center;
 }
 
 .container {
     background-color:lightgray;
     width : 800px;
-    height: 550px;
+    height: 450px;
 
+}
+
+.menserror {
+   color : red
 }
   .botonera {    
     background-color:lightgray;

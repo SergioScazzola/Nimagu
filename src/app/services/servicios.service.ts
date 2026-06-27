@@ -15,7 +15,7 @@ import { saldoEmpDTO } from '../../entidades/saldoEmpDTO';
 import { infoSEmp } from '../../entidades/infoSEmp';
 import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
-import { cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
+import { cobroComp, cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
 import { medioPago } from '../../entidades/medioPago';
 import { Dcobxcli } from '../../entidades/Dcobxcli';
 import { categoria } from '../../entidades/categoria';
@@ -221,8 +221,13 @@ public getMaxIngresos() {
     return this.http.get<number>(this.apiUrl + `ingreso/max`);
 }
 
-public getCategorias() {
-    return this.http.get<categoria[]>(this.apiUrl + `ingreso/categorias`);
+public agregarIngreso(ingreso : ingresoDTO) {
+    return this.http.post<ingresoDTO>( this.apiUrl + `ingreso/ingreso/nuevo`,ingreso);
+}
+
+
+public getCategorias(ineg : number) {
+    return this.http.get<categoria[]>(this.apiUrl + `ingreso/categorias?ingeg=`+ineg);
   }
 
 public getProcedencias() {
@@ -242,8 +247,8 @@ public getMaxCobranza() {
     return this.http.get<cobroDTO>(this.apiUrl + `cobranza?id=`+idcobro);    
 } 
 
-public agregarCobro(cobro : cobroDTO) {
-    return this.http.post<cobroDTO>( this.apiUrl + `cobranza/nuevo`,cobro);
+public agregarCobro(cobroc : cobroComp) {
+    return this.http.post<cobroComp>( this.apiUrl + `cobranza/nuevo`,cobroc);
 }
 public updateCobro( cobro : cobroDTO) {
     return this.http.put<cobroDTO>(environment.apiUrl + `cobranza/actualizar`,cobro);

@@ -1,4 +1,4 @@
 export interface medioPago {   
         idmpago        : number;
-        mediodepago    : string;        
+        mediopago      : string;        
 }

@@ -14,7 +14,7 @@ import { es } from 'date-fns/locale';
 import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { ServiciosService } from '../../../services/servicios.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { intVenta } from '../../../../entidades/ingresoDTO';
+import { ingresoDTO, intVenta } from '../../../../entidades/ingresoDTO';
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
 import {registerLocaleData } from '@angular/common';
@@ -67,7 +67,7 @@ proxing         : number;
 cclientes       : clienteDTO[]=[];
 ccategorias     : categoria[]=[];
 cprocedencias   : procedencia[]=[];
-
+ventaa          : ingresoDTO;
 catSel          : number;
 cliSel          : number;
 hoy             : Date = new Date;
@@ -95,7 +95,7 @@ importeformat   : string = "";
                      
           maxing    :  this.servicio.getMaxIngresos(),          
           proce     : this.servicio.getProcedencias(), 
-          categ     :  this.servicio.getCategorias(),
+          categ     :  this.servicio.getCategorias(1),//traer categorias de ingreso
    
          }).subscribe(res2 => {
             this.proxing        =  res2.maxing==undefined?1:res2.maxing + 1,
@@ -121,17 +121,17 @@ importeformat   : string = "";
       precioun   : [0],      
       importe    : [0],
       proced     : [''],
+      idcobro    : [0],
       observ     : ['']
     })    
   }
   prepararAlta(){
     this.formVta.controls['nroing'].setValue(this.proxing);
     this.formVta.controls['fecha'].setValue(this.hoy);
-  
     this.formVta.controls['ncliente'].setValue(this.data.nomcliente);
     this.formVta.controls['idcat'].setValue(this.ccategorias[0].idCategoria);
+    this.formVta.controls['categoria'].setValue(this.ccategorias[0].nombre);
     this.formVta.controls['proced'].setValue(this.cprocedencias[0].procedencia);
-
   }
    
   
@@ -164,10 +164,39 @@ importeformat   : string = "";
   } 
 
   AgregarVenta(){
-
+    
+    var venta : ingresoDTO = {
+        idingre         :  this.formVta.controls['nroing'].value,
+        fecha           :  this.formVta.controls['fecha'].value,
+        idcliente       :  this.data.nrocliente,
+        ncliente        :  this.data.nomcliente,
+        nroliq          : this.formVta.controls['nroliq'].value,
+        idcat           : 0,
+        categoria       : this.formVta.controls['categoria'].value,
+        cantidad        : this.formVta.controls['cantidad'].value,
+        tkilos          : this.formVta.controls['tkilos'].value,
+        precioun        : this.formVta.controls['precioun'].value,
+        importe         : this.formVta.controls['importe'].value,
+        proced          : this.formVta.controls['proced'].value,
+        idcobro         : this.formVta.controls['idcobro'].value,
+        observ          : this.formVta.controls['observ'].value,
+    }
+    console.log("Ventaaaaa : "+JSON.stringify(venta));                
+    var subscri : Subscription;
+    var resu = "";
+    subscri = this.servicio.agregarIngreso(venta)
+            .pipe(finalize(() => {   
+               console.log("Resultado00000000 : "+resu);
+               this.notiService.showNotification("La Venta Nro "+venta.idingre+
+                                    " se ha agregado con éxito ("+resu+")",
+                                    "Aceptar","mensaje",500);                          
+               this.dialogRef.close({ clicked : "Alta"})
+                }))                  
+           .subscribe((data : any): void => {});   
+   
   }
-  ModificarVenta(){
 
+  ModificarVenta(){
   }
   
   Anular(){

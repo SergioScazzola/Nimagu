@@ -1,14 +1,14 @@
-<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
     <h4 mat-dialog-title >{{operacion}}</h4>  
-      <form [formGroup]="formCob" >        
-         <div class="row mt-1" >
-          <div class="col-auto">
+      <form [formGroup]="formCob" class="p-3">        
+          <div class="row g-3 mb-3">
+          <div class="col-3">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Nro.Cobro</mat-label>
               <input matInput [readonly]="true" formControlName="nrocob" style="text-align: center;">	
              </mat-form-field>      
           </div>    
-          <div class="col-auto">
+          <div class="col-3">
             <mat-form-field class="w-100" appearance="fill"> 
                 <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
                         placeholder = "Elija una fecha" 
@@ -20,40 +20,46 @@
             </mat-form-field >            
           </div>
          
-        <div class="col-auto">
+        <div class="col-6">
           <mat-form-field class="w-100" appearance="fill">
             <mat-label>Cliente</mat-label>
             <input matInput [readonly]="true" formControlName="ncliente" style="text-align: left;">	
            </mat-form-field>      
         </div>  
       </div>  
-      <div class="row">           
-        <div class="col-auto">
+       <div class="row g-3 mb-3">
+        <div class="col-4">
               <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Nro.Factura</mat-label>
                 <input matInput formControlName="nfactura">	
                </mat-form-field> 
           </div>   
-          <div class="col-auto">
+          <div class="col-4">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Importe del Cobro</mat-label>                
-              <input matInput [readonly]="true" formControlName="importe" style="text-align: right;"	>
+              <input matInput [readonly]="true" formControlName="importe" style="text-align: right;"
+               [value]="formCob.get('importe')?.value | currency:'$':true" 	>
              </mat-form-field>        
          </div>                  
-          <div class="col-auto">
+          <div class="col-4">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Venta</mat-label>
               <mat-select formControlName="nroventa"    
                   (selectionChange)="onSelectionChangeVenta($event)">      
-                  <mat-option *ngFor="let ingre of this.cingcli; let i = index" [value]="ingre.IdIngreso">
-                    {{ ingre.ncliente+" - "+ingre.categoria+" - "+ingre.importe| number : "1.2-2"}}
+                  <mat-option *ngFor="let ingre of this.cingcli; let i = index" [value]="ingre.idingre">
+                    {{ ingre.ncliente+" - "+ingre.categoria+" - "+(ingre.importe| number : "1.2-2")}}
                   </mat-option>            
               </mat-select>
             </mat-form-field>
           </div>                           
         </div>    
-        <div class="row">
-                                     
+        <div class="row g-3 mb-3">
+           <div class="col-6">
+             <div>{{ "Total  : $ "+(this.totalventa|number : "1.2-2") }}</div>
+             <div>{{ "Restan : $ "+(this.restoventa|number : "1.2-2") }}</div>
+           </div>                           
+        </div>  
+        <div class="row g-3 mb-3">                             
          <div class="col-auto">
           <button class="btn btn-primary  btn-sm add-button" (click)="agItemCobro()"
              [disabled]="data.accion==='M'">

@@ -1,8 +1,8 @@
-<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <h4 mat-dialog-title>{{operacion}}</h4>  
     <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
-     <form [formGroup]="formVta">        
-       <div class="row g-3">
+     <form [formGroup]="formVta" class="p-3">        
+       <div class="row g-3 mb-3">
          <div class="col-2">
           <mat-form-field class="w-100" appearance="fill">
                  <mat-label>Nro</mat-label>
@@ -10,7 +10,7 @@
             </mat-form-field>    
          </div>
 
-        <div class="col-4">
+        <div class="col-3">
             <mat-form-field class="w-100" appearance="fill"> 
                 <input matInput [matDatepicker]="picker" 
                 (dateChange)="onFechaChange($event)"
@@ -22,7 +22,7 @@
             </mat-form-field >
           </div>
 
-          <div class="col-6">
+          <div class="col-7">
              <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Cliente</mat-label>
                 <input matInput [readonly]="true" formControlName="ncliente">	
@@ -30,25 +30,25 @@
           </div>               
         </div>
         <!-- Segunda Fila -->
-         <div class="row g-3">
-            <div class="col-4">
+       <div class="row g-3 mb-3">
+            <div class="col-3">
               <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Nro.Liquidación</mat-label>
                 <input matInput formControlName="nroliq">	
                </mat-form-field>                   
             </div> 
-           <div class="col-4">
+           <div class="col-6">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Categoria</mat-label>
-              <mat-select formControlName="idcat"    
+              <mat-select formControlName="categoria de venta"    
                   (selectionChange)="onSelectionChangeCategoria($event)">      
-                  <mat-option *ngFor="let cat of this.ccategorias; let i = index" [value]="cat.idCategoria">
-                    {{ cat.nombre+" - "+cat.idCategoria}}
+                  <mat-option *ngFor="let cat of this.ccategorias; let i = index" [value]="cat.nombre">
+                    {{ cat.nombre }}
                   </mat-option>            
               </mat-select>
             </mat-form-field>
           </div>            
-          <div class="col-4">
+          <div class="col-3">
            <mat-form-field class="w-100" appearance="fill">
             <mat-label>Cantidad</mat-label>                
             <input matInput  appImporte formControlName="cantidad" style="text-align: right;"	   
@@ -57,7 +57,7 @@
          </div> 
          </div> 
          <!-- Tercera Fila -->
-         <div class="row g-3">          
+         <div class="row g-3 mb-3">   
          <div class="col-4">
            <mat-form-field class="w-100" appearance="fill">
             <mat-label>Tot.Kilos</mat-label>                
@@ -75,30 +75,37 @@
          <div class="col-4">
            <mat-form-field class="w-100" appearance="fill">
             <mat-label>Importe</mat-label>                
-            <input matInput  appImporte formControlName="importe" style="text-align: right;"	   
-                   [value]="formVta.controls['importe'].value" >        
+            <input matInput appImporte formControlName="importe" style="text-align: right;"	   
+                   >        
            </mat-form-field>        
          </div> 
         </div> 
         <!-- Cuarta Fila -->
-         <div class="row g-3">  
+         <div class="row g-3 mb-3">
             <div class="col-4">
               <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Procedencias</mat-label>
                <mat-select formControlName="proced"    
                   (selectionChange)="onSelectionChangeProcedencia($event)">      
                   <mat-option *ngFor="let proce of this.cprocedencias; let i = index" [value]="proce.procedencia">
-                    {{ proce.procedencia+" - "+proce.idProcedencia}}
+                    {{ proce.procedencia}}
                   </mat-option>            
               </mat-select>
             </mat-form-field>                
             </div> 
-            <div class="col-8">
+            <div class="col-6">
                 <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Observaciones</mat-label>
                   <input matInput formControlName="observ">	
                  </mat-form-field>                   
-              </div> 
+            </div> 
+            <div class="col-2">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Cobro</mat-label>
+                  <input matInput [readonly]="true" formControlName="idcobro">
+                 </mat-form-field>                   
+            </div> 
+
         </div>
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 

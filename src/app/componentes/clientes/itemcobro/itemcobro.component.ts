@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject,NgZone } from '@angular/core';
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
 import { ImporteDirective } from '../../../Directivas/importeDirective';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -15,7 +15,7 @@ import { ServiciosService } from '../../../services/servicios.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { intItCobro } from '../../../../entidades/cobroDTO';
 import { NotiserviceService } from '../../../services/notiservice.service';
-import { finalize, Subscription } from 'rxjs';
+import { finalize, forkJoin, Subscription } from 'rxjs';
 
 import { dcobroDTO } from '../../../../entidades/cobroDTO';
 import { cuentaB } from '../../../../entidades/cuentaB';
@@ -71,7 +71,9 @@ itcobro         : dcobroDTO;
 
   constructor(    public  fb             : FormBuilder,
                   private currencyPipe: CurrencyPipe,
-                  private servicio    : ServiciosService,                
+                  private servicio    : ServiciosService,      
+                  private zone        : NgZone,     
+                  private cdr         : ChangeDetectorRef,     
                   public dialogRef    : MatDialogRef<ItemcobroComponent>,
                   @Inject(MAT_DIALOG_DATA) public data: intItCobro,  
                   private notiService : NotiserviceService )
@@ -81,27 +83,39 @@ itcobro         : dcobroDTO;
     //this.mostrarHora();
    
     this.initFormulario();
-    var subscri : Subscription;      
-    subscri = this.servicio.getMediosPago()
-      .pipe(finalize(() => {            
-        if (this.data.accion==="A"){  // Alta de Item de Cobro                                                                
-           this.operacion = "Agregar Item de Cobro Nro. : "+this.data.nroitem+
-                           " al Cliente : "+this.data.nomcli;
-                  subscri.unsubscribe();
-                  this.prepararAlta(); 
-                } else {
-                  if (this.data.accion=="M"){
-                    this.operacion = "Modificar Item de Cobro Nro. : "+this.data.dcobro.nroitem+
+     
+    if (this.data.accion==="A"){  // Alta de Item de Cobro                                                                
+        this.mostrarHora();
+      
+        forkJoin({                             
+          medpago    :  this.servicio.getMediosPago(),      
+          ctasdest   :  this.servicio.getCuentasB(),                            
+        }).subscribe(res2 => {
+            this.cmpago    =  res2.medpago;
+            this.cctasb    = res2.ctasdest
+            this.operacion = "Agregar Item de Cobro Nro. : "+this.data.nroitem+
+                             " al Cliente : "+this.data.nomcli;
+            console.log("medios de pago : "+JSON.stringify(this.cmpago))
+            this.prepararAlta(); 
+               })
+    } else {
+      if (this.data.accion=="M"){
+           
+           forkJoin({                             
+                medpago    :  this.servicio.getMediosPago(),       
+                 ctasdest   :  this.servicio.getCuentasB(),                               
+               }).subscribe(res2 => {
+                 this.cmpago    =  res2.medpago;
+                 this.cctasb    = res2.ctasdest
+                 this.operacion = "Modificar Item de Cobro Nro. : "+this.data.dcobro.nroitem+
                                      " al Cliente : "+this.data.nomcli;
-                    subscri.unsubscribe();
-                    console.log("Cobro : "+this.data.dcobro.idCobro+" item : "+this.data.dcobro.nroitem); 
-                    this.prepararModi();   
-                  }   // "M" Modifica item de cobro     
-                }}))               
-              .subscribe((datas : any): void => {
-                 this.cmpago = datas});      
+                 this.prepararModi();   
+               })
+           
+      }   // "M" Modifica item de cobro     
+      
     
-    
+    }
   }
   initFormulario(){
      this.formItCob = this.fb.group({        
@@ -123,14 +137,15 @@ itcobro         : dcobroDTO;
     this.formItCob.controls['fecha'].setValue(this.hoy);
     this.formItCob.controls['fecvto'].setValue(this.hoy);        
     this.mpagoSel = 0;
-    this.formItCob.controls['nmpago'].setValue(this.mpagoSel);        
+    this.formItCob.controls['nmpago'].setValue(this.cmpago[0].mediopago);     
+    this.formItCob.controls['ctadest'].setValue(this.cctasb[0].idCuenta);            
   }
    
   prepararModi(){
     var indmp = this.cmpago.findIndex(p=>p.idmpago==this.data.dcobro.idmpago);
     this.formItCob.controls['nrocob'].setValue(this.data.nrocobro);
     this.formItCob.controls['nroitem'].setValue(this.data.nroitem);
-    this.formItCob.controls['nmpago'].setValue(indmp);
+    this.formItCob.controls['nmpago'].setValue(this.data.dcobro.nmpago);
     this.formItCob.controls['fecha'].setValue(this.data.dcobro.fecha);
     this.formItCob.controls['nrompago'].setValue(this.data.dcobro.nrompago);       
     this.formItCob.controls['banco'].setValue(this.data.dcobro.banco);       
@@ -146,18 +161,23 @@ itcobro         : dcobroDTO;
     console.log("mpagoSel : "+this.mpagoSel);
    
   }
+  onSelectionChangeCtasDest(event : any){
+    this.mpagoSel = event.value;
+    console.log("mpagoSel : "+this.mpagoSel);
+   
+  }
   GrabarItCobro(){
     //var indmp = this.cmpago.findIndex(p=>p.idmpago=this.mpagoSel);
     var itcob   : dcobroDTO = {
       idCobro   : this.formItCob.controls['nrocob'].value,
       nroitem   : this.formItCob.controls['nroitem'].value,
-      idmpago   : this.cmpago[this.mpagoSel].idmpago,
-      nmpago    : this.cmpago[this.mpagoSel].mediodepago,
+      idmpago   : 0,
+      nmpago    : this.formItCob.controls['nmpago'].value,
       fecha     : this.formItCob.controls['fecha'].value,
       nrompago  : this.formItCob.controls['nrompago'].value,
       banco     : this.formItCob.controls['banco'].value,
       fecvto    : this.formItCob.controls['fecvto'].value,
-      importe   : Number(this.formItCob.controls['importe'].value.replaceAll('$','').replaceAll(',','')),
+      importe   : this.formItCob.controls['importe'].value,
       ctadest   : this.formItCob.controls['ctadest'].value,
       comentario: this.formItCob.controls['coment'].value,   
     }
@@ -172,31 +192,25 @@ itcobro         : dcobroDTO;
     this.data.dcobro.importe    = itcob.importe;
     this.data.dcobro.comentario = itcob.comentario;
     this.data.accion = "Alta"; 
+    console.log("IT.Cobro : "+JSON.stringify(itcob));
     this.dialogRef.close(this.data)
  
   }
   ModificarItCobro(){
     // en lugar de grabar, devuelvo en data el item modificado
-    var esnum : boolean;
-    var valorimporte = this.formItCob.controls['importe'].value;
-    if (typeof valorimporte==="string"){
-        esnum = false;
-    } else {
-      esnum = true;
-    }
+   
     var itcob   : dcobroDTO = {
       idCobro   : this.formItCob.controls['nrocob'].value,
       nroitem   : this.formItCob.controls['nroitem'].value,
-      idmpago   : this.cmpago[this.mpagoSel].idmpago,
-      nmpago    : this.cmpago[this.mpagoSel].mediodepago,
+      idmpago   : this.mpagoSel,
+      nmpago    : this.formItCob.controls['nmpago'].value,
       fecha     : this.formItCob.controls['fecha'].value,
       nrompago  : this.formItCob.controls['nrompago'].value,
       banco     : this.formItCob.controls['banco'].value,
       fecvto    : this.formItCob.controls['fecvto'].value,
      
-      importe : esnum?this.formItCob.controls['importe'].value:
-                Number(this.formItCob.controls['importe'].value.replaceAll('$','').replaceAll(',', '')),
-      ctadest : this.formItCob.controls['ctadest'].value,
+      importe   : this.formItCob.controls['importe'].value,
+      ctadest   : this.formItCob.controls['ctadest'].value,
       comentario: this.formItCob.controls['coment'].value,   
     }
     
@@ -222,11 +236,27 @@ itcobro         : dcobroDTO;
   Anular(){
     this.dialogRef.close({ clicked : "Cancelar"})
   }
-  mostrarHora(){
-    setInterval(()=> {
-       this.hoy = new Date();
-    },1000)  
-  }  
+  
+   mostrarHora() {
+   this.zone.runOutsideAngular(() => {
+    setInterval(() => {
+      const hoy = new Date();
+      const valorControl = this.formItCob.controls['fecha'].value;
+      
+      if (valorControl) {
+        const fechaform = new Date(valorControl);
+        fechaform.setHours(hoy.getHours(), hoy.getMinutes(), hoy.getSeconds());
+
+        // Volvemos a la zona de Angular solo para actualizar el valor
+        this.zone.run(() => {
+          this.formItCob.controls['fecha'].setValue(fechaform, { emitEvent: false });
+          this.cdr.detectChanges(); // Forzamos la actualización sin romper el ciclo
+        });
+      }
+    }, 1000);
+  }) 
+  }
+
   onFechaChange(event: any) {
     const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
     const ahora = new Date(); // Hora actual
@@ -257,13 +287,7 @@ itcobro         : dcobroDTO;
   }
   
 
-  quitarFormatoMoneda() {
-    const valor = this.formItCob.controls['importe'].value;
-    if (typeof valor === 'string') {
-      const sinFormato = valor.replace(/[^\d,.-]/g, '').replace(',', '');
-      this.formItCob.controls['importe'].setValue(sinFormato, { emitEvent: false });
-    }
-  }
+ 
 }
 
   

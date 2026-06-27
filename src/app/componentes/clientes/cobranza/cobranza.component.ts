@@ -14,7 +14,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { finalize, forkJoin, Observable, Subscription } from 'rxjs';
 import { clienteDTO } from '../../../../entidades/clienteDTO';
-import { intCobranza } from '../../../../entidades/cobroDTO';
+import { cobroComp, intCobranza } from '../../../../entidades/cobroDTO';
 
 import { dcobroDTO } from '../../../../entidades/cobroDTO';
 import { MatTableModule } from '@angular/material/table';
@@ -32,6 +32,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UtilService } from '../../../services/util.service';
 import { ingresoDTO } from '../../../../entidades/ingresoDTO';
+import { cuentaB } from '../../../../entidades/cuentaB';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -80,6 +81,7 @@ export class CobranzaComponent {
   public  cdetcobaux         : dcobroDTO[]=[];
   public  cclientes          : clienteDTO[]=[];
   public  cingcli            : ingresoDTO[]=[];
+  public  ccuentas           : cuentaB[]=[];
   public  totcobro           : number = 0;
   public  cobro              : cobroDTO;
   cobpalta                   : number;
@@ -92,6 +94,8 @@ export class CobranzaComponent {
   private grabada            : number = 0;
   private fechaFormateada    : string;
   filas                      : any;
+  totalventa                 : number; //para desplegar en html
+  restoventa                 : number;
   public  imprimeconcepto    : boolean = true;
  
 
@@ -127,13 +131,15 @@ export class CobranzaComponent {
       forkJoin({  
                      
           maxcob    :  this.servicio.getMaxCobranza(),          
-          clientes  : this.servicio.getClientes(), 
+          clientes  :  this.servicio.getClientes(), 
           ingxcli   :  this.servicio.getIngresosXCli(this.data.nrocliente),
+          ctasban   :  this.servicio.getCuentasB(),
    
          }).subscribe(res2 => {
             this.cobpalta =  res2.maxcob==undefined?1:res2.maxcob + 1,
             this.cclientes = res2.clientes,
-            this.cingcli   = res2.ingxcli
+            this.cingcli   = res2.ingxcli,
+            this.ccuentas  = res2.ctasban,
         
             this.operacion = "Agregar Cobro "+this.cobpalta+" al Cliente : "+this.data.nomcliente;
             this.prepararAlta(); 
@@ -176,11 +182,24 @@ export class CobranzaComponent {
    }
    onSelectionChangeVenta(event:any){
      this.ventaSel = event.value;
+     this.totalventa = this.cingcli[this.cingcli.findIndex(p=>p.idingre==this.ventaSel)].importe;
+     this.actualizarResto();
+   }
+
+   actualizarResto(){
+     var resto = this.totalventa;
+     for (let i=0;i<this.cdetcobro.length;i++){
+         resto -= this.cdetcobro[i].importe
+     }
+     this.restoventa = resto;
    }
 prepararAlta(){
   this.formCob.controls['nrocob'].setValue(this.cobpalta);
   this.formCob.controls['fecha'].setValue(this.hoy);
   this.formCob.controls['ncliente'].setValue(this.data.nomcliente);
+  this.formCob.controls['nroventa'].setValue(this.cingcli[0].idingre);
+  this.totalventa = this.cingcli[0].importe;
+  this.restoventa = this.cingcli[0].importe;
   console.log("fecha : "+format(this.formCob.controls['fecha'].value,"dd/MM/yyyy HH:mm"));
 }
 
@@ -192,7 +211,7 @@ prepararModificacion(){
  this.formCob.controls['ncliente'].setValue(this.cobro.nomcliente); 
  this.formCob.controls['nfactura'].setValue(this.cobro.nrofactura);
  this.formCob.controls['importe'].setValue(importe); 
-  this.formCob.controls['nroventa'].setValue(this.cingcli[inding].IdIngreso);  
+  this.formCob.controls['nroventa'].setValue(this.cingcli[inding].idingre);  
  this.formCob.controls['observ'].setValue(this.cobro.observaciones); 
  var fecloc : string  = this.cobro.fecha!.toLocaleDateString('es-AR');
  console.log("fecha : "+fecloc);
@@ -282,9 +301,12 @@ agItemCobro(){
     }       
  
    const dialogConfig = new MatDialogConfig();   
-   dialogConfig.autoFocus = false;
-   dialogConfig.data = datas;
-   dialogConfig.panelClass = "";
+    dialogConfig.autoFocus = false;
+     dialogConfig.data = datas;
+     dialogConfig.width =  '900';         // ancho máximo de la ventana
+     dialogConfig.maxWidth = '95vw';      
+     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+     dialogConfig.panelClass = 'custom-dialog-container';
    const dialogRef =  this.dialog.open(ItemcobroComponent, dialogConfig);
    dialogRef.afterClosed().subscribe( // 
       (data:any) => { if (data.accion === 'Alta'){        // Agregó un item  de cobro - agregarlo al detalle
@@ -303,7 +325,8 @@ agItemCobro(){
              comentario   : data.dcobro.comentario
         };      
         this.cdetcobro = [...this.cdetcobro, dcob]; // forzar la creacion del array para que detecte el cambio                           
-        this.totalizarCobro();                                                                
+        this.totalizarCobro();   
+        this.actualizarResto();                                                             
                     }
                     })
          
@@ -360,9 +383,12 @@ modificarItemCobranza(nrocob : number,nroit  : number){
   }       
  
   const dialogConfig = new MatDialogConfig();   
-  dialogConfig.autoFocus = false;
-  dialogConfig.data = datas;
-  dialogConfig.panelClass = "";
+   dialogConfig.autoFocus = false;
+   dialogConfig.data = datas;
+   dialogConfig.width =  '900';         // ancho máximo de la ventana
+   dialogConfig.maxWidth = '95vw';      
+   dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+   dialogConfig.panelClass = 'custom-dialog-container';
   const dialogRef =  this.dialog.open(ItemcobroComponent, dialogConfig);
            dialogRef.afterClosed().subscribe( // 
            (data:any) => { if (data.accion === 'Modi'){        // Agregó un item  de cobro     
@@ -381,6 +407,7 @@ modificarItemCobranza(nrocob : number,nroit  : number){
                            this.cdetcobro = [...this.cdetcobro]; // forzar la creacion del array para que detecte el cambio
 
                           this.totalizarCobro();
+                          this.actualizarResto();
                          }
                          })
 }
@@ -390,25 +417,25 @@ totalizarCobro(){
   for (let i=0;i<this.cdetcobro.length;i++){
     this.totcobro += this.cdetcobro[i].importe
   }
-  var importe = this.currencyPipe.transform(this.totcobro, '$', 'symbol', '1.2-2', 'es-AR');
-  this.formCob.controls['importe'].setValue(importe)
+  //var importe = this.currencyPipe.transform(this.totcobro, '$', 'symbol', '1.2-2', 'es-AR');
+  this.formCob.controls['importe'].setValue(this.totcobro)
   
 }
 
 
 
 
-GrabarCobro() {
-   var grabo : boolean  = false;
-   var impo = this.formCob.controls['importe'].value.replaceAll('$','').replaceAll('.', '').replaceAll(',','.');
+/*GrabarCobro() {
+  
+   var grabo : boolean  = false;  
       this.cobro = {
         idCobro         : this.formCob.controls['nrocob'].value,
         fecha           : this.formCob.controls['fecha'].value,
         idCliente       : this.data.nrocliente,
         nomcliente      : this.data.nomcliente,
         nrofactura      : this.formCob.controls['nfactura'].value,
-        nroventa        : this.formCob.controls['nrolab'].value,           
-        importe         : Number(impo),
+        nroventa        : this.formCob.controls['nroventa'].value,           
+        importe         : this.formCob.controls['importe'].value,
         observaciones   : this.formCob.controls['observ'].value
       };
       var resu : number;
@@ -419,6 +446,7 @@ GrabarCobro() {
                                         ") se ha agregado con éxito",'Aceptar','mensaje',500);     
            grabo  = true;
            this.grabada = 1; 
+           
            subs.unsubscribe();
            const observables = this.cdetcobro.map(item => {
                const itcobro: dcobroDTO = {    
@@ -448,7 +476,41 @@ GrabarCobro() {
          .subscribe((datas:any):void =>{
               resu = datas
       })
-  }
+  }*/
+  GrabarCobro(){
+    // prepara datos (Cabecera y Detalle de Cobro) para enviar al Back que hace todo
+    // de forma transaccional
+    var grabo : boolean  = false;  
+    
+    var cobro : cobroDTO = {
+        idCobro         : this.formCob.controls['nrocob'].value,
+        fecha           : this.formCob.controls['fecha'].value,
+        idCliente       : this.data.nrocliente,
+        nomcliente      : this.data.nomcliente,
+        nrofactura      : this.formCob.controls['nfactura'].value,
+        nroventa        : this.formCob.controls['nroventa'].value,           
+        importe         : this.formCob.controls['importe'].value,
+        observaciones   : this.formCob.controls['observ'].value
+      };
+    var cobroComp : cobroComp = { 
+      cabcob : cobro,
+      detcob : this.cdetcobro
+    };
+      
+    var subs : Subscription;
+    var resu = "";
+    subs = this.servicio.agregarCobro(cobroComp)
+         .pipe(finalize(() => {        
+           this.notiService.showNotification("La Cobranza Nro : "+this.cobro.idCobro+" del cliente "+this.cobro.nomcliente+"("+resu+
+                                        ") se ha agregado con éxito",'Aceptar','mensaje',500);     
+           grabo  = true;
+           this.grabada = 1;            
+           subs.unsubscribe();
+         }))
+        .subscribe((datas:any):void =>{
+              resu = datas
+     })
+  } 
   generarReciboPDF() : void {
                
     const doc = new jsPDF('p','mm','A4');

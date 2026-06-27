@@ -1,6 +1,6 @@
 export interface ingresoDTO {
    
-  IdIngreso       : number;
+  idingre         : number;
   fecha           : Date;
   idcliente       : number;
   ncliente        : string;

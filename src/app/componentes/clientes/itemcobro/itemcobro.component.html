@@ -1,84 +1,94 @@
-<div class="container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
     <h4 mat-dialog-title >{{operacion}}</h4>  
-      <form [formGroup]="formItCob" >        
-         <div class="row mt-1" >
-          <div class="col-auto">
+      <form [formGroup]="formItCob" class="p-3" >        
+         <div class="row g-3 mb-3">
+          <div class="col-3">
             <mat-form-field class="w-100" appearance="fill"> 
               <mat-label>Nro.Cobro</mat-label>
               <input matInput [readonly]="true" formControlName="nrocob" style="text-align: center;">	
              </mat-form-field>      
           </div>  
-          <div class="col-auto">
+          <div class="col-2">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Nro.Item</mat-label>
               <input matInput [readonly]="true" formControlName="nroitem" style="text-align: center;">	
              </mat-form-field>      
           </div>  
 
-          <div class="col-auto">
+          <div class="col-4">
             <mat-form-field   class="w-100" appearance="fill">
               <mat-label>Medio de Pago</mat-label>
               <mat-select formControlName="nmpago"    
                   (selectionChange)="onSelectionChangeMedioPago($event)">      
-                  <mat-option *ngFor="let mpag of this.cmpago; let i = index" [value]="i">
-                    {{ mpag.mediodepago }}
+                  <mat-option *ngFor="let mpag of this.cmpago; let i = index" [value]="mpag.mediopago">
+                    {{ mpag.mediopago }}
                   </mat-option>            
               </mat-select>
             </mat-form-field>
           </div>      
-          <div class="col-auto">
+          <div class="col-3">
             <mat-form-field class="w-100" appearance="fill"> 
                 <input matInput [matDatepicker]="picker" 
                 (dateChange)="onFechaChange($event)"
                  placeholder = "Elija una fecha" formControlName="fecha" > 
                 <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
                 <mat-datepicker #picker> </mat-datepicker>  
+                <mat-hint>{{ formItCob.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
             </mat-form-field >
           </div>
         </div>   
-        <div class="row">
+         <div class="row g-3 mb-3">
           
-          <div class="col-auto">
+          <div class="col-4">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Nro.Medio de Pago</mat-label>
               <input matInput formControlName="nrompago" style="text-align: left;">	
              </mat-form-field>      
           </div>
-          <div class="col-auto">
+          <div class="col-4">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Banco</mat-label>
               <input matInput formControlName="banco" style="text-align: left;">	
              </mat-form-field>      
           </div>
-          <div class="col-auto">
+          <div class="col-4">
             <mat-form-field class="w-100" appearance="fill"> 
                 <input matInput [matDatepicker]="picker1"  
                  (dateChange)="onFechaVtoChange($event)"
                  placeholder = "Elija una fecha" formControlName="fecvto" > 
                 <mat-datepicker-toggle  matSuffix [for]="picker1" > </mat-datepicker-toggle> 
                 <mat-datepicker #picker1> </mat-datepicker>  
+                <mat-hint>Fecha de vencimiento</mat-hint> 
             </mat-form-field >
           </div>
         </div>                   
-      <div class="row">                             
-        <div class="col-auto">
+       <div class="row g-3 mb-3">                           
+        <div class="col-3">
           <mat-form-field class="w-100" appearance="fill">
             <mat-label>Importe</mat-label>                
-            <input matInput  appImporte formControlName="importe" style="text-align: right;"	   
-               [value]="formItCob.controls['importe'].value"
+            <input matInput  appImporte formControlName="importe" style="text-align: right;"	                  
                 >        
            </mat-form-field>        
        </div>  
-       <div class="col-auto">
+       <div class="col-5">
               <mat-form-field style="width:350px;"  appearance="fill">
                 <mat-label>Observaciones</mat-label>
                 <input matInput formControlName="coment">	
                </mat-form-field> 
        </div>     
-      </div>    
-      
-      <div class="row">
-            <div class="botonera">           
+       <div class="col-4">
+           <mat-form-field   class="w-100" appearance="fill">
+              <mat-label>Cuenta Destino del medio de pago</mat-label>
+              <mat-select formControlName="ctadest"    
+                  (selectionChange)="onSelectionChangeCtasDest($event)">      
+                  <mat-option *ngFor="let cdest of this.cctasb; let i = index" [value]="cdest.idCuenta">
+                    {{ cdest.banco+" - "+cdest.periodo+" - "+cdest.titular }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+       </div>     
+      </div>         
+     <div class="botonera">           
                 <button class="btn btn-sm btn-outline-primary me-5" 
                          [disabled]="formItCob.invalid || data.accion!='A'" 
                          (click)="GrabarItCobro()">Agregar Cobro</button>                                
@@ -87,7 +97,7 @@
                          (click)="ModificarItCobro()">Modificar Cobro</button>  
                 <button class="btn btn-sm btn-outline-secondary"                
                          (click)="Anular()">Cancelar</button>                       
-            </div>  
-      </div>
+      </div>  
+      
   </form>
 </div>

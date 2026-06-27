@@ -14,6 +14,11 @@ export interface cobrosDTO {
     cobros : cobroDTO[];
 }
 
+export interface cobroComp {
+        cabcob     : cobroDTO;
+        detcob     : dcobroDTO[];
+}
+
 export interface infoDetCob {
    
    idCobro       : number;
