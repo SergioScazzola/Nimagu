@@ -11,6 +11,7 @@ import { DetcuentaComponent } from './componentes/cuentasb/detcuenta/detcuenta.c
 import { ClientesComponent } from './componentes/clientes/clientes.component';
 
 import { ProveedoresComponent } from './componentes/proveedores/proveedores';
+import { CtacteComponent } from './componentes/clientes/ctacte/ctacte.component';
 
 export const routes: Routes = [
   // Rutas para invitados (no autenticados)
@@ -34,6 +35,7 @@ export const routes: Routes = [
     
            
       { path: 'clientes/:filtro', component: ClientesComponent },
+      { path: 'clientes/:nrocliente/:nomcliente/:filtro/ctactec',component: CtacteComponent},      
       { path: 'cuentas/:idcuenta/:filtro/detcuenta', component: DetcuentaComponent },
       { path: 'cuentas/:filtro', component: CuentasbComponent },     
       { path: 'bancos',component: CuentasbComponent},     

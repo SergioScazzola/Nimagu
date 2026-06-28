@@ -64,7 +64,8 @@ operacion       : string;
 formItCob       : FormGroup;
 cmpago          : medioPago[]=[];
 cctasb          : cuentaB[]=[];
-mpagoSel        : number;
+mpagoSel        : string; // nombre del medio de pago seleccionado
+ctadSel         : number; // cuenta destino seleccionada
 hoy             : Date = new Date;
 importeformat   : string = "";
 itcobro         : dcobroDTO;
@@ -136,7 +137,8 @@ itcobro         : dcobroDTO;
     this.formItCob.controls['nroitem'].setValue(this.data.nroitem);
     this.formItCob.controls['fecha'].setValue(this.hoy);
     this.formItCob.controls['fecvto'].setValue(this.hoy);        
-    this.mpagoSel = 0;
+    this.mpagoSel = this.cmpago[0].mediopago;
+    this.ctadSel  = this.cctasb[0].idCuenta;
     this.formItCob.controls['nmpago'].setValue(this.cmpago[0].mediopago);     
     this.formItCob.controls['ctadest'].setValue(this.cctasb[0].idCuenta);            
   }
@@ -150,11 +152,12 @@ itcobro         : dcobroDTO;
     this.formItCob.controls['nrompago'].setValue(this.data.dcobro.nrompago);       
     this.formItCob.controls['banco'].setValue(this.data.dcobro.banco);       
     this.formItCob.controls['fecvto'].setValue(this.data.dcobro.fecvto);        
-    this.mpagoSel = indmp; 
+    
     this.formItCob.controls['importe'].setValue(this.data.dcobro.importe);       
     this.formItCob.controls['ctadest'].setValue(this.data.dcobro.ctadest);       
     this.formItCob.controls['coment'].setValue(this.data.dcobro.comentario);       
-        
+    this.ctadSel = this.data.dcobro.ctadest;
+    this.mpagoSel = this.data.dcobro.nmpago;
   }
   onSelectionChangeMedioPago(event : any){
     this.mpagoSel = event.value;
@@ -162,7 +165,7 @@ itcobro         : dcobroDTO;
    
   }
   onSelectionChangeCtasDest(event : any){
-    this.mpagoSel = event.value;
+    this.ctadSel = event.value;  // id de cuenta bancaria seleccionada
     console.log("mpagoSel : "+this.mpagoSel);
    
   }
@@ -178,7 +181,7 @@ itcobro         : dcobroDTO;
       banco     : this.formItCob.controls['banco'].value,
       fecvto    : this.formItCob.controls['fecvto'].value,
       importe   : this.formItCob.controls['importe'].value,
-      ctadest   : this.formItCob.controls['ctadest'].value,
+      ctadest   : 0,     
       comentario: this.formItCob.controls['coment'].value,   
     }
     this.data.dcobro.idCobro    = itcob.idCobro;
@@ -190,6 +193,7 @@ itcobro         : dcobroDTO;
     this.data.dcobro.banco      = itcob.banco;
     this.data.dcobro.fecvto     = itcob.fecvto;
     this.data.dcobro.importe    = itcob.importe;
+    this.data.dcobro.ctadest    = itcob.ctadest;
     this.data.dcobro.comentario = itcob.comentario;
     this.data.accion = "Alta"; 
     console.log("IT.Cobro : "+JSON.stringify(itcob));
@@ -201,16 +205,15 @@ itcobro         : dcobroDTO;
    
     var itcob   : dcobroDTO = {
       idCobro   : this.formItCob.controls['nrocob'].value,
-      nroitem   : this.formItCob.controls['nroitem'].value,
-      idmpago   : this.mpagoSel,
+      nroitem   : this.formItCob.controls['nroitem'].value,  
+      idmpago   : 0,   
       nmpago    : this.formItCob.controls['nmpago'].value,
       fecha     : this.formItCob.controls['fecha'].value,
       nrompago  : this.formItCob.controls['nrompago'].value,
       banco     : this.formItCob.controls['banco'].value,
-      fecvto    : this.formItCob.controls['fecvto'].value,
-     
+      fecvto    : this.formItCob.controls['fecvto'].value,     
       importe   : this.formItCob.controls['importe'].value,
-      ctadest   : this.formItCob.controls['ctadest'].value,
+      ctadest   : 0,
       comentario: this.formItCob.controls['coment'].value,   
     }
     

@@ -15,21 +15,22 @@ import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { es } from 'date-fns/locale';
 import { saldoCliDTO } from '../../../../entidades/saldoCliDTO';
 import { finalize, Subscription } from 'rxjs';
+import { ImporteDirective } from "../../../Directivas/importeDirective";
 
 
 @Component({
   selector: 'app-saldocli',
   standalone: true,
   imports: [MatFormField,
-                  MatLabel,         
-                  MatInputModule,
-                  ReactiveFormsModule,      
-                  MatDatepickerModule,
-                  MatNativeDateModule,    
-                  MatIconModule,            
-                  CommonModule,
-                  DragDropModule,
-                  FormsModule,],
+    MatLabel,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+    CommonModule,
+    DragDropModule,
+    FormsModule, ImporteDirective],
   providers : [
     CurrencyPipe,
     DatePipe,
@@ -143,36 +144,29 @@ ngOnInit(){
   GrabarSaldo(){
      var fecc = this.formSal.controls['fecha'].value as Date;
     if (this.verifFechaSaldo(fecc)){
-    var esnum : boolean;
-     var valorsaldo = this.formSal.controls['saldo'].value;
-     if (typeof valorsaldo==="string"){
-        esnum = false;
-    } else {
-      esnum = true;
-    }
-    var saldo : saldoCliDTO = {
-        idCliente : this.formSal.controls['nrocli'].value,
-        nrosaldo  : this.formSal.controls['nrosaldo'].value,
-        fecha     : this.formSal.controls['fecha'].value,
-        saldo     : esnum?this.formSal.controls['saldo'].value:
-                Number(this.formSal.controls['saldo'].value.replaceAll('$','').replaceAll(',', '')),
-    }
    
-    var subs : Subscription;
-    var resu : number;
+       var saldo : saldoCliDTO = {
+          idCliente : this.formSal.controls['nrocli'].value,
+          nrosaldo  : this.formSal.controls['nrosaldo'].value,
+          fecha     : this.formSal.controls['fecha'].value,
+          saldo     : this.formSal.controls['saldo'].value             
+       }
    
-    subs = this.servicio.AgregarSaldoCliente(saldo)
-      .pipe(finalize(() => {        
-          this.notiService.showNotification("El Saldo nro.: "+this.data.nrosaldo+" del cliente "+
+       var subs : Subscription;
+       var resu : number;
+       console.log("Saldooo : "+JSON.stringify(saldo));
+       subs = this.servicio.AgregarSaldoCliente(saldo)
+         .pipe(finalize(() => {        
+            this.notiService.showNotification("El Saldo nro.: "+this.data.nrosaldo+" del cliente "+
                                              this.data.nomcli+"("+resu+
                                             ") se ha agregado con éxito",'Aceptar','mensaje',500);   
-          this.dialogRef.close({ clicked : "Alta"});                                       
-          subs.unsubscribe;
-      }))
-      .subscribe((datas:any):void =>{
-          resu = datas
-       }) 
-      }
+            this.dialogRef.close({ clicked : "Alta"});                                       
+            subs.unsubscribe();
+          }))
+        .subscribe((datas:any):void =>{
+           resu = datas
+        }) 
+    }
   }
 
    ModificarSaldo(){

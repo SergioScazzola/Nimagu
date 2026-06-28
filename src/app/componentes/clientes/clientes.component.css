@@ -156,7 +156,8 @@
 .mat-column-M,
  .mat-column-B,
   .mat-column-IN,
-  .mat-column-COB{
+  .mat-column-COB,
+  .mat-column-CC {
   width: 50px !important;
   min-width: 50px !important;
   max-width: 50px !important;

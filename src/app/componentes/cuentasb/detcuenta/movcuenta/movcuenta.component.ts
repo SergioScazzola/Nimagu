@@ -6,7 +6,7 @@ import { ServiciosService } from '../../../../services/servicios.service';
 import { NotiserviceService } from '../../../../services/notiservice.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
 
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, DatePipe,CurrencyPipe } from '@angular/common';
 import { MatFormField, MatInputModule, MatLabel } from '@angular/material/input';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -17,6 +17,10 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '
 import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 import {es} from 'date-fns/locale';
 import { intMovCtab, movcta } from '../../../../../entidades/movcta';
+import { clienteDTO } from '../../../../../entidades/clienteDTO';
+import { ingresoDTO } from '../../../../../entidades/ingresoDTO';
+import { dcobroDTO } from '../../../../../entidades/cobroDTO';
+import { dcobxcli } from '../../../../../entidades/dcobxcli';
 
 export const DATE_FORMATS : MatDateFormats = {
   
@@ -32,6 +36,7 @@ export const DATE_FORMATS : MatDateFormats = {
 
 @Component({
   selector: 'app-movcuenta',
+  standalone: true,
   imports: [MatFormField,
     MatLabel,
     MatInputModule,
@@ -43,6 +48,7 @@ export const DATE_FORMATS : MatDateFormats = {
     FormsModule,
     ImporteDirective],
    providers : [
+    DatePipe,
     CurrencyPipe,
     { provide : DateAdapter, useClass: DateFnsAdapter },
     { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
@@ -56,6 +62,15 @@ export class MovcuentaComponent {
   public nameInput = viewChild<ElementRef>('inputFocus');
   formMov             : FormGroup;
   operacion           : string = "";
+  cclientes           : clienteDTO[]=[];
+  cventas             : ingresoDTO[]=[];
+  dcobros             : dcobroDTO[]=[];
+  fechi               : string;
+  fechf               : string;
+  cliSel              : number;
+  vtaSel              : number;
+  cobroSel            : number;
+  itcobroSel          : number;
   resumod             : string;
   nctaalta            : number;
   maxcuenta           : number;
@@ -70,6 +85,7 @@ export class MovcuentaComponent {
   
   constructor(  public fb           : FormBuilder,
                 public servicio     : ServiciosService,
+                public datepipe     : DatePipe,
                 public dialogRef    : MatDialogRef<MovcuentaComponent>,
                 private cdr         : ChangeDetectorRef,
                 private zone        : NgZone,
@@ -83,40 +99,57 @@ export class MovcuentaComponent {
  
   ngOnInit(){
      this.initFormulario();
-    
-     if (this.data.accion=="M"){ 
-        // MODIFICAR MOVIMIENTO
-        var subs2 : Subscription;            
-        subs2 = this.servicio.leerMovCuentaB(this.data.idCuenta,this.data.nromov)
-                  .subscribe((data:any):void =>{                           
-                    this.movctab = data;
-                    this.operacion = "Modificar Movimiento - "+data.nromov+" - "+
-                                     this.data.titular+" - Banco : "+this.data.banco;
-                    this.actualizarControles();
-                    this.isloading = false;
-                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
-                  })
-                 
-            } else {
-              if (this.data.accion=="A"){
-                // AGREGAR MOVIMIENTO            
-                this.mostrarHora();     
-                this.operacion = "Agregar Movimiento - "+this.data.nromov+" - "+
-                                  this.data.titular+" - Banco : "+this.data.banco;;
-                this.formMov.controls["nromov"].setValue(this.data.nromov);
-                this.isloading = false;
-                this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+     this.generarRangoFechas();  
+    if (this.data.accion=="A"){
+        forkJoin({
+            clientes : this.servicio.getClientes()
+           }).subscribe(res => {   
+            this.cclientes  = res.clientes;
+            
+            // AGREGAR MOVIMIENTO    
+            this.mostrarHora();   
+            var subs : Subscription;
+            console.log("Datos de la API:", JSON.stringify(this.cclientes, null, 2));
+            this.cliSel = this.cclientes[0].idCliente;
+            subs = this.servicio.getIngresosXCli(this.cliSel)
+               .pipe(finalize(() => {   
+                 subs.unsubscribe();
+                 this.vtaSel   = this.cventas[0].idingre;
+                 this.cobroSel = this.cventas[0].idcobro;
+                 console.log("VENTAS:", JSON.stringify(this.cventas, null, 2));
+                 var subs1 : Subscription;
+                 subs1 = this.servicio.getDetalleCobro(this.cobroSel)
+                    .pipe(finalize(()=> {                     
+                      console.log("DCOBRO:", JSON.stringify(this.dcobros, null, 2));
+                      this.itcobroSel = this.dcobros[0].nroitem;
+                      this.operacion = "Agregar Movimiento - "+this.data.nromov+" - "+
+                              this.data.titular+" - Banco : "+this.data.banco;
+                      this.actualizarParaAlta();                              
+                      this.isloading = false;
+                      this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+                    }))
+                   .subscribe((data : any): void => { this.dcobros = data });  
+                                               
+                }))                  
+           .subscribe((data : any): void => { this.cventas = data });  
+            
+
+          
               
-              }
-            }
+          })
+          
                                                          
    }
+  }
    initFormulario(){
 
      this.formMov = this.fb.group({       
-        nromov      : [''],
-        fechamov    : [new Date(),[Validators.required,this.validarFecha]],
-        ingegre     : ['IN'],
+        nromov      : [''],   
+        fechamov    : [''],
+        ingegre     : ['IN'],    
+        clte        : [''],
+        venta       : [''],
+        dcobro      : [''],
         tipocomp    : [''],
         comprob     : [''],
         concepto    : [''],
@@ -125,7 +158,27 @@ export class MovcuentaComponent {
       
       })
     }
-    actualizarControles(){
+
+    actualizarParaAlta(){
+      this.formMov.controls["nromov"].setValue(this.data.nromov);
+      // tomar la seleccion inicial en los array
+      this.formMov.controls["clte"].setValue(this.cliSel);
+      this.formMov.controls["venta"].setValue(this.vtaSel);
+      this.formMov.controls["dcobro"].setValue(1);
+
+      this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
+      this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
+      this.formMov.controls["comprob"].setValue(this.dcobros[0].nrompago);
+      this.formMov.controls["concepto"].setValue(this.cclientes[0].nombre);
+      this.formMov.controls["importe"].setValue(this.dcobros[0].importe);
+      this.formMov.controls["coment"].setValue(this.cventas[0].cantidad+" "+
+                                               this.cventas[0].categoria+" "+
+                                               this.cventas[0].importe);
+
+
+
+    }
+   /* actualizarControles(){
     // Actualiza controles para modificar
                                   
        this.formMov.controls["nromov"].setValue(this.data.nromov);
@@ -137,7 +190,7 @@ export class MovcuentaComponent {
        this.formMov.controls["importe"].setValue(this.movctab.importe);
        this.formMov.controls["coment"].setValue(this.movctab.coment);
       
-   }
+   }*/
 
    AgregarMovimiento(){
 
@@ -161,8 +214,15 @@ export class MovcuentaComponent {
              console.log("Error : "+resu);
              this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" Cta : "+movctaban.idCuenta+" - Banco : "+
                                         this.data.banco+" - "+this.data.titular+" se ha agregado con éxito",'Aceptar','mensaje',500); 
+                                                         
                 subscri.unsubscribe();
-                this.dialogRef.close({ clicked : "Alta"})
+                var subs : Subscription;
+                subs = this.servicio.updateCtaDestino(movctaban.idCuenta,movctaban.nromov,this.data.idCuenta)
+                   .pipe(finalize(() => {  
+                       this.notiService.showNotification("Item actualizado con Cuenta destino",'Aceptar','mensaje',500); 
+                       this.dialogRef.close({ clicked : "Alta"})
+                    }))
+                   .subscribe((data : any): void => { resu = data });             
                 }))                  
            .subscribe((data : any): void => { resu = data });   
     }
@@ -247,9 +307,97 @@ validarFecha = (control: AbstractControl): ValidationErrors | null => {
     : null;
 };
 
-onSelectionInEg($event : any)
+onSelectionclte(event : any)
 {
- 
+  // cambio el cliente, volver a leer ingresos y el detalle del 1er cobro
+ var nrocli = event.value;
+ this.cliSel = nrocli;
+ var indcli  = this.cclientes.findIndex(p=>p.idCliente==nrocli);
+ var subs : Subscription;
+ this.cventas = [];
+ subs = this.servicio.getIngresosXCli(nrocli) // sólo ventas cobradas
+     .pipe(finalize(() => {      
+          if (this.cventas!=undefined && this.cventas.length>0){
+             this.vtaSel =this.cventas[0].idingre;
+             this.formMov.controls["venta"].setValue(this.vtaSel);
+             this.cobroSel = this.cventas[0].idcobro;
+             var subs1 : Subscription;
+             subs1 = this.servicio.getDetalleCobro(this.cobroSel)
+                .pipe(finalize(()=> {                     
+                   this.itcobroSel = this.dcobros[0].nroitem;                                   
+                   this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
+                   this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
+                   this.formMov.controls["comprob"].setValue(this.dcobros[0].nrompago);
+                   this.formMov.controls["concepto"].setValue(this.cclientes[indcli].nombre);
+                   this.formMov.controls["importe"].setValue(this.dcobros[0].importe);
+                   this.formMov.controls["coment"].setValue(this.cventas[0].cantidad+" "+
+                                               this.cventas[0].categoria+" "+
+                                               this.cventas[0].importe);                           
+                   this.isloading = false;
+                   this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+                 }))
+                 .subscribe((data : any): void => { this.dcobros = data });   
+
+          } else {
+             this.notiService.showNotification("El Cliente NO tiene ventas cobradas para transferir a la cuenta, "+
+                                        "ingrese el/los cobros y reintente",'Aceptar','mensaje',500);             
+          }
+
+          }))
+                                                 
+         .subscribe((data:any):void => {
+              this.cventas = data;
+         })
+ }
+
+ onSelectionVenta(event : any)
+{
+ var nroventa = event.value;
+
+ var indventa = this.cventas.findIndex(p=>p.idingre==nroventa);
+ var cobro    = this.cventas[indventa].idcobro;
+ this.cobroSel = cobro;
+ var subs : Subscription;
+ subs = this.servicio.getDetalleCobro(cobro)
+     .pipe(finalize(() => {                
+        this.itcobroSel = this.dcobros[0].nroitem;                                   
+        this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
+        this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
+        this.formMov.controls["comprob"].setValue(this.dcobros[0].nrompago);
+        this.formMov.controls["importe"].setValue(this.dcobros[0].importe);
+        this.formMov.controls["coment"].setValue(this.cventas[indventa].cantidad+" "+
+                                                 this.cventas[indventa].categoria+" "+
+                                                 this.cventas[indventa].importe);                           
+                   this.isloading = false;
+                   this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+          subs.unsubscribe()         
+         }))
+         .subscribe((data:any):void => {
+              this.dcobros = data;
+         })
+ }
+
+ onSelectiondCobro(event : any)
+{
+ var nroit = event.value;
+ this.itcobroSel = nroit;
+ var inditcob = this.dcobros.findIndex(p=>p.nroitem==nroit);
+ this.formMov.controls["fechamov"].setValue(this.dcobros[inditcob].fecvto);
+ this.formMov.controls["tipocomp"].setValue(this.dcobros[inditcob].nmpago);
+ this.formMov.controls["comprob"].setValue(this.dcobros[inditcob].nrompago);
+ this.formMov.controls["importe"].setValue(this.dcobros[inditcob].importe);
+ this.isloading = false;
+ this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+ }
+
+generarRangoFechas(){
+  var anioi = Number(this.data.periodo.slice(0,4));
+  var feci = new Date(anioi,6,1); // 1 de julio del anio inicial
+  var aniof = Number(this.data.periodo.slice(6,4));
+  var fecf = new Date(aniof,6,1); // 1 de julio del anio inicial
+  
+  this.fechi = this.datepipe.transform(feci, 'yyyy-MM-dd')+"T01:00";
+  this.fechf = this.datepipe.transform(fecf, 'yyyy-MM-dd')+"T23:59";
 }
 
 Anular(){

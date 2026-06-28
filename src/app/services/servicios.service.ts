@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -17,7 +17,7 @@ import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
 import { cobroComp, cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
 import { medioPago } from '../../entidades/medioPago';
-import { Dcobxcli } from '../../entidades/Dcobxcli';
+import { dcobxcli } from '../../entidades/dcobxcli'
 import { categoria } from '../../entidades/categoria';
 import { procedencia } from '../../entidades/procedencia';
 
@@ -255,7 +255,7 @@ public updateCobro( cobro : cobroDTO) {
 }
 
 public getCobrosxCliyF(idcliente : number, feci : String, fecf : String){
- return this.http.get<Dcobxcli[]>(this.apiUrl + `cobranza/detCobXCli=`+idcliente+`&feci=`+
+ return this.http.get<dcobxcli[]>(this.apiUrl + `cobranza/detCobXCli?idcliente=`+idcliente+`&feci=`+
                                   feci+`&fecf=`+fecf);
 }
 /*@PostMapping(value="/detalle/nuevo") */
@@ -267,8 +267,23 @@ public updateItemCobranza(itcobro : dcobroDTO) {
     return this.http.put<dcobroDTO>(environment.apiUrl + `cobranza/detalle/actualizar`,itcobro);
 }
 
+
+public updateCtaDestino(idcobro:number,nroit : number,ctad : number){
+    const params = new HttpParams()
+    .set('idcobro', idcobro.toString())
+    .set('nroitem', nroit.toString())
+    .set('ctad', ctad.toString());
+
+  // 2. Hacer la petición PUT. El segundo parámetro es el BODY (va vacío)
+  // y el tercero son las opciones donde pasamos los params.
+  return this.http.put<number>(
+    `${environment.apiUrl}cobranza/detalle/actctad`, 
+    null, 
+    { params }
+  );
+}
 public getDetalleCobro(idcob:Number) {
-    return this.http.get<dcobroDTO[]>(this.apiUrl + `cobranza/detalle=`+idcob);
+    return this.http.get<dcobroDTO[]>(this.apiUrl + `cobranza/detalle?idcobro=`+idcob);
 }
 public getMediosPago() {
     return this.http.get<medioPago[]>(this.apiUrl + `ingreso/mediospago`);

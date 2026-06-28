@@ -425,58 +425,7 @@ totalizarCobro(){
 
 
 
-/*GrabarCobro() {
-  
-   var grabo : boolean  = false;  
-      this.cobro = {
-        idCobro         : this.formCob.controls['nrocob'].value,
-        fecha           : this.formCob.controls['fecha'].value,
-        idCliente       : this.data.nrocliente,
-        nomcliente      : this.data.nomcliente,
-        nrofactura      : this.formCob.controls['nfactura'].value,
-        nroventa        : this.formCob.controls['nroventa'].value,           
-        importe         : this.formCob.controls['importe'].value,
-        observaciones   : this.formCob.controls['observ'].value
-      };
-      var resu : number;
-      var subs : Subscription;  
-      subs = this.servicio.agregarCobro(this.cobro)
-         .pipe(finalize(() => {        
-           this.notiService.showNotification("La Cobranza Nro : "+this.cobro.idCobro+" del cliente "+this.cobro.nomcliente+"("+resu+
-                                        ") se ha agregado con éxito",'Aceptar','mensaje',500);     
-           grabo  = true;
-           this.grabada = 1; 
-           
-           subs.unsubscribe();
-           const observables = this.cdetcobro.map(item => {
-               const itcobro: dcobroDTO = {    
-                  idCobro    : item.idCobro,
-                  nroitem    : item.nroitem,
-                  idmpago    : item.idmpago,
-                  nmpago     : item.nmpago,
-                  fecha      : item.fecha,
-                  nrompago   : item.nrompago,
-                  banco      : item.banco,
-                  fecvto     : item.fecvto,
-                  importe    : item.importe,  
-                  ctadest    : item.ctadest,     
-                  comentario : item.comentario
-               };
-            return this.servicio.agregarItemCobro(itcobro)});
-            forkJoin(observables).subscribe({
-                next: (results) => {
-                  console.log('Todos los items grabados:', results);     
-                  this.dialogRef.close({ clicked : "Alta"}) // grabé un nuevo cobro
-                  }, 
-                error: (err) => {
-                  console.error('Error al grabar items:', err);
-                }
-            });
-          }))
-         .subscribe((datas:any):void =>{
-              resu = datas
-      })
-  }*/
+
   GrabarCobro(){
     // prepara datos (Cabecera y Detalle de Cobro) para enviar al Back que hace todo
     // de forma transaccional
@@ -496,16 +445,18 @@ totalizarCobro(){
       cabcob : cobro,
       detcob : this.cdetcobro
     };
-      
+    //console.log("Cobro Completo : "+JSON.stringify(cobroComp));  
     var subs : Subscription;
     var resu = "";
     subs = this.servicio.agregarCobro(cobroComp)
          .pipe(finalize(() => {        
-           this.notiService.showNotification("La Cobranza Nro : "+this.cobro.idCobro+" del cliente "+this.cobro.nomcliente+"("+resu+
+           this.dialogRef.close({ clicked : "Alta"})
+           /*this.notiService.showNotification("La Cobranza Nro : "+this.cobro.idCobro+" del cliente "+this.cobro.nomcliente+"("+resu+
                                         ") se ha agregado con éxito",'Aceptar','mensaje',500);     
            grabo  = true;
            this.grabada = 1;            
-           subs.unsubscribe();
+           subs.unsubscribe();*/
+          
          }))
         .subscribe((datas:any):void =>{
               resu = datas

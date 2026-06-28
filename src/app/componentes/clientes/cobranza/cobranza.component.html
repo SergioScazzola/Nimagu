@@ -34,30 +34,31 @@
                 <input matInput formControlName="nfactura">	
                </mat-form-field> 
           </div>   
-          <div class="col-4">
+           <div class="col-8">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Venta</mat-label>
+              <mat-select formControlName="nroventa"    
+                  (selectionChange)="onSelectionChangeVenta($event)">      
+                  <mat-option *ngFor="let ingre of this.cingcli; let i = index" [value]="ingre.idingre">
+                    {{ ingre.ncliente+" - "+ingre.cantidad+" "+ingre.categoria+" - "+(ingre.importe| number : "1.2-2")}}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>
+                                              
+        </div>    
+        <div class="row g-3 mb-3">
+           <div class="col-6">
+             <div>{{ "Total Venta : $ "+(this.totalventa|number : "1.2-2") }}</div>
+             <div>{{ "Restan          : $ "+(this.restoventa|number : "1.2-2") }}</div>
+           </div>                           
+           <div class="col-4">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Importe del Cobro</mat-label>                
               <input matInput [readonly]="true" formControlName="importe" style="text-align: right;"
                [value]="formCob.get('importe')?.value | currency:'$':true" 	>
              </mat-form-field>        
          </div>                  
-          <div class="col-4">
-            <mat-form-field class="w-100" appearance="fill">
-              <mat-label>Venta</mat-label>
-              <mat-select formControlName="nroventa"    
-                  (selectionChange)="onSelectionChangeVenta($event)">      
-                  <mat-option *ngFor="let ingre of this.cingcli; let i = index" [value]="ingre.idingre">
-                    {{ ingre.ncliente+" - "+ingre.categoria+" - "+(ingre.importe| number : "1.2-2")}}
-                  </mat-option>            
-              </mat-select>
-            </mat-form-field>
-          </div>                           
-        </div>    
-        <div class="row g-3 mb-3">
-           <div class="col-6">
-             <div>{{ "Total  : $ "+(this.totalventa|number : "1.2-2") }}</div>
-             <div>{{ "Restan : $ "+(this.restoventa|number : "1.2-2") }}</div>
-           </div>                           
         </div>  
         <div class="row g-3 mb-3">                             
          <div class="col-auto">
@@ -147,10 +148,10 @@
     <div class="row">
         <div class="botonera">           
             <button class="btn btn-sm btn-outline-primary me-5" 
-                     [disabled]="formCob.invalid || data.accion!='A' || this.totcobro==0" 
+                     [disabled]="formCob.invalid || data.accion!='A' || restoventa!= 0" 
                      (click)="GrabarCobro()">Agregar Cobro</button>                                
             <button class="btn btn-sm btn-outline-success me-5" 
-                     [disabled]="formCob.invalid || data.accion!='M'" 
+                     [disabled]="formCob.invalid || data.accion!='M' || restoventa!=0" 
                      (click)="ModificarCobro()">Modificar Cobro</button>  
             <button class="btn btn-sm btn-outline-info me-5" 
                      [disabled]="formCob.invalid || data.accion!='M'" 

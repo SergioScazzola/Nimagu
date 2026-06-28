@@ -40,7 +40,7 @@
            <div class="col-6">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Categoria</mat-label>
-              <mat-select formControlName="categoria de venta"    
+              <mat-select formControlName="categoria"    
                   (selectionChange)="onSelectionChangeCategoria($event)">      
                   <mat-option *ngFor="let cat of this.ccategorias; let i = index" [value]="cat.nombre">
                     {{ cat.nombre }}

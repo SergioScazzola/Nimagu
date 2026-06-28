@@ -63,30 +63,20 @@
           </div>
         </div>                   
        <div class="row g-3 mb-3">                           
-        <div class="col-3">
+        <div class="col-5">
           <mat-form-field class="w-100" appearance="fill">
             <mat-label>Importe</mat-label>                
             <input matInput  appImporte formControlName="importe" style="text-align: right;"	                  
                 >        
            </mat-form-field>        
        </div>  
-       <div class="col-5">
+       <div class="col-7">
               <mat-form-field style="width:350px;"  appearance="fill">
                 <mat-label>Observaciones</mat-label>
                 <input matInput formControlName="coment">	
                </mat-form-field> 
        </div>     
-       <div class="col-4">
-           <mat-form-field   class="w-100" appearance="fill">
-              <mat-label>Cuenta Destino del medio de pago</mat-label>
-              <mat-select formControlName="ctadest"    
-                  (selectionChange)="onSelectionChangeCtasDest($event)">      
-                  <mat-option *ngFor="let cdest of this.cctasb; let i = index" [value]="cdest.idCuenta">
-                    {{ cdest.banco+" - "+cdest.periodo+" - "+cdest.titular }}
-                  </mat-option>            
-              </mat-select>
-            </mat-form-field>
-       </div>     
+      
       </div>         
      <div class="botonera">           
                 <button class="btn btn-sm btn-outline-primary me-5" 

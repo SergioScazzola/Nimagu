@@ -68,7 +68,8 @@ cclientes       : clienteDTO[]=[];
 ccategorias     : categoria[]=[];
 cprocedencias   : procedencia[]=[];
 ventaa          : ingresoDTO;
-catSel          : number;
+catSel          : string;
+procSel         : string;
 cliSel          : number;
 hoy             : Date = new Date;
 importeformat   : string = "";
@@ -141,9 +142,11 @@ importeformat   : string = "";
 
    onSelectionChangeCategoria(event : any){
     this.catSel = event.value;     
+    this.formVta.controls['categoria'].setValue(this.catSel);
+
   }
-    onSelectionChangeProcedencia(event : any){
-      console.log("Procedencia : "+this.formVta.controls['proced'].value)
+    onSelectionChangeProcedencia(event : any){      
+      this.formVta.controls['proced'].setValue(this.procSel);
     }
   calcularImporte(){
      var totkilos = this.formVta.controls["tkilos"].value;

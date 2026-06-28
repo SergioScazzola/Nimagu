@@ -37,7 +37,7 @@ export class ClientesComponent {
   cantcli          : number;
   formcli          : boolean;
   climod           : number;
-  colClientes: string[] = ["idCliente" , "nombre", "telefono", "contacto","cuit","notas","M","B","IN","COB" ];
+  colClientes: string[] = ["idCliente" , "nombre", "telefono", "contacto","cuit","notas","M","B","IN","COB","CC" ];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -220,13 +220,18 @@ ngOnInit(){
      dialogConfig.height   = 'auto';        // altura se ajusta al contenido
      dialogConfig.panelClass = 'custom-dialog-container';
      dialogConfig.disableClose =  false; // opcional según necesidad
-      const dialogRef =  this.dialog.open(CobranzaComponent, dialogConfig);
-            dialogRef.afterClosed().subscribe( // 
+     const dialogRef =  this.dialog.open(CobranzaComponent, dialogConfig);
+     dialogRef.afterClosed().subscribe( // 
             (data:any) => { if (data.clicked === 'Alta'){        // Agregó un cobro           
                   this.notiServicio.showNotification("Cobro agregado con éxito ",'Aceptar','mensaje',500);                                            
                              }
                             })
 
+  }
+
+   cuentaCorriente(nrocliente : number,nomcliente : string){
+    var filter = this.inputRef.nativeElement.value;
+    this.router.navigate(['/clientes', nrocliente,nomcliente,filter,'ctactec']);
   }
 
   aplicarFiltro(valor : string)  {

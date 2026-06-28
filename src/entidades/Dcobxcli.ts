@@ -1,17 +1,17 @@
-export interface Dcobxcli {  
+export interface dcobxcli {  
      idCobro      : number;
      fechaCobro   : Date;
      idCliente    : number;
      nomcliente   : string;
      nrofactura   : string;
-     importeCobro : number;
+     importec     : number;
      nroitem      : number;
      nmpago       : string;
-     fechaDetalle : Date;
+     fechad       : Date;
      nrompago     : string;
      banco        : string;
      fecvto       : Date;
-     importeDetalle : number;
+     imported     : number;
      ctadest      : number;
      comentario   : string;
 }

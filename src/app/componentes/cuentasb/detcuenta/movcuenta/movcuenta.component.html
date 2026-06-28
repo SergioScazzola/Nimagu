@@ -16,56 +16,63 @@
           />
         </mat-form-field>
       </div>
-      <div class="col-4">
+     
+       <div class="col-10">
         <mat-form-field class="w-100" appearance="fill">
-            <input matInput #inputFocus [matDatepicker]="picker"  
-                  placeholder = "Elija una fecha" 
-                  (dateChange)="onFechaChange($event)"
-                  formControlName="fechamov" > 
-            <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
-            <mat-datepicker #picker> </mat-datepicker>  
-            <mat-hint>{{ formMov.controls['fechamov'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
-        </mat-form-field >
-      </div>
-       <div class="col-6">
-        <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Ingreso/Egreso</mat-label>
-          <mat-select  formControlName="ingegre"
-             (selectionChange)="onSelectionInEg($event)">
-               @for (item of this.ingeg; track item.id){
-                <mat-option [value]="item.id">                 
-                  {{ item.descripcion }}
+          <mat-label>Cliente</mat-label>
+          <mat-select  formControlName="clte"
+             [disabled]="this.cclientes.length==0"
+             (selectionChange)="onSelectionclte($event)">
+               @for (cli of this.cclientes; track cli.idCliente){
+                <mat-option [value]="cli.idCliente">                 
+                  {{ cli.nombre }}
                 </mat-option>
                 }
           </mat-select>
         </mat-form-field>
-      </div>  
+      </div>             
     </div>
+
     <!-- Segunda fila -->
     <div class="row g-3">
-      <div class="col-6">
-        <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Tipo Comprobante</mat-label>
-          <input
-            matInput            
-            formControlName="tipocomp"
-            style="text-align: left"
-          />
+      <div class="col-10">
+         <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Ventas</mat-label>
+          <mat-select  formControlName="venta"
+            [disabled]="this.cventas.length==0"
+             (selectionChange)="onSelectionVenta($event)">
+               @for (vta of this.cventas; track vta.idingre;let i = $index){
+                <mat-option [value]="vta.idingre">                 
+                  {{ vta.categoria+" - "+(vta.fecha| date : "dd/MM/yyyy")+" - "+vta.importe}}
+                </mat-option>
+                }
+          </mat-select>
         </mat-form-field>
       </div>
-        <div class="col-6">
-            <mat-form-field class="w-100" appearance="fill">
-            <mat-label>Nro. Comprobante</mat-label>
-            <input
-                matInput            
-                formControlName="comprob"
-                style="text-align: left"
-            />
-            </mat-form-field>
+      </div>
+      <!-- Tercera Fila -->
+       <div class="row g-3">
+        <div class="col-10">
+           <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Detalle del cobro</mat-label>
+          <mat-select  formControlName="dcobro"
+             [disabled]="this.dcobros.length==0"
+             (selectionChange)="onSelectiondCobro($event)">
+               @for (dcob of dcobros; track dcob.nroitem; let i = $index){
+                <mat-option [value]="dcob.nroitem">                 
+                  {{ dcob.nmpago+" "+
+                   dcob.nrompago+" Bco. "+
+                   dcob.banco+" Vto."+
+                   (dcob.fecvto | date : "dd/MM/yyyy")+" - "+
+                   (dcob.importe | number : "1.2-2")}}
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
         </div>      
     </div>
 
-    <!-- Tercera fila -->
+    <!-- Cuarta fila -->
     <div class="row g-3">
       <div class="col-md-8">
         <mat-form-field class="w-100" appearance="fill">
@@ -83,7 +90,7 @@
       </div>
     </div>
     
-    <!-- Cuarta fila -->
+    <!-- Quinta fila -->
     <div class="row g-3">
       <div class="col-10">
         <mat-form-field class="w-100" appearance="fill">
