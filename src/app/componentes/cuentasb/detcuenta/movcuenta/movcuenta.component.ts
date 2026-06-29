@@ -118,7 +118,7 @@ export class MovcuentaComponent {
                  this.cobroSel = this.cventas[0].idcobro;
                  console.log("VENTAS:", JSON.stringify(this.cventas, null, 2));
                  var subs1 : Subscription;
-                 subs1 = this.servicio.getDetalleCobro(this.cobroSel)
+                 subs1 = this.servicio.getDetalleCobro(this.cobroSel,0)
                     .pipe(finalize(()=> {                     
                       console.log("DCOBRO:", JSON.stringify(this.dcobros, null, 2));
                       this.itcobroSel = this.dcobros[0].nroitem;
@@ -322,7 +322,7 @@ onSelectionclte(event : any)
              this.formMov.controls["venta"].setValue(this.vtaSel);
              this.cobroSel = this.cventas[0].idcobro;
              var subs1 : Subscription;
-             subs1 = this.servicio.getDetalleCobro(this.cobroSel)
+             subs1 = this.servicio.getDetalleCobro(this.cobroSel,0)
                 .pipe(finalize(()=> {                     
                    this.itcobroSel = this.dcobros[0].nroitem;                                   
                    this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
@@ -358,7 +358,7 @@ onSelectionclte(event : any)
  var cobro    = this.cventas[indventa].idcobro;
  this.cobroSel = cobro;
  var subs : Subscription;
- subs = this.servicio.getDetalleCobro(cobro)
+ subs = this.servicio.getDetalleCobro(cobro,0)
      .pipe(finalize(() => {                
         this.itcobroSel = this.dcobros[0].nroitem;                                   
         this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);

@@ -149,7 +149,7 @@ export class CobranzaComponent {
          forkJoin({  
                      
           cobroo     : this.servicio.leerCobro(this.data.nrocobr),
-          detcobroo  : this.servicio.getDetalleCobro(this.data.nrocobr),    
+          detcobroo  : this.servicio.getDetalleCobro(this.data.nrocobr,1),    
           clientes   : this.servicio.getClientes(), 
           ingxcli    :  this.servicio.getIngresosXCli(this.data.nrocliente),
    

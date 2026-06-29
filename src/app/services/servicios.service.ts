@@ -282,8 +282,8 @@ public updateCtaDestino(idcobro:number,nroit : number,ctad : number){
     { params }
   );
 }
-public getDetalleCobro(idcob:Number) {
-    return this.http.get<dcobroDTO[]>(this.apiUrl + `cobranza/detalle?idcobro=`+idcob);
+public getDetalleCobro(idcob:number, ctad:number) {
+    return this.http.get<dcobroDTO[]>(this.apiUrl + `cobranza/detalle?idcobro=`+idcob+`&ctadestino=`+ctad);
 }
 public getMediosPago() {
     return this.http.get<medioPago[]>(this.apiUrl + `ingreso/mediospago`);
