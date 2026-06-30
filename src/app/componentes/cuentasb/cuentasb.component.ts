@@ -103,14 +103,14 @@ ngOnInit(){
   }
 
   modificarCuentaB(nrocta : number,cbu : string,banco : string){      
-    console.log("Modificar cuenta nro. "+nrocta+" - Banco : "+banco);
+   
     const data  = {
       nrocuenta : nrocta,
       ncbu      : cbu,
       nbanco    : banco,
       accion    : "M"
     } ;    
-    console.log("Datos a enviar al dialogo : ",JSON.stringify(data));
+   
     const dialogConfig = new MatDialogConfig();   
     dialogConfig.autoFocus = false;
     dialogConfig.data = data;
@@ -122,10 +122,10 @@ ngOnInit(){
                             }})  
   
   }
-  VerDetalledeCuenta(idcuenta : number){ 
+  VerDetalledeCuenta(idcuenta : number,periodo : string){ 
     var filter = this.inputRef.nativeElement.value;// se envia, para luego recibirlo y retomar filtro
     
-    this.router.navigate(['/cuentas', idcuenta,filter,'detcuenta']);
+    this.router.navigate(['/cuentas', idcuenta,periodo,filter,'detcuenta']);
   }
 
   borrarCuentaB(nrcuenta : number){

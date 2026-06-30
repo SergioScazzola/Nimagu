@@ -43,7 +43,8 @@
              (selectionChange)="onSelectionVenta($event)">
                @for (vta of this.cventas; track vta.idingre;let i = $index){
                 <mat-option [value]="vta.idingre">                 
-                  {{ vta.categoria+" - "+(vta.fecha| date : "dd/MM/yyyy")+" - "+vta.importe}}
+                  {{ vta.cantidad+" "+vta.categoria+" - "+(vta.fecha| date : "dd/MM/yyyy")+" - "+
+                     (vta.importe| number : "1.2-2")}}
                 </mat-option>
                 }
           </mat-select>
@@ -58,7 +59,7 @@
           <mat-select  formControlName="dcobro"
              [disabled]="this.dcobros.length==0"
              (selectionChange)="onSelectiondCobro($event)">
-               @for (dcob of dcobros; track dcob.nroitem; let i = $index){
+               @for (dcob of dcobros; track dcob.nroitem){
                 <mat-option [value]="dcob.nroitem">                 
                   {{ dcob.nmpago+" "+
                    dcob.nrompago+" Bco. "+

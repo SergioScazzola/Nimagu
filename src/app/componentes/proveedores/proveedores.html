@@ -106,7 +106,37 @@
           </div>
         </td>
       </ng-container>
-
+      <ng-container matColumnDef="EG">
+        <th mat-header-cell *matHeaderCellDef>EG</th>
+        <td mat-cell *matCellDef="let renPro">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="Egreso al proveedor"
+              (click)="IngresarSalida(renPro.idProv,renPro.nombre)"
+            >
+            <i class="bi bi-arrow-up"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PAG">
+        <th mat-header-cell *matHeaderCellDef>Pag</th>
+        <td mat-cell *matCellDef="let renPro">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="Pago al proveedor"
+              (click)="IngresarPago(renPro.idProv,renPro.nombre)"
+            >
+            <i class="bi bi-currency-dollar"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+     
       <ng-container matColumnDef="CC">
         <th mat-header-cell *matHeaderCellDef>CC</th>
         <td mat-cell *matCellDef="let renProv">

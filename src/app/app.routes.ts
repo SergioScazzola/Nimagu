@@ -36,7 +36,7 @@ export const routes: Routes = [
            
       { path: 'clientes/:filtro', component: ClientesComponent },
       { path: 'clientes/:nrocliente/:nomcliente/:filtro/ctactec',component: CtacteComponent},      
-      { path: 'cuentas/:idcuenta/:filtro/detcuenta', component: DetcuentaComponent },
+      { path: 'cuentas/:idcuenta/:periodo/:filtro/detcuenta', component: DetcuentaComponent },
       { path: 'cuentas/:filtro', component: CuentasbComponent },     
       { path: 'bancos',component: CuentasbComponent},     
       { path: 'proveedores/:filtro', component: ProveedoresComponent },      

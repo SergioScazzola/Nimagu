@@ -11,7 +11,7 @@ import { cuentaB } from '../../entidades/cuentaB';
 import { movcta } from '../../entidades/movcta';
 import { saldoCliDTO } from '../../entidades/saldoCliDTO';
 import { infoSCli } from '../../entidades/infoSCli';
-import { saldoEmpDTO } from '../../entidades/saldoEmpDTO';
+import { saldoEmpDTO } from '../../entidades/saldoProvDTO';
 import { infoSEmp } from '../../entidades/infoSEmp';
 import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
@@ -20,6 +20,9 @@ import { medioPago } from '../../entidades/medioPago';
 import { dcobxcli } from '../../entidades/dcobxcli'
 import { categoria } from '../../entidades/categoria';
 import { procedencia } from '../../entidades/procedencia';
+import { salidaDTO } from '../../entidades/salidaDTO';
+import { dpagoDTO, pagoComp, pagoDTO } from '../../entidades/pagoDTO';
+import { dpagxprov } from '../../entidades/dpagxprov';
 
 @Injectable({
   providedIn: 'root',
@@ -237,7 +240,24 @@ public getProcedencias() {
 public getIngresosXCli(idcliente : number){
    return this.http.get<ingresoDTO[]>(this.apiUrl + `ingreso/ingresosxcli?idcliente=`+idcliente); 
 }
+// SALIDAS
 
+public getMaxSalidas() {
+  // devuelve el nro del último movimiento registrado en la tabla de salidas
+    return this.http.get<number>(this.apiUrl + `salida/max`);
+}
+
+public agregarSalida(salida : salidaDTO) {
+    return this.http.post<salidaDTO>( this.apiUrl + `salida/salida/nuevo`,salida);
+}
+
+
+
+public getSalidasXProv(idprov : number){
+   return this.http.get<salidaDTO[]>(this.apiUrl + `salida/salidasxprov?idprov=`+idprov); 
+}
+
+// COBRANZA
 
 public getMaxCobranza() {
     return this.http.get<number>(this.apiUrl + `cobranza/max`);    
@@ -267,24 +287,64 @@ public updateItemCobranza(itcobro : dcobroDTO) {
     return this.http.put<dcobroDTO>(environment.apiUrl + `cobranza/detalle/actualizar`,itcobro);
 }
 
-
-public updateCtaDestino(idcobro:number,nroit : number,ctad : number){
-    const params = new HttpParams()
+public updateCtaDestinoCob(idcobro:number,nroit : number,ctad : number){
+  const params = new HttpParams()
     .set('idcobro', idcobro.toString())
     .set('nroitem', nroit.toString())
     .set('ctad', ctad.toString());
 
   // 2. Hacer la petición PUT. El segundo parámetro es el BODY (va vacío)
   // y el tercero son las opciones donde pasamos los params.
-  return this.http.put<number>(
-    `${environment.apiUrl}cobranza/detalle/actctad`, 
-    null, 
-    { params }
-  );
+  return this.http.put<number>(environment.apiUrl + `cobranza/detalle/actctad`, null, { params });
 }
 public getDetalleCobro(idcob:number, ctad:number) {
     return this.http.get<dcobroDTO[]>(this.apiUrl + `cobranza/detalle?idcobro=`+idcob+`&ctadestino=`+ctad);
 }
+
+
+// PAGOS a Proveedores
+
+public getMaxPagos() {
+    return this.http.get<number>(this.apiUrl + `pago/max`);    
+}
+ 
+ public leerPago(idpago: number) {
+    return this.http.get<pagoDTO>(this.apiUrl + `pago?id=`+idpago);    
+} 
+
+public agregarPago(pagoc : pagoComp) {
+    return this.http.post<pagoComp>( this.apiUrl + `pago/nuevo`,pagoc);
+}
+public updatePago( pago : pagoDTO) {
+    return this.http.put<pagoDTO>(environment.apiUrl + `pago/actualizar`,pago);
+}
+
+public getPagosxProvyF(idpro : number, feci : String, fecf : String){
+ return this.http.get<dpagxprov[]>(this.apiUrl + `pago/detPagXProv?idprov=`+idpro+`&feci=`+
+                                  feci+`&fecf=`+fecf);
+}
+/*@PostMapping(value="/detalle/nuevo") */
+public agregarItemPago(itpago : dpagoDTO) {
+    return this.http.post<dpagoDTO>( this.apiUrl + `pago/detalle/nuevo`,itpago);
+}
+
+public updateItemPago(itpago : dpagoDTO) {
+    return this.http.put<dpagoDTO>(environment.apiUrl + `pago/detalle/actualizar`,itpago);
+}
+public updateCtaDestinoPag(idpago:number,nroit : number,ctad : number){
+  const params = new HttpParams()
+    .set('idcobro', idpago.toString())
+    .set('nroitem', nroit.toString())
+    .set('ctad', ctad.toString());
+
+  // 2. Hacer la petición PUT. El segundo parámetro es el BODY (va vacío)
+  // y el tercero son las opciones donde pasamos los params.
+  return this.http.put<number>(environment.apiUrl + `pago/detalle/actctad`, null, { params });
+}
+public getDetallePago(idpag:number, ctad:number) {
+    return this.http.get<dpagoDTO[]>(this.apiUrl + `pago/detalle?idpago=`+idpag+`&ctadestino=`+ctad);
+}
+
 public getMediosPago() {
     return this.http.get<medioPago[]>(this.apiUrl + `ingreso/mediospago`);
   }

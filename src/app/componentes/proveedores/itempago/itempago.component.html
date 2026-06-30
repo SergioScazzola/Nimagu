@@ -1,0 +1,93 @@
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    <h4 mat-dialog-title >{{operacion}}</h4>  
+      <form [formGroup]="formItPag" class="p-3" >        
+         <div class="row g-3 mb-3">
+          <div class="col-3">
+            <mat-form-field class="w-100" appearance="fill"> 
+              <mat-label>Nro.Pago</mat-label>
+              <input matInput [readonly]="true" formControlName="nropag" style="text-align: center;">	
+             </mat-form-field>      
+          </div>  
+          <div class="col-2">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Nro.Item</mat-label>
+              <input matInput [readonly]="true" formControlName="nroitem" style="text-align: center;">	
+             </mat-form-field>      
+          </div>  
+
+          <div class="col-4">
+            <mat-form-field   class="w-100" appearance="fill">
+              <mat-label>Medio de Pago</mat-label>
+              <mat-select formControlName="nmpago"    
+                  (selectionChange)="onSelectionChangeMedioPago($event)">      
+                  <mat-option *ngFor="let mpag of this.cmpago; let i = index" [value]="mpag.mediopago">
+                    {{ mpag.mediopago }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>      
+          <div class="col-3">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input matInput [matDatepicker]="picker" 
+                (dateChange)="onFechaChange($event)"
+                 placeholder = "Elija una fecha" formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>  
+                <mat-hint>{{ formItPag.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+            </mat-form-field >
+          </div>
+        </div>   
+         <div class="row g-3 mb-3">
+          
+          <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Nro.Medio de Pago</mat-label>
+              <input matInput formControlName="nrompago" style="text-align: left;">	
+             </mat-form-field>      
+          </div>
+          <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Banco</mat-label>
+              <input matInput formControlName="banco" style="text-align: left;">	
+             </mat-form-field>      
+          </div>
+          <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input matInput [matDatepicker]="picker1"  
+                 (dateChange)="onFechaVtoChange($event)"
+                 placeholder = "Elija una fecha" formControlName="fecvto" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker1" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker1> </mat-datepicker>  
+                <mat-hint>Fecha de vencimiento</mat-hint> 
+            </mat-form-field >
+          </div>
+        </div>                   
+       <div class="row g-3 mb-3">                           
+        <div class="col-5">
+          <mat-form-field class="w-100" appearance="fill">
+            <mat-label>Importe</mat-label>                
+            <input matInput  appImporte formControlName="importe" style="text-align: right;"	                  
+                >        
+           </mat-form-field>        
+       </div>  
+       <div class="col-7">
+              <mat-form-field style="width:350px;"  appearance="fill">
+                <mat-label>Observaciones</mat-label>
+                <input matInput formControlName="coment">	
+               </mat-form-field> 
+       </div>     
+      
+      </div>         
+     <div class="botonera">           
+                <button class="btn btn-sm btn-outline-primary me-5" 
+                         [disabled]="formItPag.invalid || data.accion!='A'" 
+                         (click)="GrabarItPago()">Agregar Item de Pago</button>                                
+                <button class="btn btn-sm btn-outline-success me-5" 
+                         [disabled]="formItPag.invalid || data.accion!='M'" 
+                         (click)="ModificarItPago()">Modificar Item de Pago</button>  
+                <button class="btn btn-sm btn-outline-secondary"                
+                         (click)="Anular()">Cancelar</button>                       
+      </div>  
+      
+  </form>
+</div>

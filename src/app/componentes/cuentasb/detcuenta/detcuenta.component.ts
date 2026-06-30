@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { SinoService } from '../../../services/sino.service';
 import { NotiserviceService } from '../../../services/notiservice.service';
-import { finalize, Subscription } from 'rxjs';
+import { finalize, forkJoin, Subscription } from 'rxjs';
 import { CommonModule, DatePipe } from '@angular/common';
 import { cuentaB } from '../../../../entidades/cuentaB';
 import { MovcuentaComponent } from './movcuenta/movcuenta.component';
@@ -15,8 +15,7 @@ import { MovcuentaComponent } from './movcuenta/movcuenta.component';
 @Component({
   selector: 'app-detcuenta',
    imports: [CommonModule,MatTableModule],
-   providers : [
-          DatePipe],
+   providers : [DatePipe],
   templateUrl: './detcuenta.component.html',
   styleUrl: './detcuenta.component.css'
 })
@@ -40,7 +39,7 @@ export class DetcuentaComponent {
   ctaSel            : number;
   titular           : string|null = "";
   banco             : string;
-  periodo           : string|null = "";
+  periodo           : string;
   dfecha            : string;
   hfecha            : string;
   isloading         : boolean = true;
@@ -71,7 +70,8 @@ export class DetcuentaComponent {
    
      // Extraer parámetros de la ruta
      this.rutaActiva.paramMap.subscribe((params) => {
-       this.nrocuenta      = Number(params.get('idcuenta'));             
+     this.nrocuenta      = Number(params.get('idcuenta'));     
+     this.periodo        = params.get('periodo')||'';        
       var fil              = params.get('filtro')||'';
       this.filtro          = fil;
       this.filtrorec       = fil; 
@@ -90,64 +90,43 @@ export class DetcuentaComponent {
    // lee la cuenta "nroc" y el detalle de movimientos de la cuenta "nroc"
 
    this.cmovscta = [];
+   this.generarRangodeFechas();
+   forkJoin({
+            cuenta  : this.ctaService.leerCuentaB(nroc),
+            detalle : this.ctaService.getDetalleCuentaB(nroc,this.dfecha,this.hfecha),
+            maxdet  : this.ctaService.getMaxMovCuenta(nroc)  // para obtener el nro.del ultimo movimiento
 
-    var subs : Subscription;
-    subs = this.ctaService.leerCuentaB(nroc)
-        .pipe(finalize(()=> {
-          
-           this.periodo = this.cuentab.periodo;
-           this.titular = this.cuentab.titular;
-           this.banco   = this.cuentab.banco;
-          
-           const [ anioi,aniof ] = this.periodo.split('-').map(Number);
-                      
-           var feci = new Date(anioi,6,1);   // inicial 1 de Julio del anio inicial
-           var fecf = new Date(aniof,5,30);   // final 30 de Junio del anio final
-          
-           this.dfecha = this.datepipe.transform(feci,"yyyy-MM-dd")+"T00:05";
-           this.hfecha = this.datepipe.transform(fecf,"yyyy-MM-dd")+"T23:59";
-
-           var subs1 : Subscription;
-           subs1 = this.ctaService.getDetalleCuentaB(nroc,this.dfecha,this.hfecha)
-          .pipe(finalize(()=> {
-            subs1.unsubscribe();   
-            this.cantmovs = this.cmovscta==undefined ? 0 : this.cmovscta.length;
-            if (this.cantmovs==0){
+           }).subscribe(res => {   
+            this.cuentab    = res.cuenta;
+            this.cmovscta   = res.detalle;
+            this.proxnromov = res.maxdet;
+           
+                    
+           this.titular    = this.cuentab.titular;
+           this.banco      = this.cuentab.banco;                      
+           this.cantmovs = this.cmovscta==undefined ? 0 : this.cmovscta.length;
+           if (this.cantmovs==0){
                this.notiServicio.showNotification("No hay movimientos para la cuenta bancaria de "+this.titular,"Aceptar","mensaje",3000);
                this.proxnromov = 1;           
                this.isloading = false;
                this.cdr.detectChanges();
-            } else {
-               var subs2 : Subscription;
-               subs2 = this.ctaService.getMaxMovCuenta(nroc)  // para obtener el nro.del ultimo movimiento
-               .pipe(finalize(()=> {
-                   this.armarCuentaBancaria(actualizaSaldo);
+            } else {           
+               this.armarCuentaBancaria(actualizaSaldo);
                   // arma el array "dispcta" con los movimientos para mostrar en el html
-                   this.dataSource.data = this.dispcta;         
-                   this.dataSource.filterPredicate = (dato : dispmovcta, fil : string) => {
-                      return dato.concepto.toLowerCase().includes(fil);
-                   };    
-                   // Aplica filtro si hay uno
-                   if (this.filtro!=='') {                                 
+               this.dataSource.data = this.dispcta;         
+               this.dataSource.filterPredicate = (dato : dispmovcta, fil : string) => {
+                  return dato.concepto.toLowerCase().includes(fil);
+               };    
+               // Aplica filtro si hay uno
+               if (this.filtro!=='') {                                 
                      this.dataSource.filter = this.filtro;                                                                       
                      this.inputRef.nativeElement.value = this.filtro;//setAttribute('value', this.filtro);
-                   }
-                   subs2.unsubscribe();
-                   this.proxnromov += 1;                  
-                   this.isloading = false;
-                   this.cdr.detectChanges();
-              }))
-              .subscribe((data : any): void => {
-                  this.proxnromov = data });
-                 
-            }
-      }))
-      .subscribe((data : any): void => {
-          this.cmovscta = data });
-        }))     
-      .subscribe((data : any): void => {
-                this.cuentab = data});  
-                      
+               }               
+               this.proxnromov += 1;                  
+               this.isloading = false;
+               this.cdr.detectChanges();
+              }
+            })           
    }
 
 
@@ -190,7 +169,30 @@ export class DetcuentaComponent {
 
   }
 
-  agregarMovimiento(){
+  agregarIngreso(){
+    // llama al componente de movimiento de cuenta que agregar un nuevo movimiento
+    const data = {
+      idCuenta   : this.cuentab.idCuenta,
+      periodo    : this.cuentab.periodo,
+      nromov     : this.proxnromov,
+      titular    : this.cuentab.titular,       
+      banco      : this.cuentab.banco,
+      accion     : "A"
+    }  
+   
+    const dialogConfig = new MatDialogConfig();   
+    dialogConfig.autoFocus = false;
+    dialogConfig.data = data;
+    dialogConfig.panelClass = "custom-dialog-container";
+    const dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
+          dialogRef.afterClosed().subscribe( // 
+          (datas:any) => { if (datas.clicked === 'Alta'){                   
+                 this.leerDetalleCuenta(this.cuentab.idCuenta,1); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                                       
+                
+                       }})  
+  }
+
+  agregarEgreso(){
     // llama al componente de movimiento de cuenta que agregar un nuevo movimiento
     const data = {
       idCuenta  : this.cuentab.idCuenta,
@@ -259,6 +261,16 @@ export class DetcuentaComponent {
     this.dataSource.filter = valor.trim().toLowerCase();
   }
 
+  generarRangodeFechas(){
+    // el periodo viene como parametro de ruta;
+    const [ anioi,aniof ] = this.periodo.split('-').map(Number);
+                      
+    var feci = new Date(anioi,6,1);   // inicial 1 de Julio del anio inicial
+    var fecf = new Date(aniof,5,30);   // final 30 de Junio del anio final
+          
+    this.dfecha = this.datepipe.transform(feci,"yyyy-MM-dd")+"T00:05";
+    this.hfecha = this.datepipe.transform(fecf,"yyyy-MM-dd")+"T23:59";
+  }
   Volver(){
      this.router.navigate(['/cuentas',this.filtrorec]);
   }

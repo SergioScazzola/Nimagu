@@ -1,8 +1,8 @@
-export interface dcobxcli {  
-     idCobro      : number;
+export interface dpagxprov {
+     idPago       : number;
      fechac       : Date;
-     idCliente    : number;
-     nomcliente   : string;
+     idProv       : number;
+     nomprov      : string;
      nrofactura   : string;
      importec     : number;
      nroitem      : number;
