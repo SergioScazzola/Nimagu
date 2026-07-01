@@ -12,6 +12,8 @@ import { ProveedorComponent } from './proveedor/proveedor';
 import { CommonModule } from '@angular/common';
 import { intSalida } from '../../../entidades/salidaDTO';
 import { SalidaComponent } from './salida/salida.component';
+import { PagosComponent } from './pagos/pagos.component';
+import { intPago } from '../../../entidades/pagoDTO';
 
 @Component({
   selector : 'app-proveedores',
@@ -159,8 +161,29 @@ ngOnInit(){
     var filter = this.inputRef()?.nativeElement.value;
     this.router.navigate(['/proveedores', nroprov,nomprov,filter,'ctactep']);
   }
-IngresarPago(idprov : number,nombre:number){
-
+IngresarPago(idprov : number,nombre:string){
+      
+    const datas : intPago = {
+      nroprov      : idprov,
+      nropago      : 0,
+      nomprov      : nombre,
+      accion       : "A"
+    }       
+     const dialogConfig = new MatDialogConfig();   
+     dialogConfig.autoFocus = false;
+     dialogConfig.data = datas;
+     dialogConfig.width =  '900';         // ancho máximo de la ventana
+     dialogConfig.maxWidth = '95vw';      
+     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+     dialogConfig.panelClass = 'custom-dialog-container';
+     dialogConfig.disableClose =  false; // opcional según necesidad
+      const dialogRef =  this.dialog.open(PagosComponent, dialogConfig);
+            dialogRef.afterClosed().subscribe( // 
+            (datass:any) => { if (datass.clicked === 'Alta'){        // Agregó un cobro           
+                  this.notiServicio.showNotification("Pago agregado con éxito ",'Aceptar','mensaje',500);                                            
+                  
+                             }
+                            })
 }
 IngresarSalida(idprov : number,nombre:string){
     const datas : intSalida = {
@@ -187,6 +210,9 @@ IngresarSalida(idprov : number,nombre:string){
 
   
 }
+
+  
+  
   aplicarFiltro(valor : string)  {
     this.dataSource.filter = valor.trim().toLowerCase();
  }

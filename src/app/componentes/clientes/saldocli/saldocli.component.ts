@@ -66,34 +66,15 @@ ngOnInit(){
     saldo      : ['',[Validators.required]],                
   });
  
-  if (this.data.accion=="A"){
+  if (this.data.accion=="M"){
     this.formSal.controls['fecha'].setValue(this.hoy);
     this.mostrarHora();
     this.formSal.controls['nrocli'].setValue(this.data.nrocli);
-    this.formSal.controls['nrosaldo'].setValue(this.data.nrosaldo);
+    this.formSal.controls['nrosaldo'].setValue(1);
+    this.formSal.controls['saldo'].setValue(this.data.saldo);
     if (this.data.nrosaldo==1){
-        this.operacion = "Agregar Saldo inicial al Cliente : "+this.data.nomcli  
-    } else {
-      this.operacion = "Agregar Saldo al Cliente : "+this.data.nomcli  
-    }
-  } else {
-    if (this.data.accion=="I"){
-     this.operacion = "Modificar Saldo inicial al Cliente : "+this.data.nomcli
-    } else {
-       this.operacion = "Modificar Saldo al Cliente : "+this.data.nomcli
-    }
-    var subs : Subscription;
-    console.log("Anttes de leerr Saldo : "+this.data.nrosaldo);
-    subs = this.servicio.leerSaldoDelCliente(this.data.nrocli,this.data.nrosaldo)
-          .pipe(finalize(() => {
-                      this.formSal.controls['nrocli'].setValue(this.itsaldo.idCliente);
-                      this.formSal.controls['nrosaldo'].setValue(this.itsaldo.nrosaldo);
-                      this.formSal.controls['fecha'].setValue(this.itsaldo.fecha);
-                      this.formSal.controls['saldo'].setValue(this.itsaldo.saldo)             
-                      subs.unsubscribe();                    
-                  }))
-          .subscribe((data : any): void => {
-                       this.itsaldo = data});      
+        this.operacion = "Modificar Saldo inicial al Cliente : "+this.data.nomcli  
+    } 
 
   }
 
@@ -155,12 +136,12 @@ ngOnInit(){
        var subs : Subscription;
        var resu : number;
        console.log("Saldooo : "+JSON.stringify(saldo));
-       subs = this.servicio.AgregarSaldoCliente(saldo)
+       subs = this.servicio.actualizarSaldoInicial(saldo)
          .pipe(finalize(() => {        
             this.notiService.showNotification("El Saldo nro.: "+this.data.nrosaldo+" del cliente "+
                                              this.data.nomcli+"("+resu+
-                                            ") se ha agregado con éxito",'Aceptar','mensaje',500);   
-            this.dialogRef.close({ clicked : "Alta"});                                       
+                                            ") se ha actualizado con éxito",'Aceptar','mensaje',500);               
+            this.dialogRef.close({ clicked : "Modi"});                                       
             subs.unsubscribe();
           }))
         .subscribe((datas:any):void =>{
@@ -171,39 +152,38 @@ ngOnInit(){
 
    ModificarSaldo(){
     var fecc = this.formSal.controls['fecha'].value as Date;
-    if (this.verifFechaSaldo(fecc)){
+    /*if (this.verifFechaSaldo(fecc)){
     var esnum : boolean;
      var valorsaldo = this.formSal.controls['saldo'].value;
      if (typeof valorsaldo==="string"){
         esnum = false;
     } else {
       esnum = true;
-    }
+    }*/
     var saldo : saldoCliDTO = {
         idCliente : this.formSal.controls['nrocli'].value,
         nrosaldo  : this.formSal.controls['nrosaldo'].value,
         fecha     : this.formSal.controls['fecha'].value,
-        saldo     : esnum?this.formSal.controls['saldo'].value:
-                Number(this.formSal.controls['saldo'].value.replaceAll('$','').replaceAll(',', '')),
+        saldo     : this.formSal.controls['saldo'].value
+                
     }
     
     var subs : Subscription;
-    var resu : number;
-     console.log("Anttes de agregaar Saldpo : "+saldo.saldo);
-    subs = this.servicio.actualizarSaldoCliente(saldo)
+    var resu : number;    
+    subs = this.servicio.actualizarSaldoInicial(saldo)
       .pipe(finalize(() => {        
           this.notiService.showNotification("El Saldo nro.: "+this.data.nrosaldo+" del cliente "+
                                              this.data.nomcli+"("+resu+
                                             ") se ha Modificado con éxito",'Aceptar','mensaje',10000)
          
-          this.dialogRef.close({ clicked : "Modi"});                                       
-          subs.unsubscribe;
+          this.dialogRef.close({ clicked : "Modi",saldoini : saldo.saldo});                                       
+          subs.unsubscribe();
       }))
       .subscribe((datas:any):void =>{
           resu = datas
        }) 
     }
-  }
+
 
    Anular(){
     this.dialogRef.close({ clicked : "Cancelar"})

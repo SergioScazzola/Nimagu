@@ -8,6 +8,7 @@ export interface saldoCliDTO {
 export interface intSaldoCli {
      nrocli      : number; // 
      nrosaldo    : number;
+     saldo       : number;
      nomcli      : string;          
      accion      : string;
      fecprmv     : Date | null;

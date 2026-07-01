@@ -19,13 +19,13 @@
      
        <div class="col-10">
         <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Cliente</mat-label>
-          <mat-select  formControlName="clte"
-             [disabled]="this.cclientes.length==0"
-             (selectionChange)="onSelectionclte($event)">
-               @for (cli of this.cclientes; track cli.idCliente){
-                <mat-option [value]="cli.idCliente">                 
-                  {{ cli.nombre }}
+          <mat-label>Proveedor</mat-label>
+          <mat-select  formControlName="prov"
+             [disabled]="this.cproveedores.length==0"
+             (selectionChange)="onSelectionProv($event)">
+               @for (pro of this.cproveedores; track pro.idProv){
+                <mat-option [value]="pro.idProv">                 
+                  {{ pro.nombre }}
                 </mat-option>
                 }
           </mat-select>
@@ -37,14 +37,14 @@
     <div class="row g-3">
       <div class="col-10">
          <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Ventas Cobradas</mat-label>
-          <mat-select  formControlName="venta"
-            [disabled]="this.cventas.length==0"
-             (selectionChange)="onSelectionVenta($event)">
-               @for (vta of this.cventas; track vta.idingre;let i = $index){
-                <mat-option [value]="vta.idingre">                 
-                  {{ vta.cantidad+" "+vta.categoria+" - "+(vta.fecha| date : "dd/MM/yyyy")+" - "+
-                     (vta.importe| number : "1.2-2")}}
+          <mat-label>Egresos Pagados</mat-label>
+          <mat-select  formControlName="salida"
+            [disabled]="this.csalidas.length==0"
+             (selectionChange)="onSelectionSalida($event)">
+               @for (sal of this.csalidas; track sal.idSalida;let i = $index){
+                <mat-option [value]="sal.idSalida">                 
+                  {{ sal.cantidad+" "+sal.categoria+" - "+(sal.fecha| date : "dd/MM/yyyy")+" - "+
+                     (sal.importe| number : "1.2-2")}}
                 </mat-option>
                 }
           </mat-select>
@@ -55,17 +55,17 @@
        <div class="row g-3">
         <div class="col-10">
            <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Detalle del cobro</mat-label>
-          <mat-select  formControlName="dcobro"
-             [disabled]="this.dcobros.length==0"
-             (selectionChange)="onSelectiondCobro($event)">
-               @for (dcob of dcobros; track dcob.nroitem){
-                <mat-option [value]="dcob.nroitem">                 
-                  {{ dcob.nmpago+" "+
-                   dcob.nrompago+" Bco. "+
-                   dcob.banco+" Vto."+
-                   (dcob.fecvto | date : "dd/MM/yyyy")+" - "+
-                   (dcob.importe | number : "1.2-2")}}
+          <mat-label>Detalle del pago</mat-label>
+          <mat-select  formControlName="dpago"
+             [disabled]="dpagos==undefined ||dpagos.length==0"
+             (selectionChange)="onSelectiondPago($event)">
+               @for (dpag of dpagos; track dpag.nroitem){
+                <mat-option [value]="dpag.nroitem">                 
+                  {{ dpag.nmpago+" "+
+                   dpag.nrompago+" Bco. "+
+                   dpag.banco+" Vto."+
+                   (dpag.fecvto | date : "dd/MM/yyyy")+" - "+
+                   (dpag.importe | number : "1.2-2")}}
                 </mat-option>
                 }
           </mat-select>

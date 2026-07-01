@@ -32,7 +32,7 @@ export interface infoDetPag {
 }
 
 export interface intPago {
-     nroprov : number; // 
+     nroprov    : number;  
      nropago    : number;
      nomprov    : string;
      accion     : string;

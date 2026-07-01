@@ -6,13 +6,12 @@ import { clienteDTO } from '../../entidades/clienteDTO';
 import { ConfigService } from '../services/config.service';
 import { environment } from '../../environments/environment';
 
-import { empleadoDTO } from '../../entidades/empleadoDTO';
 import { cuentaB } from '../../entidades/cuentaB';
 import { movcta } from '../../entidades/movcta';
 import { saldoCliDTO } from '../../entidades/saldoCliDTO';
 import { infoSCli } from '../../entidades/infoSCli';
-import { saldoEmpDTO } from '../../entidades/saldoProvDTO';
-import { infoSEmp } from '../../entidades/infoSEmp';
+
+
 import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
 import { cobroComp, cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
@@ -95,54 +94,7 @@ export class ServiciosService {
   }
 
 
-  public getEmpleados() {
-    return this.http.get<empleadoDTO[]>(this.apiUrl + `empleados/empleados`);
-  }
-
-
-  public getCantEmpleados() {
-    return this.http.get<number>(this.apiUrl + `empleados/empleados/max`);
-  }
-  public getEmpleado(nroemp: number) {
-    return this.http.get<empleadoDTO>(
-      this.apiUrl + `empleados/empleado?id=` + nroemp
-    );
-  }
-  public AgregarEmpleado(empl: empleadoDTO) {
-    return this.http.post<empleadoDTO>(
-      this.apiUrl + `empleados/empleado/nuevo`,
-      empl
-    );
-  }
-    public AgregarSaldoEmpleado(saldoe : saldoEmpDTO) {
-    return this.http.post<saldoEmpDTO>(this.apiUrl + `empleados/saldo/nuevo`,saldoe);
-  }
-    public actualizarSaldoInicialEmp(salc : saldoEmpDTO) {
-    return this.http.put<saldoEmpDTO>( environment.apiUrl + `empleados/actsaldoini`,salc);
-  }
-  
-  public actualizarSaldoEmpleado(sale : saldoEmpDTO) {
-    return this.http.put<saldoEmpDTO>( environment.apiUrl + `empleados/actsaldoemp`,sale);
-  }
-
-  public leerSaldoDelEmpleado(nroe : number, nros : number){
-    return this.http.get<saldoEmpDTO>(this.apiUrl + `empleados/empleado/saldo?idempleado=`+nroe+`&nrosaldo=`+nros);
-  }
- public infoSaldosEmpleados() {
-    return this.http.get<infoSEmp[]>(this.apiUrl + `empleados/infosaldos`);
-  }
-
-  public updateEmpleado(nroemp: number, empl: empleadoDTO) {
-    return this.http.put<empleadoDTO>(
-      environment.apiUrl + `empleados/empleado/actualizar?id=` + nroemp,
-      empl
-    );
-  }
-  public elimEmpleado(nremp: number) {
-    return this.http.delete(
-      environment.apiUrl + `empleados/empleado?id=` + nremp
-    );
-  }
+ 
 
 // PROVEEDORES
  public getProveedores() {
@@ -237,7 +189,7 @@ public getProcedencias() {
     return this.http.get<procedencia[]>(this.apiUrl + `ingreso/procedencias`);
   }
 
-public getIngresosXCli(idcliente : number){
+public getIngresosXCli(idcliente : number, cobrados : number){
    return this.http.get<ingresoDTO[]>(this.apiUrl + `ingreso/ingresosxcli?idcliente=`+idcliente); 
 }
 // SALIDAS
@@ -253,8 +205,8 @@ public agregarSalida(salida : salidaDTO) {
 
 
 
-public getSalidasXProv(idprov : number){
-   return this.http.get<salidaDTO[]>(this.apiUrl + `salida/salidasxprov?idprov=`+idprov); 
+public getSalidasXProv(idprov : number,pagadas : number){
+   return this.http.get<salidaDTO[]>(this.apiUrl + `salida/salidasxprov?idprov=`+idprov+`&pagadas=`+pagadas); 
 }
 
 // COBRANZA
@@ -333,7 +285,7 @@ public updateItemPago(itpago : dpagoDTO) {
 }
 public updateCtaDestinoPag(idpago:number,nroit : number,ctad : number){
   const params = new HttpParams()
-    .set('idcobro', idpago.toString())
+    .set('idPago', idpago.toString())
     .set('nroitem', nroit.toString())
     .set('ctad', ctad.toString());
 

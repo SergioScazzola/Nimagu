@@ -10,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { intPago } from '../../../../entidades/pagoDTO';
-import { PagoComponent } from '../pagos/pagos.component';
+
 import { saldoProvDTO } from '../../../../entidades/saldoProvDTO';
 import { intSaldoProv } from '../../../../entidades/saldoProvDTO';
 import { SaldoprovComponent } from '../../proveedores/saldoprov/saldoprov.component';
@@ -95,22 +95,22 @@ ngOnInit()
      var preparo : boolean=false;
      forkJoin({  // consultas para armar la cta.cte del cliente en paralelo
         //saldoscli  :     this.servicio.getSaldosCliente(this.numcliente),
-        saldosprov:     this.servicio.getSaldosProveedor(this.numcliente),
+        //saldosprov:     this.servicio.getSaldosProveedor(this.numcliente),
 
-        ingxcli    :     this.servicio.getIngresosXCli(this.numcliente), // traer los ingresos del cliente
-        cobroscli  :     this.servicio.getCobrosxCliyF(this.numcliente,this.fechi,this.fechf), // traer los cobros al cliente       
-        leercli:         this.servicio.leerCliente(this.numcliente)
+        salxprov   :     this.servicio.getSalidasXProv(this.numprov,2), // traer las salidas del proveedor
+        pagosprov  :     this.servicio.getPagosxProvyF(this.numprov,this.fechi,this.fechf), // traer los pagos al proveedor       
+        leerprov   :     this.servicio.leerProveedor(this.numprov)
        
 
       }).subscribe(res2 => {
         //this.csaldos    = res2.saldoscli;
-        this.cingresos  = res2.ingxcli;
-        this.csaldos    = res2.saldoscli;
-        this.cdetcobros = res2.cobroscli;        
-        this.clte       = res2.leercli;
+        this.csalidas     = res2.salxprov;
+        //this.csaldos    = res2.saldoscli;
+        this.cdetpagos    = res2.pagosprov;        
+        this.prove        = res2.leerprov;
                                                       
         this.prepararMovimientos();                                
-        this.saldoinicial = this.clte.saldoini;
+        this.saldoinicial = this.prove.saldoini;
         if (this.saldoinicial==0){
             this.mensSaldo = "Saldo inicial : "                              
         } else {
@@ -125,45 +125,45 @@ ngOnInit()
 }   
 
 prepararMovimientos(){
-console.log("detalle de cobros : "+JSON.stringify(this.cdetcobros));
-// vuelca Ingresos y Cobros al array de movimientos y los ordena por fecha
-if (this.cdetcobros!=undefined){
-  for (let index=0; index<this.cdetcobros.length;index++){
-    var regmovim : ctactecDTO = {
-     idMov      : this.cdetcobros[index].idCobro,
-     fecha      : this.cdetcobros[index].fechad,   
-     tipomov    : "COB",
-     descmov    : this.cdetcobros[index].nmpago+" Nro."+
-                  this.cdetcobros[index].nrompago+" "+
-                  this.cdetcobros[index].banco+" F.Vto:"+
-                  this.datepipe.transform(this.cdetcobros[index].fecvto,"dd/MM/yyyy"),
-     importe   :  this.cdetcobros[index].imported,
+console.log("detalle de cobros : "+JSON.stringify(this.cdetpagos));
+// vuelca Salidas y Pagos al array de movimientos y los ordena por fecha
+if (this.cdetpagos!=undefined){
+  for (let index=0; index<this.cdetpagos.length;index++){
+    var regmovim : ctactepDTO = {
+     idMov      : this.cdetpagos[index].idPago,
+     fecha      : this.cdetpagos[index].fechad,   
+     tipomov    : "PAG",
+     descmov    : this.cdetpagos[index].nmpago+" Nro."+
+                  this.cdetpagos[index].nrompago+" "+
+                  this.cdetpagos[index].banco+" F.Vto:"+
+                  this.datepipe.transform(this.cdetpagos[index].fecvto,"dd/MM/yyyy"),
+     importe   :  this.cdetpagos[index].imported,
      saldo     :  0
   };
   this.cmovscc.push(regmovim);
   };
 };
 
-if (this.cingresos!=undefined){
-  for (let index=0; index<this.cingresos.length; index++){
-    var dcobro = "";
-    if (this.cingresos[index].idcobro==0){
-       dcobro = "Sin Cobrar"
+if (this.csalidas!=undefined){
+  for (let index=0; index<this.csalidas.length; index++){
+    var dpago = "";
+    if (this.csalidas[index].idpago==0){
+       dpago = "Sin Pagar"
     } else {
-      dcobro  = "Cob."+this.cingresos[index].idcobro
+      dpago  = "Pago "+this.csalidas[index].idpago
     }
-    var regmov : ctactecDTO = {
-      idMov      : this.cingresos[index].idingre,
-      fecha      : this.cingresos[index].fecha,   
-      tipomov    : "VTA",
-      descmov    : this.cingresos[index].ncliente+" "+
-                   this.cingresos[index].cantidad+" "+
-                   this.cingresos[index].categoria+" "+
-                   this.cingresos[index].importe+" "+
-                   dcobro,
+    var regmov : ctactepDTO = {
+      idMov      : this.csalidas[index].idSalida,
+      fecha      : this.csalidas[index].fecha,   
+      tipomov    : "EGR",
+      descmov    : this.csalidas[index].nprov+" "+
+                   this.csalidas[index].cantidad+" "+
+                   this.csalidas[index].categoria+" "+
+                   this.csalidas[index].importe+" "+
+                   dpago,
                    
 
-      importe    :  this.cingresos[index].importe,
+      importe    :  this.csalidas[index].importe,
       saldo      :  0
    };  
    this.cmovscc.push(regmov);
@@ -198,13 +198,13 @@ return indmenor
 }    
 
 generarColSaldo(){
-  // VTA suma, COB resta. Saldo positivo
+  // EGR suma, PAG resta. Saldo positivo
   // genera columna de saldo en el array de movimientos a partir de un saldo inicial
   var saldo : number = this.saldoinicial;
   for (let index=0; index<this.cmovscc.length;index++){ 
-    if (this.cmovscc[index].tipomov==="VTA"){
+    if (this.cmovscc[index].tipomov==="EGR"){
       this.cmovscc[index].importe = this.cmovscc[index].importe
-    } else { // "COB"
+    } else { // "PAG"
       this.cmovscc[index].importe = this.cmovscc[index].importe * -1
     }
     saldo = saldo + this.cmovscc[index].importe;
@@ -216,10 +216,10 @@ generarColSaldo(){
 
 Cancelar() {
   // Volver a la página de clientes retomando estado
-  this.router.navigate(['/clientes',this.filter]);
+  this.router.navigate(['/proveedores',this.filter]);
 }
 
-agregarCobro(){
+/*agregarCobro(){
      const data : intCobranza = {
         nrocliente : this.numcliente,
         nrocobr    : 0,
@@ -259,21 +259,21 @@ modificarCobro(nrocob:number ){
                         })
 
 
-}
-actualizarxUltCobroyCred(){
-  // Vuelve  a  leer los cobros y creditos al cliente para reflejar el último en la cta.cte
+}*/
+actualizarxUltPago(){
+  // Vuelve  a  leer los pagos y salidas al proveedor para reflejar el último en la cta.cte
   var subs1 : Subscription;
   this.cmovscc   = [];
-  this.cdetcobros   = [];
-  this.cingresos    = [];
+  this.cdetpagos   = [];
+  this.csalidas    = [];
 
   forkJoin({  // consultas para armar la cta.cte del cliente en paralelo        
-        ingxcli    :     this.servicio.getIngresosXCli(this.numcliente), // traer los ingresos del cliente
-        cobroscli  :     this.servicio.getCobrosxCliyF(this.numcliente,this.fechi,this.fechf), // traer los cobros al cliente       
+        salxprov   :     this.servicio.getSalidasXProv(this.numprov,2), // traer los salidas del proveedor, todas
+        pagosprov  :     this.servicio.getPagosxProvyF(this.numprov,this.fechi,this.fechf), // traer los cobros al cliente       
        
       }).subscribe(res2 => {
-        this.cdetcobros    = res2.cobroscli;
-        this.cingresos     = res2.ingxcli;
+        this.cdetpagos    = res2.pagosprov;
+        this.csalidas     = res2.salxprov;
 
         this.cargandoCtaCte = false;
         this.prepararMovimientos();      
@@ -292,17 +292,15 @@ modifSaldoInicial(){
    fec = null;
  }
  
- if (this.csaldos!=undefined){ // modifica saldo inicial
-    nros = 1;
-    acc  = "I";
- } else {  // no tiene saldos, agrega el primer saldo
-    nros = 1; 
-    acc  = "A";
- }
- const datas : intSaldoCli = {
-    nrocli     : this.numcliente,    
-    nrosaldo   : nros,
-    nomcli     : this.nomcliente,
+ 
+  nros = 1; 
+  acc  = "M";
+ 
+ const datas : intSaldoProv = {
+    nroprov     : this.numprov,    
+    nrosaldo    : nros,
+    saldo       : this.prove.saldoini,
+    nomprov     : this.nomprov,
     accion     : acc,
     fecprmv    : fec     // fecha del movimiento mas antiguo
   }    
@@ -311,16 +309,16 @@ modifSaldoInicial(){
   dialogConfig.autoFocus = false;
   dialogConfig.data = datas;
   dialogConfig.panelClass = "";
-  const dialogRef =  this.dialog.open(SaldocliComponent, dialogConfig);
+  const dialogRef =  this.dialog.open(SaldoprovComponent, dialogConfig);
         dialogRef.afterClosed().subscribe( // 
         (data:any) => { if (data.clicked === 'Alta' || data.clicked === 'Modi'){ // agrego o modifico saldo inicial
-                        this.regenerarSaldo();   // volver a leer los saldos                                                       // leer ultimo cobro y agregar a cmovims y recalcular totales                                            
+                           this.saldoinicial = data.saldoini;
                          }
                         })
 
 }
 
-regenerarSaldo(){
+/*regenerarSaldo(){
   this.csaldos = [];
   var subs : Subscription;
   subs = this.servicio.getSaldosCliente(this.numcliente)
@@ -334,13 +332,13 @@ regenerarSaldo(){
        .subscribe((data: any): void => {
          this.csaldos = data;
        })
-}
+}*/
 
 onSelectionChangeSaldos($event : any){
 
 }
 
-actualizarSaldoInicial(){
+/*actualizarSaldoInicial(){
   // Actualiza el saldo  inicial en la table "clientes"
    var salc : saldoCliDTO = {
       idCliente : this.numcliente,
@@ -362,7 +360,7 @@ actualizarSaldoInicial(){
          resu = data;
     });
      
-}
+}*/
 generarCtaCtePDF(){
      var colspdf = [
     { header: 'Fecha', dataKey: 'fecha' },
@@ -375,7 +373,7 @@ generarCtaCtePDF(){
     var filas    :  any[];
     const doc = new jsPDF('p','mm','A4');
     
-    const title = 'Cuenta Corriente de : '+this.nomcliente;
+    const title = 'Cuenta Corriente de : '+this.nomprov;
   
     // Fecha actual
     const fecha = new Date();
@@ -414,7 +412,7 @@ generarCtaCtePDF(){
               const pageSize = doc.internal.pageSize;
               const text = `Página ${i} de ${totalPages}`;
               doc.setFontSize(10);
-              doc.text("Degros S.A.", 10, 15, { align: 'left' });
+              doc.text("Nimagu S.A.", 10, 15, { align: 'left' });
 
               // Título centrado
               doc.setFontSize(10);
@@ -438,7 +436,7 @@ generarCtaCtePDF(){
               doc.text(cade,doc.internal.pageSize.getWidth()-10, 23,{ align: 'right' });
              //}
             }  
-            doc.save('CCCli'+this.nomcliente+'.pdf');                               
+            doc.save('CCCli'+this.nomprov+'.pdf');                               
   
 }
 

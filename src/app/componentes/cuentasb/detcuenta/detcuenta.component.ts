@@ -11,6 +11,7 @@ import { finalize, forkJoin, Subscription } from 'rxjs';
 import { CommonModule, DatePipe } from '@angular/common';
 import { cuentaB } from '../../../../entidades/cuentaB';
 import { MovcuentaComponent } from './movcuenta/movcuenta.component';
+import { MovctasalComponent } from './movctasal/movctasal.component';
 
 @Component({
   selector: 'app-detcuenta',
@@ -207,7 +208,7 @@ export class DetcuentaComponent {
     dialogConfig.autoFocus = false;
     dialogConfig.data = data;
     dialogConfig.panelClass = "custom-dialog-container";
-    const dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
+    const dialogRef =  this.dialog.open(MovctasalComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 
           (datas:any) => { if (datas.clicked === 'Alta'){                   
                  this.leerDetalleCuenta(this.cuentab.idCuenta,1); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                                       

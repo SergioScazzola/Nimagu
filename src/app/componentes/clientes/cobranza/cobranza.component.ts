@@ -132,7 +132,8 @@ export class CobranzaComponent {
                      
           maxcob    :  this.servicio.getMaxCobranza(),          
           clientes  :  this.servicio.getClientes(), 
-          ingxcli   :  this.servicio.getIngresosXCli(this.data.nrocliente),
+          ingxcli   :  this.servicio.getIngresosXCli(this.data.nrocliente,0), 
+          //traer ventas no cobradas
           ctasban   :  this.servicio.getCuentasB(),
    
          }).subscribe(res2 => {
@@ -151,7 +152,7 @@ export class CobranzaComponent {
           cobroo     : this.servicio.leerCobro(this.data.nrocobr),
           detcobroo  : this.servicio.getDetalleCobro(this.data.nrocobr,1),    
           clientes   : this.servicio.getClientes(), 
-          ingxcli    :  this.servicio.getIngresosXCli(this.data.nrocliente),
+          ingxcli    : this.servicio.getIngresosXCli(this.data.nrocliente,0),
    
          }).subscribe(res2 => {
             this.cobro     =  res2.cobroo,

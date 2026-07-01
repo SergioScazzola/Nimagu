@@ -142,11 +142,11 @@ importeformat   : string = "";
 
    onSelectionChangeCategoria(event : any){
     this.catSel = event.value;     
-    this.formVta.controls['categoria'].setValue(this.catSel);
+  
 
   }
     onSelectionChangeProcedencia(event : any){      
-      this.formVta.controls['proced'].setValue(this.procSel);
+     this.procSel = event.value;
     }
   calcularImporte(){
      var totkilos = this.formVta.controls["tkilos"].value;

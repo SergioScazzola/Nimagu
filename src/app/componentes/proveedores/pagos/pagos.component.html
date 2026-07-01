@@ -4,7 +4,7 @@
           <div class="row g-3 mb-3">
           <div class="col-3">
             <mat-form-field class="w-100" appearance="fill">
-              <mat-label>Nro.Cobro</mat-label>
+              <mat-label>Nro.Pago</mat-label>
               <input matInput [readonly]="true" formControlName="nropag" style="text-align: center;">	
              </mat-form-field>      
           </div>    
@@ -37,9 +37,9 @@
            <div class="col-8">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Venta</mat-label>
-              <mat-select formControlName="nroventa"    
-                  (selectionChange)="onSelectionChangeVenta($event)">      
-                  <mat-option *ngFor="let egre of this.csalpro; let i = index" [value]="egre.idSalida">
+              <mat-select formControlName="nrosalida"    
+                  (selectionChange)="onSelectionChangeEgreso($event)">      
+                  <mat-option *ngFor="let egre of this.csalpro" [value]="egre.idSalida">
                     {{ egre.nprov+" - "+
                        egre.cantidad+" "+
                        egre.categoria+" - "+

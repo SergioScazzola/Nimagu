@@ -17,10 +17,10 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '
 import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 import {es} from 'date-fns/locale';
 import { intMovCtab, movcta } from '../../../../../entidades/movcta';
-import { clienteDTO } from '../../../../../entidades/clienteDTO';
-import { ingresoDTO } from '../../../../../entidades/ingresoDTO';
-import { dcobroDTO } from '../../../../../entidades/cobroDTO';
-import { dcobxcli } from '../../../../../entidades/dcobxcli';
+
+import { proveedorDTO } from '../../../../../entidades/proveedorDTO';
+import { salidaDTO } from '../../../../../entidades/salidaDTO';
+import { dpagoDTO } from '../../../../../entidades/pagoDTO';
 
 export const DATE_FORMATS : MatDateFormats = {
   
@@ -35,9 +35,8 @@ export const DATE_FORMATS : MatDateFormats = {
 }
 
 @Component({
-  selector: 'app-movcuenta',
-  standalone: true,
-  imports: [MatFormField,
+  selector: 'app-movctasal',
+imports: [MatFormField,
     MatLabel,
     MatInputModule,
     MatSelectModule,
@@ -55,22 +54,22 @@ export const DATE_FORMATS : MatDateFormats = {
     { provide : MAT_DATE_LOCALE, useValue: es},
     
   ],     
-  templateUrl: './movcuenta.component.html',
-  styleUrl: './movcuenta.component.css'
+  templateUrl: './movctasal.component.html',
+  styleUrl: './movctasal.component.css'
 })
-export class MovcuentaComponent {
-  public nameInput = viewChild<ElementRef>('inputFocus');
+export class MovctasalComponent {
+ public nameInput = viewChild<ElementRef>('inputFocus');
   formMov             : FormGroup;
   operacion           : string = "";
-  cclientes           : clienteDTO[]=[];
-  cventas             : ingresoDTO[]=[];
-  dcobros             : dcobroDTO[]=[];
+  cproveedores        : proveedorDTO[]=[];
+  csalidas            : salidaDTO[]=[];
+  dpagos              : dpagoDTO[]=[];
   fechi               : string;
   fechf               : string;
-  cliSel              : number;
-  vtaSel              : number;
-  cobroSel            : number;
-  itcobroSel          : number;
+  proSel              : number;
+  salSel              : number;
+  pagoSel             : number;
+  itpagoSel          : number;
   resumod             : string;
   nctaalta            : number;
   maxcuenta           : number;
@@ -86,7 +85,7 @@ export class MovcuentaComponent {
   constructor(  public fb           : FormBuilder,
                 public servicio     : ServiciosService,
                 public datepipe     : DatePipe,
-                public dialogRef    : MatDialogRef<MovcuentaComponent>,
+                public dialogRef    : MatDialogRef<MovctasalComponent>,
                 private cdr         : ChangeDetectorRef,
                 private zone        : NgZone,
                 @Inject(MAT_DIALOG_DATA) public data: intMovCtab,  
@@ -103,11 +102,11 @@ export class MovcuentaComponent {
     if (this.data.accion=="A"){
         this.mostrarHora();   
         forkJoin({
-            clientes : this.servicio.getClientes()
+            proveed : this.servicio.getProveedores()
            }).subscribe(res => {   
-            this.cclientes  = res.clientes;
+            this.cproveedores  = res.proveed;
              this.formMov.controls["nromov"].setValue(this.data.nromov);       
-             this.operacion = "Agregar movimiento bancario de ingreso";
+             this.operacion = "Agregar movimiento bancario de egreso(Salida)";
              this.isloading = false;
              this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
                     
@@ -120,10 +119,10 @@ export class MovcuentaComponent {
      this.formMov = this.fb.group({       
         nromov      : [''],   
         fechamov    : [''],
-        ingegre     : ['IN'],    
-        clte        : [''],
-        venta       : [''],
-        dcobro      : [''],
+        ingegre     : ['EG'],    
+        prov        : [''],
+        salida      : [''],
+        dpago       : [''],
         tipocomp    : [''],
         comprob     : [''],
         concepto    : [''],
@@ -136,18 +135,18 @@ export class MovcuentaComponent {
     actualizarParaAlta(){
       this.formMov.controls["nromov"].setValue(this.data.nromov);
       // tomar la seleccion inicial en los array
-      this.formMov.controls["clte"].setValue(this.cliSel);
-      this.formMov.controls["venta"].setValue(this.vtaSel);
-      this.formMov.controls["dcobro"].setValue(1);
+      this.formMov.controls["prov"].setValue(this.proSel);
+      this.formMov.controls["salida"].setValue(this.salSel);
+      this.formMov.controls["dpago"].setValue(1);
 
-      this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
-      this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
-      this.formMov.controls["comprob"].setValue(this.dcobros[0].nrompago);
-      this.formMov.controls["concepto"].setValue(this.cclientes[0].nombre);
-      this.formMov.controls["importe"].setValue(this.dcobros[0].importe);
-      this.formMov.controls["coment"].setValue(this.cventas[0].cantidad+" "+
-                                               this.cventas[0].categoria+" "+
-                                               this.cventas[0].importe);
+      this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
+      this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
+      this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
+      this.formMov.controls["concepto"].setValue(this.cproveedores[0].nombre);
+      this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
+      this.formMov.controls["coment"].setValue(this.csalidas[0].cantidad+" "+
+                                               this.csalidas[0].categoria+" "+
+                                               this.csalidas[0].importe);
 
 
 
@@ -192,7 +191,7 @@ export class MovcuentaComponent {
                 subscri.unsubscribe();
                 var subs : Subscription;
                 // Guarda en el item de cobro, el id de cuenta bancaria a la que fué transferido
-                subs = this.servicio.updateCtaDestinoCob(this.cobroSel,this.itcobroSel,this.data.idCuenta)
+                subs = this.servicio.updateCtaDestinoPag(this.pagoSel,this.itpagoSel,this.data.idCuenta)
                    .pipe(finalize(() => {  
                        this.notiService.showNotification("Item actualizado con Cuenta destino",'Aceptar','mensaje',500); 
                        this.dialogRef.close({ clicked : "Alta"})
@@ -282,92 +281,92 @@ validarFecha = (control: AbstractControl): ValidationErrors | null => {
     : null;
 };
 
-onSelectionclte(event : any)
+onSelectionProv(event : any)
 {
-  // cambio el cliente, volver a leer ingresos y el detalle del 1er cobro
- var nrocli = event.value;
- this.cliSel = nrocli;
- var indcli  = this.cclientes.findIndex(p=>p.idCliente==nrocli);
+  // cambio el proveedor, volver a leer egresos y el detalle del 1er pago
+ var nropro = event.value;
+ this.proSel = nropro;
+ var indpro  = this.cproveedores.findIndex(p=>p.idProv==nropro);
  var subs : Subscription;
- this.cventas = [];
- this.dcobros = [];
- subs = this.servicio.getIngresosXCli(nrocli, 1) // sólo ventas cobradas
+ this.csalidas = [];
+ this.dpagos   = [];
+ subs = this.servicio.getSalidasXProv(nropro, 1) // sólo salidas pagadas
      .pipe(finalize(() => {      
-          if (this.cventas!=undefined && this.cventas.length>0){
-             this.vtaSel =this.cventas[0].idingre;
-             this.formMov.controls["venta"].setValue(this.vtaSel);
-             this.cobroSel = this.cventas[0].idcobro;
+          if (this.csalidas!=undefined && this.csalidas.length>0){
+             this.salSel =this.csalidas[0].idSalida;
+             this.formMov.controls["salida"].setValue(this.salSel);
+             this.pagoSel = this.csalidas[0].idpago;
              var subs1 : Subscription;
-             subs1 = this.servicio.getDetalleCobro(this.cobroSel,0)
+             subs1 = this.servicio.getDetallePago(this.pagoSel,0)
                 .pipe(finalize(()=> {                     
-                   this.itcobroSel = this.dcobros[0].nroitem;                   
-                   this.formMov.controls["dcobro"].setValue(this.itcobroSel);                                
-                   this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
-                   this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
-                   this.formMov.controls["comprob"].setValue(this.dcobros[0].nrompago);
-                   this.formMov.controls["concepto"].setValue(this.cclientes[indcli].nombre);
-                   this.formMov.controls["importe"].setValue(this.dcobros[0].importe);
-                   this.formMov.controls["coment"].setValue(this.cventas[0].cantidad+" "+
-                                               this.cventas[0].categoria+" "+
-                                               this.cventas[0].importe);                           
+                   this.itpagoSel = this.dpagos[0].nroitem;                   
+                   this.formMov.controls["dpago"].setValue(this.itpagoSel);                                
+                   this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
+                   this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
+                   this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
+                   this.formMov.controls["concepto"].setValue(this.cproveedores[indpro].nombre);
+                   this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
+                   this.formMov.controls["coment"].setValue(this.csalidas[0].cantidad+" "+
+                                               this.csalidas[0].categoria+" "+
+                                               this.csalidas[0].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
                  }))
-                 .subscribe((data : any): void => { this.dcobros = data });   
+                 .subscribe((data : any): void => { this.dpagos = data });   
 
           } else {
-             this.notiService.showNotification("El Cliente NO tiene ventas cobradas para transferir a la cuenta, "+
-                                        "ingrese el/los cobros y reintente",'Aceptar','mensaje',500);             
+             this.notiService.showNotification("El Proveedor NO tiene egresos pagados para transferir a la cuenta, "+
+                                        "ingrese el/los pagos y reintente",'Aceptar','mensaje',500);             
           }
 
           }))
                                                  
          .subscribe((data:any):void => {
-              this.cventas = data;
+              this.csalidas = data;
          })
  }
 
- onSelectionVenta(event : any)
+ onSelectionSalida(event : any)
 {
- var nroventa = event.value;
+ var nrosalida = event.value;
 
- var indventa = this.cventas.findIndex(p=>p.idingre==nroventa);
- var cobro    = this.cventas[indventa].idcobro;
- this.cobroSel = cobro;
+ var indsal = this.csalidas.findIndex(p=>p.idSalida==nrosalida);
+ var pago    = this.csalidas[indsal].idpago;
+ this.pagoSel = pago;
  var subs : Subscription;
- this.dcobros = [];
+ this.dpagos = [];
 
- subs = this.servicio.getDetalleCobro(cobro,0)
+ subs = this.servicio.getDetallePago(pago,0)
      .pipe(finalize(() => {                
-        this.cobroSel   = this.dcobros[0].idCobro;                                   
-        this.itcobroSel = this.dcobros[0].nroitem; 
-        this.formMov.controls["dcobro"].setValue(this.itcobroSel);                                 
-        this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
-        this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
-        this.formMov.controls["comprob"].setValue(this.dcobros[0].nrompago);
-        this.formMov.controls["importe"].setValue(this.dcobros[0].importe);
-        this.formMov.controls["coment"].setValue(this.cventas[indventa].cantidad+" "+
-                                                 this.cventas[indventa].categoria+" "+
-                                                 this.cventas[indventa].importe);                           
+        this.pagoSel   = this.dpagos[0].idPago;                                   
+        this.itpagoSel = this.dpagos[0].nroitem; 
+        this.formMov.controls["dpago"].setValue(this.itpagoSel);                                 
+        this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
+        this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
+        this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
+        this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
+        this.formMov.controls["coment"].setValue(this.csalidas[indsal].cantidad+" "+
+                                                 this.csalidas[indsal].categoria+" "+
+                                                 this.csalidas[indsal].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
           subs.unsubscribe()         
          }))
          .subscribe((data:any):void => {
-              this.dcobros = data;
+              this.dpagos = data;
          })
  }
 
- onSelectiondCobro(event : any)
+ onSelectiondPago(event : any)
 {
  var nroit = event.value;
- this.itcobroSel = nroit;
- var inditcob = this.dcobros.findIndex(p=>p.nroitem==nroit);
- this.formMov.controls["fechamov"].setValue(this.dcobros[inditcob].fecvto);
- this.formMov.controls["tipocomp"].setValue(this.dcobros[inditcob].nmpago);
- this.formMov.controls["comprob"].setValue(this.dcobros[inditcob].nrompago);
- this.formMov.controls["importe"].setValue(this.dcobros[inditcob].importe);
- this.cobroSel = this.dcobros[inditcob].idCobro;
+ this.itpagoSel = nroit;
+ var inditpag = this.dpagos.findIndex(p=>p.nroitem==nroit);
+ this.formMov.controls["fechamov"].setValue(this.dpagos[inditpag].fecvto);
+ this.formMov.controls["tipocomp"].setValue(this.dpagos[inditpag].nmpago);
+ this.formMov.controls["comprob"].setValue(this.dpagos[inditpag].nrompago);
+ this.formMov.controls["importe"].setValue(this.dpagos[inditpag].importe);
+ this.pagoSel = this.dpagos[inditpag].idPago;
  this.isloading = false;
  this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
  }
@@ -386,7 +385,3 @@ Anular(){
       this.dialogRef.close({ clicked : "Cancelar"})
      }
 }
-
-
-
-

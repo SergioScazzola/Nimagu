@@ -130,13 +130,14 @@ export class PagosComponent {
                      
           maxpag       :  this.servicio.getMaxPagos(),          
           proveedores  :  this.servicio.getProveedores(), 
-          ingxprov     :  this.servicio.getSalidasXProv(this.data.nroprov),
+          salxprov     :  this.servicio.getSalidasXProv(this.data.nroprov,0),
+          //traer salidas no pagadas
           ctasban      :  this.servicio.getCuentasB(),
    
          }).subscribe(res2 => {
             this.pagpalta     =  res2.maxpag==undefined?1:res2.maxpag + 1,
             this.cproveedores = res2.proveedores,
-            this.csalpro      = res2.ingxprov,
+            this.csalpro      = res2.salxprov,
             this.ccuentas     = res2.ctasban,
         
             this.operacion = "Agregar Pago "+this.pagpalta+" al Proveedor : "+this.data.nomprov;
@@ -149,7 +150,8 @@ export class PagosComponent {
           pagoo       : this.servicio.leerPago(this.data.nropago),
           detpagoo   : this.servicio.getDetallePago(this.data.nropago,1),    
           proveed    : this.servicio.getProveedores(), 
-          salxprov   : this.servicio.getSalidasXProv(this.data.nroprov),
+          salxprov   : this.servicio.getSalidasXProv(this.data.nroprov,0), 
+          //traer salidas no pagadas
    
          }).subscribe(res2 => {
             this.pago         =  res2.pagoo,
@@ -174,11 +176,11 @@ export class PagosComponent {
       nprov      : ['',[Validators.required]],    
       nfactura   : ['',[Validators.required]],                            
       importe    : [''],
-      nrosalida  : [0,[Validators.required]],
+      nrosalida  : ['',[Validators.required]],
       observ     : [''],      
     }) 
    }
-   onSelectionChangeVenta(event:any){
+   onSelectionChangeEgreso(event:any){
      this.salidaSel = event.value;
      this.totalsalida = this.csalpro[this.csalpro.findIndex(p=>p.idSalida==this.salidaSel)].importe;
      this.actualizarResto();
@@ -218,7 +220,7 @@ prepararModificacion(){
 }
 
 ModificarPago(){
-  
+
 }
 
 /*ModificarCobro(){
@@ -310,21 +312,21 @@ agItemPago(){
    const dialogRef =  this.dialog.open(ItempagoComponent, dialogConfig);
    dialogRef.afterClosed().subscribe( // 
       (data:any) => { if (data.accion === 'Alta'){        // Agregó un item  de cobro - agregarlo al detalle
-          console.log("pppp : "+data.dcobro.idCobro);                
-          var dcob : dpagoDTO = {
-             idPago       : data.dcobro.idPago,
-             nroitem      : data.dcobro.nroitem,             
-             idmpago      : data.dcobro.idmpago,
-             nmpago       : data.dcobro.nmpago,                             
-             fecha        : data.dcobro.fecha,
-             nrompago     : data.dcobro.nrompago,
-             banco        : data.dcobro.banco,
-             fecvto       : data.dcobro.fecvto,
-             importe      : data.dcobro.importe,
-             ctadest      : data.dcobro.ctadest,
-             comentario   : data.dcobro.comentario
+          //console.log("pppp : "+data.dcobro.idCobro);                
+          var dpag : dpagoDTO = {
+             idPago       : data.dpago.idPago,
+             nroitem      : data.dpago.nroitem,             
+             idmpago      : data.dpago.idmpago,
+             nmpago       : data.dpago.nmpago,                             
+             fecha        : data.dpago.fecha,
+             nrompago     : data.dpago.nrompago,
+             banco        : data.dpago.banco,
+             fecvto       : data.dpago.fecvto,
+             importe      : data.dpago.importe,
+             ctadest      : data.dpago.ctadest,
+             comentario   : data.dpago.comentario
         };      
-        this.cdetpagos = [...this.cdetpagos, dcob]; // forzar la creacion del array para que detecte el cambio                           
+        this.cdetpagos = [...this.cdetpagos, dpag]; // forzar la creacion del array para que detecte el cambio                           
         this.totalizarPago();   
         this.actualizarResto();                                                             
                     }
@@ -394,15 +396,15 @@ modificarItemPago(nropag : number,nroit  : number){
            (data:any) => { if (data.accion === 'Modi'){        // Agregó un item  de cobro     
                           
                           var indm = data.dpago.nroitem - 1;
-                          this.cdetpagos[indm].idmpago   = data.dcobro.idmpago;
-                          this.cdetpagos[indm].nmpago    = data.dcobro.nmpago;                                                                                       
-                          this.cdetpagos[indm].fecha     = data.dcobro.fecha;
-                          this.cdetpagos[indm].nrompago  = data.dcobro.nrompago;
-                          this.cdetpagos[indm].banco     = data.dcobro.banco;
-                          this.cdetpagos[indm].fecvto    = data.dcobro.fecvto;
-                          this.cdetpagos[indm].importe   = data.dcobro.importe;
-                          this.cdetpagos[indm].ctadest   = data.dcobro.ctadest;
-                          this.cdetpagos[indm].comentario= data.dcobro.comentario;
+                          this.cdetpagos[indm].idmpago   = data.dpago.idmpago;
+                          this.cdetpagos[indm].nmpago    = data.dpago.nmpago;                                                                                       
+                          this.cdetpagos[indm].fecha     = data.dpago.fecha;
+                          this.cdetpagos[indm].nrompago  = data.dpago.nrompago;
+                          this.cdetpagos[indm].banco     = data.dpago.banco;
+                          this.cdetpagos[indm].fecvto    = data.dpago.fecvto;
+                          this.cdetpagos[indm].importe   = data.dpago.importe;
+                          this.cdetpagos[indm].ctadest   = data.dpago.ctadest;
+                          this.cdetpagos[indm].comentario= data.dpago.comentario;
 
                            this.cdetpagos = [...this.cdetpagos]; // forzar la creacion del array para que detecte el cambio
 

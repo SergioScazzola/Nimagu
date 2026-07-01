@@ -7,6 +7,7 @@ export interface saldoProvDTO {
 export interface intSaldoProv  {
      nroprov      : number; // 
      nrosaldo     : number;
+     saldo        : number;
      nomprov      : string;          
      accion       : string;
      fecprmv      : Date | null;

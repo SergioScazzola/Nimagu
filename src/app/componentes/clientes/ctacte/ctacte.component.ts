@@ -104,7 +104,7 @@ ngOnInit()
         //saldoscli  :     this.servicio.getSaldosCliente(this.numcliente),
         saldoscli:     this.servicio.getSaldosCliente(this.numcliente),
 
-        ingxcli    :     this.servicio.getIngresosXCli(this.numcliente), // traer los ingresos del cliente
+        ingxcli    :     this.servicio.getIngresosXCli(this.numcliente,2), // traer los ingresos del cliente
         cobroscli  :     this.servicio.getCobrosxCliyF(this.numcliente,this.fechi,this.fechf), // traer los cobros al cliente       
         leercli:         this.servicio.leerCliente(this.numcliente)
        
@@ -275,7 +275,7 @@ actualizarxUltCobroyCred(){
   this.cingresos    = [];
 
   forkJoin({  // consultas para armar la cta.cte del cliente en paralelo        
-        ingxcli    :     this.servicio.getIngresosXCli(this.numcliente), // traer los ingresos del cliente
+        ingxcli    :     this.servicio.getIngresosXCli(this.numcliente,2), // traer los ingresos del cliente
         cobroscli  :     this.servicio.getCobrosxCliyF(this.numcliente,this.fechi,this.fechf), // traer los cobros al cliente       
        
       }).subscribe(res2 => {
@@ -299,16 +299,14 @@ modifSaldoInicial(){
    fec = null;
  }
  
- if (this.csaldos!=undefined){ // modifica saldo inicial
-    nros = 1;
-    acc  = "I";
- } else {  // no tiene saldos, agrega el primer saldo
-    nros = 1; 
-    acc  = "A";
- }
+ 
+  nros = 1; 
+  acc  = "M";
+ 
  const datas : intSaldoCli = {
     nrocli     : this.numcliente,    
     nrosaldo   : nros,
+    saldo      : this.clte.saldoini,
     nomcli     : this.nomcliente,
     accion     : acc,
     fecprmv    : fec     // fecha del movimiento mas antiguo
@@ -321,7 +319,7 @@ modifSaldoInicial(){
   const dialogRef =  this.dialog.open(SaldocliComponent, dialogConfig);
         dialogRef.afterClosed().subscribe( // 
         (data:any) => { if (data.clicked === 'Alta' || data.clicked === 'Modi'){ // agrego o modifico saldo inicial
-                        this.regenerarSaldo();   // volver a leer los saldos                                                       // leer ultimo cobro y agregar a cmovims y recalcular totales                                            
+                           this.saldoinicial = data.saldoini;
                          }
                         })
 

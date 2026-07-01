@@ -37,14 +37,9 @@
         </div>        
       
         <div class="row">
-            <div class="botonera">           
-                <button class="btn btn-sm btn-outline-primary me-5" 
-                         [disabled]="formSal.invalid || data.accion!='A' ||
-                                    formSal.controls['saldo'].value==0" 
-                         (click)="GrabarSaldo()">Grabar Saldo</button>   
+            <div class="botonera">                            
                 <button class="btn btn-sm btn-outline-success me-5" 
-                       [disabled]="formSal.invalid || (data.accion!='I' && data.accion!='M') ||
-                                    formSal.controls['saldo'].value==0" 
+                       [disabled]="formSal.invalid || data.accion!='M'"                                   
                        (click)="ModificarSaldo()">Modificar Saldo</button>                                                                      
                 <button class="btn btn-sm btn-outline-secondary"                
                          (click)="Anular()">Cancelar</button>                       
