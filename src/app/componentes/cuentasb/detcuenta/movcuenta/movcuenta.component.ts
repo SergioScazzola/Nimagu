@@ -293,13 +293,16 @@ onSelectionclte(event : any)
  this.dcobros = [];
  subs = this.servicio.getIngresosXCli(nrocli, 1) // sólo ventas cobradas
      .pipe(finalize(() => {      
-          if (this.cventas!=undefined && this.cventas.length>0){
+          if (this.cventas!==null && this.cventas.length>0){
              this.vtaSel =this.cventas[0].idingre;
              this.formMov.controls["venta"].setValue(this.vtaSel);
              this.cobroSel = this.cventas[0].idcobro;
              var subs1 : Subscription;
              subs1 = this.servicio.getDetalleCobro(this.cobroSel,0)
-                .pipe(finalize(()=> {                     
+                .pipe(finalize(()=> {    
+                   console.log("Cobros de la venta : "+JSON.stringify(this.dcobros,null,2));   
+                  if (this.dcobros!==null && this.dcobros.length>0){
+
                    this.itcobroSel = this.dcobros[0].nroitem;                   
                    this.formMov.controls["dcobro"].setValue(this.itcobroSel);                                
                    this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
@@ -312,6 +315,10 @@ onSelectionclte(event : any)
                                                this.cventas[0].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+                  } else {
+                    this.notiService.showNotification("La venta NO tiene cobros pendientes de transferir a la cuenta, "+
+                                        "seleccione otra venta",'Aceptar','mensaje',500);             
+                  }
                  }))
                  .subscribe((data : any): void => { this.dcobros = data });   
 
@@ -337,10 +344,13 @@ onSelectionclte(event : any)
  var subs : Subscription;
  this.dcobros = [];
 
- subs = this.servicio.getDetalleCobro(cobro,0)
-     .pipe(finalize(() => {                
+ subs = this.servicio.getDetalleCobro(cobro,0) // Cobros NO transferidos de la venta
+     .pipe(finalize(() => {        
+       console.log("Cobros de la venta : "+JSON.stringify(this.dcobros,null,2));
+       if (this.dcobros!==null && this.dcobros.length>0){        
+       
         this.cobroSel   = this.dcobros[0].idCobro;                                   
-        this.itcobroSel = this.dcobros[0].nroitem; 
+        this.itcobroSel = this.dcobros[0].nroitem;         
         this.formMov.controls["dcobro"].setValue(this.itcobroSel);                                 
         this.formMov.controls["fechamov"].setValue(this.dcobros[0].fecvto);
         this.formMov.controls["tipocomp"].setValue(this.dcobros[0].nmpago);
@@ -352,6 +362,10 @@ onSelectionclte(event : any)
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
           subs.unsubscribe()         
+        } else {
+          this.notiService.showNotification("La venta NO tiene cobros pendientes de transferir a la cuenta, "+
+                                        "seleccione otra venta",'Aceptar','mensaje',500);               
+        }
          }))
          .subscribe((data:any):void => {
               this.dcobros = data;

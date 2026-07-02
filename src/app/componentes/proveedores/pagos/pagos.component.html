@@ -36,7 +36,7 @@
           </div>   
            <div class="col-8">
             <mat-form-field class="w-100" appearance="fill">
-              <mat-label>Venta</mat-label>
+              <mat-label>Egresos no pagados</mat-label>
               <mat-select formControlName="nrosalida"    
                   (selectionChange)="onSelectionChangeEgreso($event)">      
                   <mat-option *ngFor="let egre of this.csalpro" [value]="egre.idSalida">

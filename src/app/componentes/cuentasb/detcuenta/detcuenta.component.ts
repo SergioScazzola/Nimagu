@@ -184,7 +184,11 @@ export class DetcuentaComponent {
     const dialogConfig = new MatDialogConfig();   
     dialogConfig.autoFocus = false;
     dialogConfig.data = data;
-    dialogConfig.panelClass = "custom-dialog-container";
+    dialogConfig.width =  '900';         // ancho máximo de la ventana
+    dialogConfig.maxWidth = '95vw';      
+    dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+    dialogConfig.panelClass = 'custom-dialog-container';
+    dialogConfig.disableClose =  false; // opcional según necesidad
     const dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 
           (datas:any) => { if (datas.clicked === 'Alta'){                   

@@ -190,7 +190,7 @@ export class MovctasalComponent {
                                                          
                 subscri.unsubscribe();
                 var subs : Subscription;
-                // Guarda en el item de cobro, el id de cuenta bancaria a la que fué transferido
+                // Guarda en el item de pago, el id de cuenta bancaria a la que fué transferido
                 subs = this.servicio.updateCtaDestinoPag(this.pagoSel,this.itpagoSel,this.data.idCuenta)
                    .pipe(finalize(() => {  
                        this.notiService.showNotification("Item actualizado con Cuenta destino",'Aceptar','mensaje',500); 
@@ -292,13 +292,14 @@ onSelectionProv(event : any)
  this.dpagos   = [];
  subs = this.servicio.getSalidasXProv(nropro, 1) // sólo salidas pagadas
      .pipe(finalize(() => {      
-          if (this.csalidas!=undefined && this.csalidas.length>0){
+          if (this.csalidas!==null && this.csalidas.length>0){
              this.salSel =this.csalidas[0].idSalida;
              this.formMov.controls["salida"].setValue(this.salSel);
              this.pagoSel = this.csalidas[0].idpago;
              var subs1 : Subscription;
              subs1 = this.servicio.getDetallePago(this.pagoSel,0)
-                .pipe(finalize(()=> {                     
+                .pipe(finalize(()=> {    
+                  if (this.dpagos!==null && this.dpagos.length>0){                 
                    this.itpagoSel = this.dpagos[0].nroitem;                   
                    this.formMov.controls["dpago"].setValue(this.itpagoSel);                                
                    this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
@@ -311,6 +312,10 @@ onSelectionProv(event : any)
                                                this.csalidas[0].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
+                  } else {
+                    this.notiService.showNotification("El egreso NO tiene pagos pendientes de transferir a la cuenta, "+
+                                        "seleccione otra venta",'Aceptar','mensaje',500);             
+                  }  
                  }))
                  .subscribe((data : any): void => { this.dpagos = data });   
 
@@ -337,20 +342,25 @@ onSelectionProv(event : any)
  this.dpagos = [];
 
  subs = this.servicio.getDetallePago(pago,0)
-     .pipe(finalize(() => {                
-        this.pagoSel   = this.dpagos[0].idPago;                                   
-        this.itpagoSel = this.dpagos[0].nroitem; 
-        this.formMov.controls["dpago"].setValue(this.itpagoSel);                                 
-        this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
-        this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
-        this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
-        this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-        this.formMov.controls["coment"].setValue(this.csalidas[indsal].cantidad+" "+
+     .pipe(finalize(() => {    
+        if (this.dpagos!==null && this.dpagos.length>0){              
+          this.pagoSel   = this.dpagos[0].idPago;                                   
+          this.itpagoSel = this.dpagos[0].nroitem; 
+          this.formMov.controls["dpago"].setValue(this.itpagoSel);                                 
+          this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
+          this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
+          this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
+          this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
+          this.formMov.controls["coment"].setValue(this.csalidas[indsal].cantidad+" "+
                                                  this.csalidas[indsal].categoria+" "+
                                                  this.csalidas[indsal].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
-          subs.unsubscribe()         
+        } else {
+            this.notiService.showNotification("El egreso NO tiene pagos pendientes de transferir a la cuenta, "+
+                      "seleccione otra venta",'Aceptar','mensaje',500);             
+        }  
+        subs.unsubscribe()         
          }))
          .subscribe((data:any):void => {
               this.dpagos = data;

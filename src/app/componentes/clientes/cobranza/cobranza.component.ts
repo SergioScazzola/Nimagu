@@ -94,8 +94,8 @@ export class CobranzaComponent {
   private grabada            : number = 0;
   private fechaFormateada    : string;
   filas                      : any;
-  totalventa                 : number; //para desplegar en html
-  restoventa                 : number;
+  totalventa                 : number = 0; //para desplegar en html
+  restoventa                 : number = 0;
   public  imprimeconcepto    : boolean = true;
  
 
@@ -140,8 +140,12 @@ export class CobranzaComponent {
             this.cobpalta =  res2.maxcob==undefined?1:res2.maxcob + 1,
             this.cclientes = res2.clientes,
             this.cingcli   = res2.ingxcli,
-            this.ccuentas  = res2.ctasban,
-        
+            this.ccuentas  = res2.ctasban
+
+            if (this.cingcli==undefined || this.cingcli.length==0){
+              this.notiService.showNotification("El cliente no tiene ventas pendientes de cobro",
+                                                'Aceptar','advertencia',500);
+            }
             this.operacion = "Agregar Cobro "+this.cobpalta+" al Cliente : "+this.data.nomcliente;
             this.prepararAlta(); 
          })  
@@ -152,7 +156,8 @@ export class CobranzaComponent {
           cobroo     : this.servicio.leerCobro(this.data.nrocobr),
           detcobroo  : this.servicio.getDetalleCobro(this.data.nrocobr,1),    
           clientes   : this.servicio.getClientes(), 
-          ingxcli    : this.servicio.getIngresosXCli(this.data.nrocliente,0),
+          ingxcli    : this.servicio.getIngresosXCli(this.data.nrocliente,0)
+          // ingresos no cobrados del cliente
    
          }).subscribe(res2 => {
             this.cobro     =  res2.cobroo,

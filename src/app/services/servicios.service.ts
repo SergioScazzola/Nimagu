@@ -190,7 +190,7 @@ public getProcedencias() {
   }
 
 public getIngresosXCli(idcliente : number, cobrados : number){
-   return this.http.get<ingresoDTO[]>(this.apiUrl + `ingreso/ingresosxcli?idcliente=`+idcliente); 
+   return this.http.get<ingresoDTO[]>(this.apiUrl + `ingreso/ingresosxcli?idcliente=`+idcliente+`&cobrados=`+cobrados); 
 }
 // SALIDAS
 
@@ -285,7 +285,7 @@ public updateItemPago(itpago : dpagoDTO) {
 }
 public updateCtaDestinoPag(idpago:number,nroit : number,ctad : number){
   const params = new HttpParams()
-    .set('idPago', idpago.toString())
+    .set('idpago', idpago.toString())
     .set('nroitem', nroit.toString())
     .set('ctad', ctad.toString());
 

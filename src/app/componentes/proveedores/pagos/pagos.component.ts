@@ -92,8 +92,8 @@ export class PagosComponent {
   private grabada            : number = 0;
   private fechaFormateada    : string;
   filas                      : any;
-  totalsalida                : number; //para desplegar en html
-  restosalida                : number;
+  totalsalida                : number = 0; //para desplegar en html
+  restosalida                : number = 0;
   public  imprimeconcepto    : boolean = true;
  
 
@@ -138,8 +138,12 @@ export class PagosComponent {
             this.pagpalta     =  res2.maxpag==undefined?1:res2.maxpag + 1,
             this.cproveedores = res2.proveedores,
             this.csalpro      = res2.salxprov,
-            this.ccuentas     = res2.ctasban,
+            this.ccuentas     = res2.ctasban
         
+            if (this.csalpro==undefined || this.csalpro.length==0){
+              this.notiService.showNotification("El proveedor no tiene egresos pendientes de pago",
+                                                'Aceptar','advertencia',500);
+            }
             this.operacion = "Agregar Pago "+this.pagpalta+" al Proveedor : "+this.data.nomprov;
             this.prepararAlta(); 
          })  

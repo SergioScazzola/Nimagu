@@ -96,7 +96,7 @@ importeformat   : string = "";
                      
           maxing    :  this.servicio.getMaxIngresos(),          
           proce     : this.servicio.getProcedencias(), 
-          categ     :  this.servicio.getCategorias(1),//traer categorias de ingreso
+          categ     :  this.servicio.getCategorias(0),//traer todas las categorias 
    
          }).subscribe(res2 => {
             this.proxing        =  res2.maxing==undefined?1:res2.maxing + 1,

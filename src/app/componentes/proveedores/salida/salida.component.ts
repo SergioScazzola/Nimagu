@@ -96,14 +96,14 @@ importeformat   : string = "";
                      
           maxing    :  this.servicio.getMaxSalidas(),          
           proce     : this.servicio.getProcedencias(), 
-          categ     :  this.servicio.getCategorias(1),//traer categorias de ingreso
+          categ     :  this.servicio.getCategorias(0),//traer todas las categorias 
    
          }).subscribe(res2 => {
             this.proxsal        =  res2.maxing==undefined?1:res2.maxing + 1,
             this.cprocedencias  =  res2.proce,
             this.ccategorias    =  res2.categ
         
-            this.operacion = "Agregar Venta "+this.proxsal+" al Proveedor : "+this.data.nomprov;
+            this.operacion = "Agregar Egreso "+this.proxsal+" al Proveedor : "+this.data.nomprov;
             this.prepararAlta(); 
          })  
      } 
