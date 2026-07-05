@@ -1,23 +1,20 @@
 export interface ingresoDTO {
-   
-  idingre         : number;
-  fecha           : Date;
-  idcliente       : number;
-  ncliente        : string;
-  nroliq          : string;
-  idcat           : number;
-  categoria       : string;
-  cantidad        : number;
-  tkilos          : number;
-  precioun        : number;
-  importe         : number;
-  proced          : string;
-  idcobro         : number;
-  observ          : number;
+   // item de cuenta corriente bancaria
+   iCuenta    : number,
+   nromov     : number,   
+   fechamov   : Date
+   ingegre    : string,    
+   tipomov    : string,       
+   nrocheque  : string,
+   descrip    : string,
+   nroliq     : string,
+   importe    : number,
+   coment     : string
 }
-export interface intVenta {
-     nrocliente : number; // 
-     nroing     : number;
+ 
+export interface intIngreso {
+     idcuenta   : number; // 
+     nromov     : number;
      nomcliente : string;
      accion     : string;
    

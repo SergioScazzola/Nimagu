@@ -6,10 +6,7 @@ export interface salidaDTO {
   nprov           : string;
   nroliq          : string;
   idcat           : number;
-  categoria       : string;
-  cantidad        : number;
-  tkilos          : number; 
-  precioun        : number;
+  categoria       : string; 
   importe         : number;
   proced          : string;
   idpago          : number;

@@ -105,11 +105,15 @@ export class MovctasalComponent {
             proveed : this.servicio.getProveedores()
            }).subscribe(res => {   
             this.cproveedores  = res.proveed;
+
+            if (this.cproveedores!==null && this.cproveedores.length>0){
              this.formMov.controls["nromov"].setValue(this.data.nromov);       
              this.operacion = "Agregar movimiento bancario de egreso(Salida)";
              this.isloading = false;
              this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
-                    
+            } else {
+                this.notiService.showNotification("No existen proveedores registrados",'Aceptar','mensaje',500);
+            }     
            })   
     }
   
@@ -144,8 +148,7 @@ export class MovctasalComponent {
       this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
       this.formMov.controls["concepto"].setValue(this.cproveedores[0].nombre);
       this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-      this.formMov.controls["coment"].setValue(this.csalidas[0].cantidad+" "+
-                                               this.csalidas[0].categoria+" "+
+      this.formMov.controls["coment"].setValue(this.csalidas[0].categoria+" "+
                                                this.csalidas[0].importe);
 
 
@@ -307,9 +310,8 @@ onSelectionProv(event : any)
                    this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
                    this.formMov.controls["concepto"].setValue(this.cproveedores[indpro].nombre);
                    this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-                   this.formMov.controls["coment"].setValue(this.csalidas[0].cantidad+" "+
-                                               this.csalidas[0].categoria+" "+
-                                               this.csalidas[0].importe);                           
+                   this.formMov.controls["coment"].setValue(this.csalidas[0].categoria+" "+
+                                                            this.csalidas[0].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
                   } else {
@@ -351,9 +353,8 @@ onSelectionProv(event : any)
           this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
           this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
           this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-          this.formMov.controls["coment"].setValue(this.csalidas[indsal].cantidad+" "+
-                                                 this.csalidas[indsal].categoria+" "+
-                                                 this.csalidas[indsal].importe);                           
+          this.formMov.controls["coment"].setValue(this.csalidas[indsal].categoria+" "+
+                                                   this.csalidas[indsal].importe);                           
                    this.isloading = false;
                    this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
         } else {

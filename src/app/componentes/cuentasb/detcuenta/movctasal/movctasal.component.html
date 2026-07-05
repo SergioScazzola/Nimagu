@@ -19,7 +19,7 @@
      
        <div class="col-10">
         <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Proveedor</mat-label>
+          <mat-label>Elija un Proveedor</mat-label>
           <mat-select  formControlName="prov"
              [disabled]="this.cproveedores.length==0"
              (selectionChange)="onSelectionProv($event)">
@@ -43,7 +43,7 @@
              (selectionChange)="onSelectionSalida($event)">
                @for (sal of this.csalidas; track sal.idSalida;let i = $index){
                 <mat-option [value]="sal.idSalida">                 
-                  {{ sal.cantidad+" "+sal.categoria+" - "+(sal.fecha| date : "dd/MM/yyyy")+" - "+
+                  {{ sal.categoria+" - "+(sal.fecha| date : "dd/MM/yyyy")+" - "+
                      (sal.importe| number : "1.2-2")}}
                 </mat-option>
                 }

@@ -4,7 +4,7 @@
 
   <form [formGroup]="formMov" class="p-3">
     <!-- Primera fila -->
-    <div class="row g-3">
+    <div class="row g-3 mb-1">
       <div class="col-2">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Nro.Mov</mat-label>
@@ -16,69 +16,54 @@
           />
         </mat-form-field>
       </div>
-     
-       <div class="col-10">
+      <div class="col-3">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
+                        placeholder = "Elija una fecha" 
+                        (dateChange)="onFechaChange($event)"
+                        formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>                  
+                <mat-hint>{{ formMov.controls['fecha'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
+            </mat-form-field >            
+      </div>
+      <div class="col-3">
         <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Cliente</mat-label>
-          <mat-select  formControlName="clte"
-             [disabled]="this.cclientes.length==0"
-             (selectionChange)="onSelectionclte($event)">
-               @for (cli of this.cclientes; track cli.idCliente){
-                <mat-option [value]="cli.idCliente">                 
-                  {{ cli.nombre }}
+          <mat-label>Tipo de Movimiento</mat-label>
+          <mat-select  formControlName="tipomov"
+             [disabled]="this.ctiposmov.length==0"
+             (selectionChange)="onSelectionTmov($event)">
+               @for (tm of this.ctiposmov; track tm.tipomov){
+                <mat-option [value]="tm.tipomov">                 
+                  {{ tm.tipomov }}
                 </mat-option>
                 }
           </mat-select>
         </mat-form-field>
-      </div>             
+      </div>  
+      </div>  
+      <!-- Segunda fila -->
+      <div class="row g-3 mb-1">
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.de Cheque</mat-label>
+          <input matInput formControlName="nrocheque" />
+        </mat-form-field>
+      </div>
+       <div class="col-md-3">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.Liq</mat-label>
+          <input matInput formControlName="nroliq" />
+        </mat-form-field>
+      </div>
     </div>
 
-    <!-- Segunda fila -->
-    <div class="row g-3">
-      <div class="col-12">
+    <!-- Tercera fila -->
+    <div class="row g-3 mb-1">
+      <div class="col-6">
          <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Ventas Cobradas</mat-label>
-          <mat-select  formControlName="venta"
-            [disabled]="this.cventas==null|| this.cventas.length==0"
-             (selectionChange)="onSelectionVenta($event)">
-               @for (vta of this.cventas; track vta.idingre;let i = $index){
-                <mat-option [value]="vta.idingre">                 
-                  {{ vta.cantidad+" "+vta.categoria+" - "+(vta.fecha| date : "dd/MM/yyyy")+" - "+
-                     (vta.importe| number : "1.2-2")}}
-                </mat-option>
-                }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      </div>
-      <!-- Tercera Fila -->
-       <div class="row g-3">
-        <div class="col-12">
-           <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Detalle del cobro</mat-label>
-          <mat-select  formControlName="dcobro"
-             [disabled]="this.dcobros===null || this.dcobros.length==0"
-             (selectionChange)="onSelectiondCobro($event)">
-               @for (dcob of dcobros; track dcob.nroitem){
-                <mat-option [value]="dcob.nroitem">                 
-                  {{ dcob.nmpago+" "+
-                   dcob.nrompago+" Bco. "+
-                   dcob.banco+" Vto."+
-                   (dcob.fecvto | date : "dd/MM/yyyy")+" - "+
-                   (dcob.importe | number : "1.2-2")}}
-                </mat-option>
-                }
-          </mat-select>
-        </mat-form-field>
-        </div>      
-    </div>
-
-    <!-- Cuarta fila -->
-    <div class="row g-3">
-      <div class="col-md-8">
-        <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Concepto</mat-label>
-          <input matInput formControlName="concepto" />
+          <mat-label>Descripción</mat-label>                    
+          <input matInput formControlName="descrip" />
         </mat-form-field>
       </div>
       <div class="col-md-4">
@@ -86,21 +71,19 @@
           <mat-label>Importe</mat-label>
           <input matInput appImporte formControlName="importe" 
                  style="text-align: right" />
-
         </mat-form-field>
       </div>
     </div>
-    
-    <!-- Quinta fila -->
-    <div class="row g-3">
-      <div class="col-12">
+    <!-- Cuarta fila -->
+    <div class="row g-3 mb-1">
+    <div class="col-10">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Observaciones</mat-label>
           <input matInput formControlName="coment" />
         </mat-form-field>
-      </div>           
+    </div> 
     </div>
-    
+      
     <!-- Botonera -->
     <div class="botonera">
       <button

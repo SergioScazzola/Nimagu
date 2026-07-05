@@ -82,7 +82,7 @@ export class ClienteComponent {
           nombre     : ['',[Validators.required]],
           telefono   : [''],
           contacto   : [''],   
-          cuit       : ['',[Validators.required,cuitValidator]], 
+          cuit       : ['',[cuitValidator]], 
           notas      : [''],    
    
         })

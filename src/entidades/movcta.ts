@@ -3,9 +3,10 @@ export interface movcta {
   nromov        : number,
   fechamov      : Date,
   ingegre       : string,
-  tipocomp      : string,
-  comprob       : string,
-  concepto      : string,
+  tipomov      : string,
+  nrocheque    : string,
+  descrip      : string,
+  nroliq       : string,
   importe       : number,
   coment        : string;
 }

@@ -15,7 +15,7 @@ import { infoSCli } from '../../entidades/infoSCli';
 import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
 import { cobroComp, cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
-import { medioPago } from '../../entidades/medioPago';
+import { medioPago, tipomov } from '../../entidades/tipomov';
 import { dcobxcli } from '../../entidades/dcobxcli'
 import { categoria } from '../../entidades/categoria';
 import { procedencia } from '../../entidades/procedencia';
@@ -297,7 +297,7 @@ public getDetallePago(idpag:number, ctad:number) {
     return this.http.get<dpagoDTO[]>(this.apiUrl + `pago/detalle?idpago=`+idpag+`&ctadestino=`+ctad);
 }
 
-public getMediosPago() {
-    return this.http.get<medioPago[]>(this.apiUrl + `ingreso/mediospago`);
+public getTiposMovimiento() {
+    return this.http.get<tipomov[]>(this.apiUrl + `ingreso/tiposmov`);
   }
 }

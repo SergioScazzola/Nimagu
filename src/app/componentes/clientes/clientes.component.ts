@@ -109,6 +109,7 @@ ngOnInit(){
       var subs : Subscription;
       subs = this.clienteService.getClientes()
          .pipe(finalize(()=> {
+           if (this.cclientes!==null && this.cclientes.length>0){
              this.cantcli = this.cclientes.length;
               this.dataSource.data = this.cclientes;         
               this.dataSource.filterPredicate = (dato : clienteDTO, fil : string) => {
@@ -120,6 +121,9 @@ ngOnInit(){
                   this.inputRef.nativeElement.value = this.filtro;//setAttribute('value', this.filtro);
               }
              subs.unsubscribe();
+            } else {
+               this.notiServicio.showNotification("No existen clientes registrados",'Aceptar','mensaje',500);  
+            }
          }))
          .subscribe((data : any): void => {
                           this.cclientes = data});  
