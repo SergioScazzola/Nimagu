@@ -21,6 +21,7 @@ import { intMovCtab, movcta } from '../../../../../entidades/movcta';
 import { proveedorDTO } from '../../../../../entidades/proveedorDTO';
 import { salidaDTO } from '../../../../../entidades/salidaDTO';
 import { dpagoDTO } from '../../../../../entidades/pagoDTO';
+import { tipomov } from '../../../../../entidades/tipomov';
 
 export const DATE_FORMATS : MatDateFormats = {
   
@@ -62,14 +63,13 @@ export class MovctasalComponent {
   formMov             : FormGroup;
   operacion           : string = "";
   cproveedores        : proveedorDTO[]=[];
-  csalidas            : salidaDTO[]=[];
-  dpagos              : dpagoDTO[]=[];
+  ctiposmov           : tipomov[]=[];
+  movimcta            : movcta;
   fechi               : string;
   fechf               : string;
   proSel              : number;
-  salSel              : number;
-  pagoSel             : number;
-  itpagoSel          : number;
+  movSel              : string;
+
   resumod             : string;
   nctaalta            : number;
   maxcuenta           : number;
@@ -99,16 +99,39 @@ export class MovctasalComponent {
   ngOnInit(){
      this.initFormulario();
      this.generarRangoFechas();  
-    if (this.data.accion=="A"){
-        this.mostrarHora();   
-        forkJoin({
-            proveed : this.servicio.getProveedores()
+      if (this.data.accion=="M"){
+          forkJoin({
+            proveed : this.servicio.getProveedores(),
+            tmovs    : this.servicio.getTiposMovimiento(),
+            movcta   : this.servicio.leerMovCuentaB(this.data.idCuenta,this.data.nromov),
+
            }).subscribe(res => {   
             this.cproveedores  = res.proveed;
+            this.ctiposmov  = res.tmovs;
+            this.movimcta   = res.movcta;
 
             if (this.cproveedores!==null && this.cproveedores.length>0){
-             this.formMov.controls["nromov"].setValue(this.data.nromov);       
-             this.operacion = "Agregar movimiento bancario de egreso(Salida)";
+             this.actualizarParaModificacion();
+             
+             this.operacion = "Modificar movimiento bancario de EGRESO";
+             this.isloading = false;
+             this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores      
+           }
+          })
+        } else { // alta de movimiento
+    
+        this.mostrarHora();   
+        forkJoin({
+            proveed : this.servicio.getProveedores(),
+            tiposmov : this.servicio.getTiposMovimiento(),
+           }).subscribe(res => {   
+            this.cproveedores  = res.proveed;
+            this.ctiposmov     = res.tiposmov;
+
+            if (this.cproveedores!==null && this.cproveedores.length>0){
+             this.formMov.controls["nromov"].setValue(this.data.nromov);    
+             this.proSel = this.cproveedores[0].idProv;
+             this.operacion = "Agregar movimiento bancario de EGRESO";
              this.isloading = false;
              this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
             } else {
@@ -120,66 +143,68 @@ export class MovctasalComponent {
   }
    initFormulario(){
 
-     this.formMov = this.fb.group({       
+     this.formMov = this.fb.group({    
+        idcuenta    : [this.data.idCuenta],   
         nromov      : [''],   
+        fecha       : [new Date()],
         fechamov    : [''],
+        prove       : [0],
         ingegre     : ['EG'],    
-        prov        : [''],
-        salida      : [''],
-        dpago       : [''],
-        tipocomp    : [''],
-        comprob     : [''],
-        concepto    : [''],
+        tipomov     : [''],       
+        nrocheque   : [''],
+        descrip     : ['', Validators.required],
+        nroliq      : [''],
         importe     : [0],
         coment      : ['']  
       
       })
     }
 
+      actualizarParaModificacion(){
+        this.proSel = this.cproveedores[0].idProv;
+        this.movSel = this.ctiposmov[0].tipomov;
+        this.formMov.controls["nromov"].setValue(this.data.nromov);       
+        this.formMov.controls["fechamov"].setValue(this.movimcta.fechamov);       
+        this.formMov.controls["prove"].setValue(this.movimcta.cliprov);
+        this.formMov.controls["tipomov"].setValue(this.movimcta.tipomov);              
+        this.formMov.controls["nrocheque"].setValue(this.movimcta.nrocheque);      
+        this.formMov.controls["descrip"].setValue(this.movimcta.descrip);      
+        this.formMov.controls["nroliq"].setValue(this.movimcta.nroliq);      
+        this.formMov.controls["importe"].setValue(this.movimcta.importe);      
+        this.formMov.controls["coment"].setValue(this.movimcta.coment);
+
+    }
     actualizarParaAlta(){
       this.formMov.controls["nromov"].setValue(this.data.nromov);
       // tomar la seleccion inicial en los array
-      this.formMov.controls["prov"].setValue(this.proSel);
-      this.formMov.controls["salida"].setValue(this.salSel);
-      this.formMov.controls["dpago"].setValue(1);
+      this.formMov.controls["prov"].setValue(this.proSel);    
+      this.formMov.controls["fecha"].setValue(new Date()); 
+      this.formMov.controls["fechamov"].setValue(new Date());
+      this.formMov.controls["tipomov"].setValue(this.ctiposmov[0].tipomov);
+      
 
-      this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
-      this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
-      this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
-      this.formMov.controls["concepto"].setValue(this.cproveedores[0].nombre);
-      this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-      this.formMov.controls["coment"].setValue(this.csalidas[0].categoria+" "+
-                                               this.csalidas[0].importe);
 
 
 
     }
-   /* actualizarControles(){
-    // Actualiza controles para modificar
-                                  
-       this.formMov.controls["nromov"].setValue(this.data.nromov);
-       this.formMov.controls["fechamov"].setValue(this.movctab.fechamov);
-       this.formMov.controls["ingegre"].setValue(this.movctab.ingegre);
-       this.formMov.controls["tipocomp"].setValue(this.movctab.tipocomp);
-       this.formMov.controls["comprob"].setValue(this.movctab.comprob);
-       this.formMov.controls["concepto"].setValue(this.movctab.concepto);
-       this.formMov.controls["importe"].setValue(this.movctab.importe);
-       this.formMov.controls["coment"].setValue(this.movctab.coment);
-      
-   }*/
+
 
    AgregarMovimiento(){
 
      var movctaban : movcta = {
      idCuenta      : this.data.idCuenta,
      nromov        : this.data.nromov,
+     fecha         : new Date(),
      fechamov      : this.formMov.controls["fechamov"].value,
+     cliprov       : this.formMov.controls["prove"].value,
      ingegre       : this.formMov.controls["ingegre"].value,
-     tipocomp      : this.formMov.controls["tipocomp"].value,
-     comprob       : this.formMov.controls["comprob"].value,
-     concepto      : this.formMov.controls["concepto"].value,
+     tipomov      : this.formMov.controls["tipomov"].value,
+     nrocheque       : this.formMov.controls["nrocheque"].value,
+     descrip       : this.formMov.controls["descrip"].value,
+     nroliq        : this.formMov.controls["nroliq"].value,
      importe       : this.formMov.controls["importe"].value,
-     coment        : this.formMov.controls["coment"].value
+     coment        : this.formMov.controls["coment"].value,
+     movvinc       : 0
  
     }   
  
@@ -188,18 +213,11 @@ export class MovctasalComponent {
     subscri = this.servicio.agMovCuentaB(movctaban)
             .pipe(finalize(() => {   
              console.log("Error : "+resu);
-             this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" Cta : "+movctaban.idCuenta+" - Banco : "+
+             this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" Cta Banco : "+
                                         this.data.banco+" - "+this.data.titular+" se ha agregado con éxito",'Aceptar','mensaje',500); 
                                                          
                 subscri.unsubscribe();
-                var subs : Subscription;
-                // Guarda en el item de pago, el id de cuenta bancaria a la que fué transferido
-                subs = this.servicio.updateCtaDestinoPag(this.pagoSel,this.itpagoSel,this.data.idCuenta)
-                   .pipe(finalize(() => {  
-                       this.notiService.showNotification("Item actualizado con Cuenta destino",'Aceptar','mensaje',500); 
-                       this.dialogRef.close({ clicked : "Alta"})
-                    }))
-                   .subscribe((data : any): void => { resu = data });             
+                 this.dialogRef.close({ clicked : "Alta" })        
                 }))                  
            .subscribe((data : any): void => { resu = data });   
     }
@@ -207,24 +225,23 @@ export class MovctasalComponent {
     
     ModificarMovimiento(){
    
-    var movctaban : movcta = {
-     idCuenta      : this.data.idCuenta,
-     nromov        : this.data.nromov,
-     fechamov      : this.formMov.controls["fechamov"].value,
-     ingegre       : this.formMov.controls["ingegre"].value,
-     tipocomp      : this.formMov.controls["tipocomp"].value,
-     comprob       : this.formMov.controls["comprob"].value,
-     concepto      : this.formMov.controls["concepto"].value,
-     importe       : this.formMov.controls["importe"].value,
-     coment        : this.formMov.controls["coment"].value
- 
-    }   
+    this.movimcta.idCuenta      = this.data.idCuenta;
+    this.movimcta.nromov        = this.data.nromov;
+    this.movimcta.fechamov      = this.formMov.controls["fechamov"].value;
+    this.movimcta.cliprov       = this.formMov.controls["prove"].value;
+    this.movimcta.ingegre       = this.formMov.controls["ingegre"].value;
+    this.movimcta.tipomov       = this.formMov.controls["tipomov"].value;
+    this.movimcta.nrocheque     = this.formMov.controls["nrocheque"].value;
+    this.movimcta.descrip       = this.formMov.controls["descrip"].value;
+    this.movimcta.nroliq        = this.formMov.controls["nroliq"].value;
+    this.movimcta.importe       = this.formMov.controls["importe"].value;
+    this.movimcta.coment        = this.formMov.controls["coment"].value;
    
     var subscri : Subscription;
     var resu    : string;
-    subscri = this.servicio.updateMovCuentaB(movctaban)  
+    subscri = this.servicio.updateMovCuentaB(this.movimcta)  
             .pipe(finalize(() => {   
-             this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" - Banco : "+
+             this.notiService.showNotification("El Movimiento Nro. "+this.movimcta.nromov+" - Banco : "+
                                         this.data.banco+" - "+this.data.titular+" se ha modificado con éxito",'Aceptar','mensaje',500); 
              subscri.unsubscribe();
              this.dialogRef.close({ clicked : "Modi"})
@@ -286,101 +303,12 @@ validarFecha = (control: AbstractControl): ValidationErrors | null => {
 
 onSelectionProv(event : any)
 {
-  // cambio el proveedor, volver a leer egresos y el detalle del 1er pago
- var nropro = event.value;
- this.proSel = nropro;
- var indpro  = this.cproveedores.findIndex(p=>p.idProv==nropro);
- var subs : Subscription;
- this.csalidas = [];
- this.dpagos   = [];
- subs = this.servicio.getSalidasXProv(nropro, 1) // sólo salidas pagadas
-     .pipe(finalize(() => {      
-          if (this.csalidas!==null && this.csalidas.length>0){
-             this.salSel =this.csalidas[0].idSalida;
-             this.formMov.controls["salida"].setValue(this.salSel);
-             this.pagoSel = this.csalidas[0].idpago;
-             var subs1 : Subscription;
-             subs1 = this.servicio.getDetallePago(this.pagoSel,0)
-                .pipe(finalize(()=> {    
-                  if (this.dpagos!==null && this.dpagos.length>0){                 
-                   this.itpagoSel = this.dpagos[0].nroitem;                   
-                   this.formMov.controls["dpago"].setValue(this.itpagoSel);                                
-                   this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
-                   this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
-                   this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
-                   this.formMov.controls["concepto"].setValue(this.cproveedores[indpro].nombre);
-                   this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-                   this.formMov.controls["coment"].setValue(this.csalidas[0].categoria+" "+
-                                                            this.csalidas[0].importe);                           
-                   this.isloading = false;
-                   this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
-                  } else {
-                    this.notiService.showNotification("El egreso NO tiene pagos pendientes de transferir a la cuenta, "+
-                                        "seleccione otra venta",'Aceptar','mensaje',500);             
-                  }  
-                 }))
-                 .subscribe((data : any): void => { this.dpagos = data });   
+  this.proSel = event.value;  
+  this.formMov.controls["descrip"].setValue(this.cproveedores.find(p => p.idProv === this.proSel)?.nombre);
 
-          } else {
-             this.notiService.showNotification("El Proveedor NO tiene egresos pagados para transferir a la cuenta, "+
-                                        "ingrese el/los pagos y reintente",'Aceptar','mensaje',500);             
-          }
-
-          }))
-                                                 
-         .subscribe((data:any):void => {
-              this.csalidas = data;
-         })
  }
 
- onSelectionSalida(event : any)
-{
- var nrosalida = event.value;
 
- var indsal = this.csalidas.findIndex(p=>p.idSalida==nrosalida);
- var pago    = this.csalidas[indsal].idpago;
- this.pagoSel = pago;
- var subs : Subscription;
- this.dpagos = [];
-
- subs = this.servicio.getDetallePago(pago,0)
-     .pipe(finalize(() => {    
-        if (this.dpagos!==null && this.dpagos.length>0){              
-          this.pagoSel   = this.dpagos[0].idPago;                                   
-          this.itpagoSel = this.dpagos[0].nroitem; 
-          this.formMov.controls["dpago"].setValue(this.itpagoSel);                                 
-          this.formMov.controls["fechamov"].setValue(this.dpagos[0].fecvto);
-          this.formMov.controls["tipocomp"].setValue(this.dpagos[0].nmpago);
-          this.formMov.controls["comprob"].setValue(this.dpagos[0].nrompago);
-          this.formMov.controls["importe"].setValue(this.dpagos[0].importe);
-          this.formMov.controls["coment"].setValue(this.csalidas[indsal].categoria+" "+
-                                                   this.csalidas[indsal].importe);                           
-                   this.isloading = false;
-                   this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
-        } else {
-            this.notiService.showNotification("El egreso NO tiene pagos pendientes de transferir a la cuenta, "+
-                      "seleccione otra venta",'Aceptar','mensaje',500);             
-        }  
-        subs.unsubscribe()         
-         }))
-         .subscribe((data:any):void => {
-              this.dpagos = data;
-         })
- }
-
- onSelectiondPago(event : any)
-{
- var nroit = event.value;
- this.itpagoSel = nroit;
- var inditpag = this.dpagos.findIndex(p=>p.nroitem==nroit);
- this.formMov.controls["fechamov"].setValue(this.dpagos[inditpag].fecvto);
- this.formMov.controls["tipocomp"].setValue(this.dpagos[inditpag].nmpago);
- this.formMov.controls["comprob"].setValue(this.dpagos[inditpag].nrompago);
- this.formMov.controls["importe"].setValue(this.dpagos[inditpag].importe);
- this.pagoSel = this.dpagos[inditpag].idPago;
- this.isloading = false;
- this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores
- }
 
 generarRangoFechas(){
   var anioi = Number(this.data.periodo.slice(0,4));
@@ -391,6 +319,10 @@ generarRangoFechas(){
   this.fechi = this.datepipe.transform(feci, 'yyyy-MM-dd')+"T01:00";
   this.fechf = this.datepipe.transform(fecf, 'yyyy-MM-dd')+"T23:59";
 }
+onSelectionTmov(event: any){
+
+}
+
 
 Anular(){
       this.dialogRef.close({ clicked : "Cancelar"})

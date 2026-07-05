@@ -12,8 +12,7 @@ import { MatTableModule,MatTableDataSource } from '@angular/material/table';
 import { ClienteComponent } from "./cliente/cliente.component";
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { intCobranza } from '../../../entidades/cobroDTO';
-import { CobranzaComponent } from './cobranza/cobranza.component';
-import { VentaComponent } from './venta/venta.component';
+
 
 @Component({
   selector: 'app-clientes',
@@ -37,7 +36,7 @@ export class ClientesComponent {
   cantcli          : number;
   formcli          : boolean;
   climod           : number;
-  colClientes: string[] = ["idCliente" , "nombre", "telefono", "contacto","cuit","notas","M","B","IN","COB","CC" ];
+  colClientes: string[] = ["idCliente" , "nombre", "telefono", "contacto","cuit","notas","M","B"];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -185,7 +184,7 @@ ngOnInit(){
       this.router.navigate(['/clientes','infocobros']);
    }
 
-  IngresarVenta(nrocliente : number,nomcliente : string){
+  /*IngresarVenta(nrocliente : number,nomcliente : string){
       const datas : intCobranza = {
         nrocliente : nrocliente,
         nrocobr    : 0,
@@ -231,7 +230,7 @@ ngOnInit(){
                              }
                             })
 
-  }
+  }*/
 
    cuentaCorriente(nrocliente : number,nomcliente : string){
     var filter = this.inputRef.nativeElement.value;

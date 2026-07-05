@@ -11,8 +11,7 @@ import { DetcuentaComponent } from './componentes/cuentasb/detcuenta/detcuenta.c
 import { ClientesComponent } from './componentes/clientes/clientes.component';
 
 import { ProveedoresComponent } from './componentes/proveedores/proveedores';
-import { CtacteComponent } from './componentes/clientes/ctacte/ctacte.component';
-import { CtactepComponent } from './componentes/proveedores/ctactep/ctactep.component';
+
 
 export const routes: Routes = [
   // Rutas para invitados (no autenticados)
@@ -35,13 +34,12 @@ export const routes: Routes = [
       { path: 'ppal', component: NavegadorComponent },         
     
            
-      { path: 'clientes/:filtro', component: ClientesComponent },
-      { path: 'clientes/:nrocliente/:nomcliente/:filtro/ctactec',component: CtacteComponent},      
+      { path: 'clientes/:filtro', component: ClientesComponent },    
       { path: 'cuentas/:idcuenta/:periodo/:filtro/detcuenta', component: DetcuentaComponent },
       { path: 'cuentas/:filtro', component: CuentasbComponent },     
       { path: 'bancos',component: CuentasbComponent},     
       { path: 'proveedores/:filtro', component: ProveedoresComponent },      
-      { path: 'proveedores/:nroprov/:nomprov/:filtro/ctactep',component : CtactepComponent},      
+          
     ],
   },
 

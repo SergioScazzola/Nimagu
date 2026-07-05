@@ -10,10 +10,7 @@ import { SinoService } from '../../services/sino.service';
 import { proveedorDTO } from '../../../entidades/proveedorDTO';
 import { ProveedorComponent } from './proveedor/proveedor';
 import { CommonModule } from '@angular/common';
-import { intSalida } from '../../../entidades/salidaDTO';
-import { SalidaComponent } from './salida/salida.component';
-import { PagosComponent } from './pagos/pagos.component';
-import { intPago } from '../../../entidades/pagoDTO';
+
 
 @Component({
   selector : 'app-proveedores',
@@ -34,7 +31,7 @@ export class ProveedoresComponent {
   formprov          : boolean;
   provmod           : number;
   colProveedores    : string[] = ["idProv" , "nombre", "domicilio","localidad","telefono",
-                                  "email","notas","M","B","EG","PAG","CC" ];
+                                  "email","notas","M","B"];
 
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -153,7 +150,7 @@ ngOnInit(){
     this.router.navigate(['/proveedores','infosaldos']);
    }
 
-   informePagos(){
+  /* informePagos(){
       this.router.navigate(['/proveedores','infopagos']);
    }
 
@@ -209,7 +206,7 @@ IngresarSalida(idprov : number,nombre:string){
                             })
 
   
-}
+}*/
 
   
   

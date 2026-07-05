@@ -65,6 +65,7 @@ export class MovcuentaComponent {
   operacion           : string = "";
   cclientes           : clienteDTO[]=[];
   ctiposmov           : tipomov[]=[];
+  movimcta            : movcta;
 
 
   fechi               : string;
@@ -102,15 +103,36 @@ export class MovcuentaComponent {
   ngOnInit(){
      this.initFormulario();
      this.generarRangoFechas();  
-    if (this.data.accion=="A"){
-        this.mostrarHora();   
-        forkJoin({
+    if (this.data.accion=="M"){
+          forkJoin({
             clientes : this.servicio.getClientes(),
-            tmovs    : this.servicio.getTiposMovimiento()
+            tmovs    : this.servicio.getTiposMovimiento(),
+            movcta   : this.servicio.leerMovCuentaB(this.data.idCuenta,this.data.nromov),
+
            }).subscribe(res => {   
             this.cclientes  = res.clientes;
             this.ctiposmov  = res.tmovs;
+            this.movimcta   = res.movcta;
 
+            if (this.cclientes!==null && this.cclientes.length>0){
+             this.actualizarParaModificacion();
+             
+             this.operacion = "Modificar movimiento bancario de INGRESO";
+             this.isloading = false;
+             this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores      
+           }
+          })
+    } else { // ALTA DE MOVIMIENTO
+    
+        this.mostrarHora();   
+        forkJoin({
+            clientes : this.servicio.getClientes(),
+            tmovs    : this.servicio.getTiposMovimiento(),
+
+           }).subscribe(res => {   
+            this.cclientes  = res.clientes;
+            this.ctiposmov  = res.tmovs;
+         
             if (this.cclientes!==null && this.cclientes.length>0){
              this.cliSel = this.cclientes[0].idCliente;
              this.movSel = this.ctiposmov[0].tipomov;
@@ -123,7 +145,8 @@ export class MovcuentaComponent {
             }
                     
            })   
-    }
+
+      }
   
   }
    initFormulario(){
@@ -131,19 +154,32 @@ export class MovcuentaComponent {
      this.formMov = this.fb.group({    
         idcuenta    : [this.data.idCuenta],   
         nromov      : [''],   
-        fechamov    : [''],
-        clte        : [''],
+        fechamov    : [new Date()],
+        clte        : [0],
         ingegre     : ['IN'],    
         tipomov     : [''],       
         nrocheque   : [''],
-        descrip     : [''],
+        descrip     : ['', Validators.required],
         nroliq      : [''],
         importe     : [0],
         coment      : ['']  
       
       })
     }
+    actualizarParaModificacion(){
+        this.cliSel = this.cclientes[0].idCliente;
+        this.movSel = this.ctiposmov[0].tipomov;
+        this.formMov.controls["nromov"].setValue(this.data.nromov);       
+        this.formMov.controls["fechamov"].setValue(this.movimcta.fechamov);       
+        this.formMov.controls["clte"].setValue(this.movimcta.cliprov);
+        this.formMov.controls["tipomov"].setValue(this.movimcta.tipomov);              
+        this.formMov.controls["nrocheque"].setValue(this.movimcta.nrocheque);      
+        this.formMov.controls["descrip"].setValue(this.movimcta.descrip);      
+        this.formMov.controls["nroliq"].setValue(this.movimcta.nroliq);      
+        this.formMov.controls["importe"].setValue(this.movimcta.importe);      
+        this.formMov.controls["coment"].setValue(this.movimcta.coment);
 
+    }
     actualizarParaAlta(){
       this.formMov.controls["nromov"].setValue(this.data.nromov);
       // tomar la seleccion inicial en los array
@@ -163,23 +199,26 @@ export class MovcuentaComponent {
      var movctaban : movcta = {
      idCuenta      : this.data.idCuenta,
      nromov        : this.data.nromov,
+     fecha         : new Date(),
      fechamov      : this.formMov.controls["fechamov"].value,
+     cliprov       : this.formMov.controls["clte"].value,
      ingegre       : this.formMov.controls["ingegre"].value,
      tipomov       : this.formMov.controls["tipomov"].value,
      nrocheque     : this.formMov.controls["nrocheque"].value,
      descrip       : this.formMov.controls["descrip"].value,
      nroliq        : this.formMov.controls["nroliq"].value,
      importe       : this.formMov.controls["importe"].value,
-     coment        : this.formMov.controls["coment"].value
+     coment        : this.formMov.controls["coment"].value,
+     movvinc       : 0
  
     }   
- 
+    console.log("movctaban : "+JSON.stringify(movctaban));
     var subscri : Subscription;
     var resu    : string;
     subscri = this.servicio.agMovCuentaB(movctaban)
             .pipe(finalize(() => {   
              console.log("Error : "+resu);
-             this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" Cta : "+movctaban.idCuenta+" - Banco : "+
+             this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" Cta Banco : "+
                                         this.data.banco+" - "+this.data.titular+" se ha agregado con éxito",'Aceptar','mensaje',500);                                                          
                 subscri.unsubscribe();
                  this.dialogRef.close({ clicked : "Alta"})         
@@ -189,32 +228,33 @@ export class MovcuentaComponent {
     
     
     ModificarMovimiento(){
-    }
+    
    
-  /*  var movctaban : movcta = {
-     idCuenta      : this.data.idCuenta,
-     nromov        : this.data.nromov,
-     fechamov      : this.formMov.controls["fechamov"].value,
-     ingegre       : this.formMov.controls["ingegre"].value,
-     tipocomp      : this.formMov.controls["tipocomp"].value,
-     comprob       : this.formMov.controls["comprob"].value,
-     concepto      : this.formMov.controls["concepto"].value,
-     importe       : this.formMov.controls["importe"].value,
-     coment        : this.formMov.controls["coment"].value
+    this.movimcta.idCuenta      = this.data.idCuenta;
+    this.movimcta.nromov        = this.data.nromov;
+    this.movimcta.fechamov      = this.formMov.controls["fechamov"].value;
+    this.movimcta.cliprov       = this.formMov.controls["clte"].value;
+    this.movimcta.ingegre       = this.formMov.controls["ingegre"].value;
+    this.movimcta.tipomov       = this.formMov.controls["tipomov"].value;
+    this.movimcta.nrocheque     = this.formMov.controls["nrocheque"].value;
+    this.movimcta.descrip       = this.formMov.controls["descrip"].value;
+    this.movimcta.nroliq        = this.formMov.controls["nroliq"].value;
+    this.movimcta.importe       = this.formMov.controls["importe"].value;
+    this.movimcta.coment        = this.formMov.controls["coment"].value;
+
  
-    }   
    
     var subscri : Subscription;
     var resu    : string;
-    subscri = this.servicio.updateMovCuentaB(movctaban)  
+    subscri = this.servicio.updateMovCuentaB(this.movimcta)  
             .pipe(finalize(() => {   
-             this.notiService.showNotification("El Movimiento Nro. "+movctaban.nromov+" - Banco : "+
+             this.notiService.showNotification("El Movimiento Nro. "+this.movimcta.nromov+" - Banco : "+
                                         this.data.banco+" - "+this.data.titular+" se ha modificado con éxito",'Aceptar','mensaje',500); 
              subscri.unsubscribe();
              this.dialogRef.close({ clicked : "Modi"})
                 }))                  
            .subscribe((data : any): void => {resu=data});   
-    }*/
+}
              
 onFechaChange(event: any) {
     const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
@@ -285,6 +325,12 @@ generarRangoFechas(){
   this.fechf = this.datepipe.transform(fecf, 'yyyy-MM-dd')+"T23:59";
 }
 
+onSelectionClte(event:any){
+  this.cliSel = event.value;
+  this.formMov.controls["descrip"].setValue(this.cclientes.find(c => c.idCliente === this.cliSel)?.nombre);
+
+
+}
 Anular(){
       this.dialogRef.close({ clicked : "Cancelar"})
      }

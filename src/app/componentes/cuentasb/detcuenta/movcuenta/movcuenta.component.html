@@ -5,7 +5,7 @@
   <form [formGroup]="formMov" class="p-3">
     <!-- Primera fila -->
     <div class="row g-3 mb-1">
-      <div class="col-2">
+      <div class="col-3">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Nro.Mov</mat-label>
           <input
@@ -16,18 +16,19 @@
           />
         </mat-form-field>
       </div>
-      <div class="col-3">
+      <div class="col-5">
             <mat-form-field class="w-100" appearance="fill"> 
                 <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
                         placeholder = "Elija una fecha" 
                         (dateChange)="onFechaChange($event)"
-                        formControlName="fecha" > 
+                        formControlName="fechamov" > 
                 <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
                 <mat-datepicker #picker> </mat-datepicker>                  
-                <mat-hint>{{ formMov.controls['fecha'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
+                <mat-hint>{{ formMov.controls['fechamov'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
             </mat-form-field >            
       </div>
-      <div class="col-3">
+      
+      <div class="col-4">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Tipo de Movimiento</mat-label>
           <mat-select  formControlName="tipomov"
@@ -41,32 +42,55 @@
           </mat-select>
         </mat-form-field>
       </div>  
-      </div>  
-      <!-- Segunda fila -->
+      </div>
       <div class="row g-3 mb-1">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Nro.de Cheque</mat-label>
           <input matInput formControlName="nrocheque" />
         </mat-form-field>
       </div>
-       <div class="col-md-3">
+      <div class="col-8">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Elija un Cliente</mat-label>
+          <mat-select  formControlName="clte"
+             [disabled]="this.cclientes.length==null || this.cclientes.length==0"
+             (selectionChange)="onSelectionClte($event)">
+               @for (cl of this.cclientes; track cl.idCliente){
+                <mat-option [value]="cl.idCliente">                 
+                  {{ cl.nombre }}                 
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+      </div>  
+      <!-- Segunda fila -->
+      <div class="row g-3 mb-1">
+      
+       <div class="col-md-4">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Nro.Liq</mat-label>
           <input matInput formControlName="nroliq" />
         </mat-form-field>
       </div>
-    </div>
-
-    <!-- Tercera fila -->
-    <div class="row g-3 mb-1">
-      <div class="col-6">
+      <div class="col-8">
          <mat-form-field class="w-100" appearance="fill">
           <mat-label>Descripción</mat-label>                    
           <input matInput formControlName="descrip" />
         </mat-form-field>
       </div>
-      <div class="col-md-4">
+    </div>
+     
+    <!-- Tercera fila -->
+    <div class="row g-3 mb-1">
+       <div class="col-8">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Observaciones</mat-label>
+          <input matInput formControlName="coment" />
+        </mat-form-field>
+    </div> 
+      <div class="col-md-4 ms-auto">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Importe</mat-label>
           <input matInput appImporte formControlName="importe" 
@@ -74,15 +98,7 @@
         </mat-form-field>
       </div>
     </div>
-    <!-- Cuarta fila -->
-    <div class="row g-3 mb-1">
-    <div class="col-10">
-        <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Observaciones</mat-label>
-          <input matInput formControlName="coment" />
-        </mat-form-field>
-    </div> 
-    </div>
+    
       
     <!-- Botonera -->
     <div class="botonera">

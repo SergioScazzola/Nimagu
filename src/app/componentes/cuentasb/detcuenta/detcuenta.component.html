@@ -32,10 +32,11 @@
           <div class="row">
             <div class="col-10">
               <div class="field">
-                <div>Titular :   </div>
-                <div class="field-label">{{ this.titular }}</div>           
-                <div style="padding-left: 100px;">Banco : </div>
-                <div class="field-label">{{ this.banco }}</div>                 
+                <div class="field-banco">Titular :   </div>
+                <div class="field-banco">{{ this.titular+" - Banco : "+this.banco }}</div>           
+                <!--div style="padding-left: 100px;">Banco : </div-->
+                <!--div class="field-banco">Banco : </div-->
+                <!--div class="field-banco">{{ this.banco }}</div-->                 
                 <div style="padding-left: 100px;">CBU : </div>
                 <div class="field-label">{{ this.cuentab.cbu }}</div>   
               </div>              
@@ -80,33 +81,45 @@
       </ng-container>
 
       <!-- Columna Tipo de Comprobante -->
-      <ng-container matColumnDef="tipocomp">
-        <th mat-header-cell *matHeaderCellDef >Tipo Comp</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.tipocomp }}</td>
+      <ng-container matColumnDef="tipomov">
+        <th mat-header-cell *matHeaderCellDef>Tipo Mov</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.tipomov }}</td>
       </ng-container>
 
       <!-- Columna Nro.Comp -->
-      <ng-container matColumnDef="comprob">
-        <th mat-header-cell *matHeaderCellDef >Nro.Comp</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.comprob }}</td>
+      <ng-container matColumnDef="nrocheque">
+        <th mat-header-cell *matHeaderCellDef >Nro.Cheque</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.nrocheque }}</td>
       </ng-container>
 
-      <!-- Columna Concepto -->
-      <ng-container matColumnDef="concepto">
+      <!-- Columna Descripción -->
+      <ng-container matColumnDef="descrip">
         <th mat-header-cell *matHeaderCellDef class="center-col">Descripción</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.concepto }}</td>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.descrip }}</td>
       </ng-container>
+
+      <!-- Columna Nro.Liq -->
+      <ng-container matColumnDef="nroliq">
+        <th mat-header-cell *matHeaderCellDef class="center-col">Nro.Liq.</th>
+        <td mat-cell *matCellDef="let renCta">{{ renCta.nroliq }}</td>
+      </ng-container>
+
 
       <!-- Columna Ingreso -->
       <ng-container matColumnDef="impingre">
         <th mat-header-cell *matHeaderCellDef  class="center-col">Ingreso</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.impingre | number : "1.2-2" }}</td>
+        <td mat-cell *matCellDef="let renCta"
+         [ngClass]="{'ingreso-positivo': renCta.impingre > 0}">
+          {{ renCta.impingre | number : "1.2-2" }}
+        </td>
       </ng-container>
 
       <!-- Columna Egreso -->
       <ng-container matColumnDef="impegre">
         <th mat-header-cell *matHeaderCellDef class="center-col">Egreso</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.impegre | number : "1.2-2"}}</td>
+        <td mat-cell *matCellDef="let renCta"
+        [ngClass]="{'egreso-positivo': renCta.impegre > 0}">
+        {{ renCta.impegre | number : "1.2-2"}}</td>                
       </ng-container>
 
        <!-- Columna Saldo -->
@@ -133,8 +146,7 @@
               mat-icon-button
               class="action-btn"
               title="modificar Movimiento"
-              (click)="modificarMovCuentaB( renCta.nromov)"
-            >
+              (click)="modificarMovCuentaB( renCta.nromov,renCta.impingre,renCta.impegre)">
               <i class="bi bi-pencil-fill"></i>
             </button>
           </div>

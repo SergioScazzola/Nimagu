@@ -109,6 +109,13 @@ table {
     /*width: 150px;*/
   }
 
+    .cta-info .field-banco {
+    font-size : 20px;
+    color : blue;
+    font-weight: 500;
+    /*width: 150px;*/
+  }
+
   .cta-header {
     margin-bottom: 15px;
     padding-bottom: 10px;
@@ -230,17 +237,21 @@ table {
   padding-left: 0rem;
   
 }
-.mat-column-tipocomp {  
-  max-width: 80px;
+.mat-column-tipomov {  
+  max-width: 40px;
   text-align: left;  
 }
-.mat-column-comprob {
-  max-width: 50px;
+.mat-column-nrocheque {
+  max-width: 40px;
   text-align: left;  
 }
-.mat-column-concepto {  
+.mat-column-descrip {  
   max-width: 100px;
   text-align: left;  
+}
+.mat-column-nroliq {  
+  max-width: 50px;
+  text-align: center;  
 }
 .mat-column-impingre,
 .mat-column-impegre{
@@ -248,7 +259,7 @@ table {
   text-align: right;  
 }
 .mat-column-saldo {
-  max-width: 80px;
+  max-width: 60px;
   text-align: right;  
   color : blue;
   font-weight: 400;
@@ -269,6 +280,16 @@ table {
 
 .saldo-negativo {
   color: red;
+  font-weight: 400;
+}
+.ingreso-positivo {
+  background-color:gray;
+  color:yellow;
+  font-weight: 400;
+}
+.egreso-positivo {
+  background-color:gray;
+  color:lightgreen;
   font-weight: 400;
 }
 

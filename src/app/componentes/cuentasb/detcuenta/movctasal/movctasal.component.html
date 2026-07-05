@@ -4,8 +4,8 @@
 
   <form [formGroup]="formMov" class="p-3">
     <!-- Primera fila -->
-    <div class="row g-3">
-      <div class="col-2">
+    <div class="row g-1">
+      <div class="col-3">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Nro.Mov</mat-label>
           <input
@@ -16,11 +16,53 @@
           />
         </mat-form-field>
       </div>
-     
+      <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input  #fechaaporte matInput #inputFocus [matDatepicker]="picker" 
+                        placeholder = "Elija una fecha" 
+                        (dateChange)="onFechaChange($event)"
+                        formControlName="fechamov" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>                  
+                <mat-hint>{{ formMov.controls['fecha'].value| date : "dd/MM/yyyy HH:mm"}}</mat-hint>
+            </mat-form-field >            
+      </div>
+      <div class="col-5">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Tipo de Movimiento</mat-label>
+          <mat-select  formControlName="tipomov"
+             [disabled]="this.ctiposmov.length==0"
+             (selectionChange)="onSelectionTmov($event)">
+               @for (tm of this.ctiposmov; track tm.tipomov){
+                <mat-option [value]="tm.tipomov">                 
+                  {{ tm.tipomov }}
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      </div>
+     <!-- Segunda fila -->
+      <div class="row g-3">
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.de Cheque</mat-label>
+          <input matInput formControlName="nrocheque" />
+        </mat-form-field>
+      </div>
+       <div class="col-md-3 ms-auto">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.Liq</mat-label>
+          <input matInput formControlName="nroliq" />
+        </mat-form-field>
+      </div>
+    </div>
+     <!-- Segunda fila -->  
+      <div class="row g-3">
        <div class="col-10">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Elija un Proveedor</mat-label>
-          <mat-select  formControlName="prov"
+          <mat-select  formControlName="prove"
              [disabled]="this.cproveedores.length==0"
              (selectionChange)="onSelectionProv($event)">
                @for (pro of this.cproveedores; track pro.idProv){
@@ -30,76 +72,35 @@
                 }
           </mat-select>
         </mat-form-field>
-      </div>             
-    </div>
-
-    <!-- Segunda fila -->
-    <div class="row g-3">
-      <div class="col-12">
+      </div>        
+      <div class="col-10">
          <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Egresos Pagados</mat-label>
-          <mat-select  formControlName="salida"
-            [disabled]="this.csalidas==null || this.csalidas.length==0"
-             (selectionChange)="onSelectionSalida($event)">
-               @for (sal of this.csalidas; track sal.idSalida;let i = $index){
-                <mat-option [value]="sal.idSalida">                 
-                  {{ sal.categoria+" - "+(sal.fecha| date : "dd/MM/yyyy")+" - "+
-                     (sal.importe| number : "1.2-2")}}
-                </mat-option>
-                }
-          </mat-select>
+          <mat-label>Descripción</mat-label>                    
+          <input matInput formControlName="descrip" />
         </mat-form-field>
-      </div>
-      </div>
-      <!-- Tercera Fila -->
-       <div class="row g-3">
-        <div class="col-12">
-           <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Detalle del pago</mat-label>
-          <mat-select  formControlName="dpago"
-             [disabled]="dpagos==null ||dpagos.length==0"
-             (selectionChange)="onSelectiondPago($event)">
-               @for (dpag of dpagos; track dpag.nroitem){
-                <mat-option [value]="dpag.nroitem">                 
-                  {{ dpag.nmpago+" "+
-                   dpag.nrompago+" Bco. "+
-                   dpag.banco+" Vto."+
-                   (dpag.fecvto | date : "dd/MM/yyyy")+" - "+
-                   (dpag.importe | number : "1.2-2")}}
-                </mat-option>
-                }
-          </mat-select>
-        </mat-form-field>
-        </div>      
+      </div>     
     </div>
 
-    <!-- Cuarta fila -->
-    <div class="row g-3">
-      <div class="col-md-8">
-        <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Concepto</mat-label>
-          <input matInput formControlName="concepto" />
-        </mat-form-field>
-      </div>
-      <div class="col-md-4">
-        <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Importe</mat-label>
-          <input matInput appImporte formControlName="importe" 
-                 style="text-align: right" />
-
-        </mat-form-field>
-      </div>
-    </div>
     
-    <!-- Quinta fila -->
+
+     <!-- Cuarta fila -->
     <div class="row g-3">
-      <div class="col-12">
+      <div class="col-8">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Observaciones</mat-label>
           <input matInput formControlName="coment" />
         </mat-form-field>
       </div>           
+      <div class="col-4 ms-auto">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Importe</mat-label>
+          <input matInput appImporte formControlName="importe" 
+                 style="text-align: right" />
+        </mat-form-field>
+      </div>
     </div>
+    
+  >
     
     <!-- Botonera -->
     <div class="botonera">

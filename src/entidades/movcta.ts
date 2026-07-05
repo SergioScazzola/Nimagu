@@ -1,14 +1,17 @@
 export interface movcta {
   idCuenta      : number,
   nromov        : number,
+  fecha         : Date,
   fechamov      : Date,
+  cliprov       : number,
   ingegre       : string,
-  tipomov      : string,
-  nrocheque    : string,
-  descrip      : string,
-  nroliq       : string,
+  tipomov       : string,
+  nrocheque     : string,
+  descrip       : string,
+  nroliq        : string,
   importe       : number,
   coment        : string;
+  movvinc       : number;
 }
 
 export interface intMovCtab {
@@ -22,9 +25,10 @@ export interface intMovCtab {
 export interface dispmovcta { 
   nromov        : number,
   fecha         : Date,
-  tipocomp      : string,
-  comprob       : string,
-  concepto      : string,
+  tipomov       : string,
+  nrocheque     : string,
+  descrip       : string,
+  nroliq        : string,
   impingre      : number,
   impegre       : number,
   saldo         : number,

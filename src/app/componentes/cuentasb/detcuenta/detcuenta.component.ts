@@ -48,7 +48,7 @@ export class DetcuentaComponent {
   cargandoCta       : boolean = false;
   
  
-  colMovsCta : string[] = ["fecha","tipocomp","comprob","concepto","impingre","impegre","saldo","coment","M"];
+  colMovsCta : string[] = ["fecha","tipomov","nrocheque","descrip","nroliq","impingre","impegre","saldo","coment","M"];
                            
   
   dataSource = new MatTableDataSource<any>();
@@ -107,7 +107,7 @@ export class DetcuentaComponent {
            this.banco      = this.cuentab.banco;                      
            this.cantmovs = this.cmovscta==undefined ? 0 : this.cmovscta.length;
            if (this.cantmovs==0){
-               this.notiServicio.showNotification("No hay movimientos para la cuenta bancaria de "+this.titular,"Aceptar","mensaje",3000);
+               this.notiServicio.showNotification("No hay movimientos para la cuenta del banco"+this.banco+" de "+this.titular,"Aceptar","mensaje",3000);
                this.proxnromov = 1;           
                this.isloading = false;
                this.cdr.detectChanges();
@@ -116,7 +116,7 @@ export class DetcuentaComponent {
                   // arma el array "dispcta" con los movimientos para mostrar en el html
                this.dataSource.data = this.dispcta;         
                this.dataSource.filterPredicate = (dato : dispmovcta, fil : string) => {
-                  return dato.concepto.toLowerCase().includes(fil);
+                  return dato.descrip.toLowerCase().includes(fil);
                };    
                // Aplica filtro si hay uno
                if (this.filtro!=='') {                                 
@@ -148,9 +148,10 @@ export class DetcuentaComponent {
         var rendisp : dispmovcta = {
            nromov    : this.cmovscta[i].nromov,
            fecha     : this.cmovscta[i].fechamov,
-           tipocomp  : this.cmovscta[i].tipocomp,
-           comprob   : this.cmovscta[i].comprob,
-           concepto  : this.cmovscta[i].concepto,
+           tipomov   : this.cmovscta[i].tipomov,
+           nrocheque : this.cmovscta[i].nrocheque,
+           descrip   : this.cmovscta[i].descrip,
+           nroliq    : this.cmovscta[i].nroliq,
            impingre  : this.cmovscta[i].ingegre=="IN"?this.cmovscta[i].importe:0,
            impegre   : this.cmovscta[i].ingegre=="EG"?this.cmovscta[i].importe:0,
            saldo     : saldocte,
@@ -219,7 +220,7 @@ export class DetcuentaComponent {
                 
                        }})  
   }
-  modificarMovCuentaB( nmov : number){
+  modificarMovCuentaB( nmov : number, impingre : number, impegre : number){
      // llama al componente de movimiento de cuenta para modificar un movimiento existente
     const data = {
       idCuenta   : this.cuentab.idCuenta,
@@ -231,11 +232,22 @@ export class DetcuentaComponent {
     }  
     var saldo : number;
     const dialogConfig = new MatDialogConfig();   
-    dialogConfig.autoFocus = false;
-    dialogConfig.data = data;
-    dialogConfig.panelClass = "custom-dialog-container";
-    const dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe( // 
+     dialogConfig.autoFocus = false;
+     dialogConfig.data = data;
+     dialogConfig.width =  '900';         // ancho máximo de la ventana
+     dialogConfig.maxWidth = '95vw';      
+     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+     dialogConfig.panelClass = 'custom-dialog-container';
+     dialogConfig.disableClose =  false; // opcional según necesidad
+     var dialogRef =  null;
+     if (impingre>0 && impegre==0){
+        dialogRef =  this.dialog.open(MovcuentaComponent, dialogConfig);
+     } else {
+        if (impegre>0 && impingre==0){
+          dialogRef =  this.dialog.open(MovctasalComponent, dialogConfig);
+        }
+     }
+     dialogRef?.afterClosed().subscribe( // 
           (datas:any) => { if (datas.clicked === 'Modi'){                   
                  this.leerDetalleCuenta(this.cuentab.idCuenta,1); // recargar el detalle de cuenta para mostrar el nuevo movimiento                                       
                 

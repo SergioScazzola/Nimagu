@@ -15,13 +15,14 @@ import { infoSCli } from '../../entidades/infoSCli';
 import { proveedorDTO } from '../../entidades/proveedorDTO';
 import { ingresoDTO } from '../../entidades/ingresoDTO';
 import { cobroComp, cobroDTO, dcobroDTO } from '../../entidades/cobroDTO';
-import { medioPago, tipomov } from '../../entidades/tipomov';
+import {  tipomov } from '../../entidades/tipomov';
 import { dcobxcli } from '../../entidades/dcobxcli'
 import { categoria } from '../../entidades/categoria';
 import { procedencia } from '../../entidades/procedencia';
 import { salidaDTO } from '../../entidades/salidaDTO';
 import { dpagoDTO, pagoComp, pagoDTO } from '../../entidades/pagoDTO';
 import { dpagxprov } from '../../entidades/dpagxprov';
+import { endoso } from '../../entidades/endoso';
 
 @Injectable({
   providedIn: 'root',
@@ -300,4 +301,37 @@ public getDetallePago(idpag:number, ctad:number) {
 public getTiposMovimiento() {
     return this.http.get<tipomov[]>(this.apiUrl + `ingreso/tiposmov`);
   }
+
+// ENDOSOS
+
+  public getEndosos() {
+    return this.http.get<endoso[]>(this.apiUrl + `endosos`);
+  }
+
+  public getEndososXCuenta(idcuenta: number) {
+    return this.http.get<endoso[]>(this.apiUrl + `endososXCuenta?idcuenta=` + idcuenta);
+  }
+
+  public getMaxEndososXCuenta(idcuenta: number) {
+    return this.http.get<number>(this.apiUrl + `endoso/max?idcuenta=` + idcuenta);
+  }
+
+  public leerEndoso(idcuenta: number, idmov: number) {
+    return this.http.get<endoso>(this.apiUrl + `endoso?idcta=` + idcuenta + `&idmov=` + idmov);
+  }
+
+  public agregarEndoso(endoso: endoso) {
+    return this.http.post<endoso>(this.apiUrl + `endoso/nuevo`, endoso);
+  }
+
+  public updateEndoso(endoso: endoso) {
+    return this.http.put<endoso>(environment.apiUrl + `endoso/actualizar`, endoso);
+  }
+
+  public elimEndoso(idcuenta: number, idmov: number) {
+    return this.http.delete(environment.apiUrl + `endoso/borrar?idcta=` + idcuenta + `&idmov=` + idmov);
+  }
+
 }
+
+
