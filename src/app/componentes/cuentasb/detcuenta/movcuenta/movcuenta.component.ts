@@ -12,15 +12,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { ImporteDirective } from "../../../../Directivas/importeDirective";
-import { SelecTextDirective } from '../../../../Directivas/selec-text.directive';
+
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 import {es} from 'date-fns/locale';
 import { intMovCtab, movcta } from '../../../../../entidades/movcta';
 import { clienteDTO } from '../../../../../entidades/clienteDTO';
-import { ingresoDTO } from '../../../../../entidades/ingresoDTO';
-import { dcobroDTO } from '../../../../../entidades/cobroDTO';
-import { dcobxcli } from '../../../../../entidades/dcobxcli';
+
 import { tipomov } from '../../../../../entidades/tipomov';
 
 export const DATE_FORMATS : MatDateFormats = {

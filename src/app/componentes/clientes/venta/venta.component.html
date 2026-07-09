@@ -1,0 +1,96 @@
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formVta" class="p-3">        
+       <div class="row g-3 mb-1">
+         <div class="col-2">
+          <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Nro</mat-label>
+                 <input matInput [readonly]="true" formControlName="nroing" style="text-align: center;">	
+            </mat-form-field>    
+         </div>
+
+        <div class="col-3">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input matInput [matDatepicker]="picker" 
+                (dateChange)="onFechaChange($event)"
+                 placeholder = "Elija una fecha" formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>  
+                <mat-hint>{{ formVta.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+
+            </mat-form-field >
+          </div>
+
+          <div class="col-7">
+             <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Cliente</mat-label>
+                <input matInput [readonly]="true" formControlName="ncliente">	
+               </mat-form-field> 
+          </div>               
+        </div>
+        <!-- Segunda Fila -->
+       <div class="row g-3 mb-1">
+            <div class="col-4">
+              <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Nro.Liquidación</mat-label>
+                <input matInput formControlName="nroliq">	
+               </mat-form-field>                   
+            </div> 
+           <div class="col-6 ms-auto">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Categoria</mat-label>
+              <mat-select formControlName="categoria"    
+                  (selectionChange)="onSelectionChangeCategoria($event)">      
+                  <mat-option *ngFor="let cat of this.ccategorias; let i = index" [value]="cat.nombre">
+                    {{ cat.nombre }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>
+          </div>            
+      
+           <!-- TerceraFila -->
+         <div class="row g-3 mb-1">
+            <div class="col-4">
+              <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Procedencia</mat-label>
+               <mat-select formControlName="proced"    
+                  (selectionChange)="onSelectionChangeProcedencia($event)">      
+                  <mat-option *ngFor="let proce of this.cprocedencias; let i = index" [value]="proce.procedencia">
+                    {{ proce.procedencia}}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>                
+            </div> 
+            <div class="col-8">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Observaciones</mat-label>
+                  <input matInput formControlName="observ">	
+                 </mat-form-field>                   
+            </div> 
+         </div>
+         <!-- Cuarta Fila -->
+         <div class="row g-3 mb-3">
+          <div class="col-4 ms-auto">
+           <mat-form-field class="w-100" appearance="fill">
+            <mat-label>Importe</mat-label>                
+            <input matInput appImporte formControlName="importe" style="text-align: right;"	   
+                   >        
+           </mat-form-field>        
+         </div> 
+        </div> 
+        <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formVta.invalid || data.accion!='A'" 
+                       (click)="AgregarVenta()">Agregar Venta</button>                                
+              <button class="btn btn-sm btn-outline-success me-5" 
+                       [disabled]="formVta.invalid || data.accion!='M'" 
+                       (click)="ModificarVenta()">Modificar</button>  
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Anular()">Cancelar</button>                       
+        </div>  
+          
+    </form>
+</div>
+

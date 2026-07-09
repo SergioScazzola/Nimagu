@@ -60,7 +60,7 @@ ngOnInit(){
               this.cantprov = this.cproveedores==undefined?0:this.cproveedores.length;                         
               this.dataSource.data = this.cproveedores;              
               this.dataSource.filterPredicate = (dato : proveedorDTO, fil : string) => {
-                   return dato.nombre.toLowerCase().includes(fil);
+                   return dato.nombre.toLowerCase().startsWith(fil);
                                    };    
               // Aplica filtro si hay uno
               if (this.filtro!=='') {                                 

@@ -1,0 +1,112 @@
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4>{{ operacion }}</h4>
+
+  <form [formGroup]="formEndoso" class="p-3">
+    <!-- Primera fila -->
+    <div class="row g-3 mb-1">
+      <div class="col-3">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.Endoso</mat-label>
+          <input
+            matInput
+            readonly
+            formControlName="idendoso"
+            style="text-align: center"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-6 ms-auto">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Cuenta</mat-label>
+          <input matInput readonly="true" formControlName="banco" />
+        </mat-form-field>
+      </div>
+      </div>
+      <!-- Segunda fila -->
+      <div class="row g-3 mb-1">
+      <div class="col-12">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Cheques ingresados</mat-label>
+          <mat-select  formControlName="nromov"
+             [disabled]="cmovscta==null || cmovscta.length==0"
+             (selectionChange)="onSelectionCheque($event)">
+               @for (ch of this.cmovscta; track ch.nromov){
+                <mat-option [value]="ch.nromov">                 
+                  {{ ch.tipomov+" - "+
+                     ch.nrocheque+" - "+
+                     ch.descrip+" - "+
+                     (ch.fechamov | date : "dd/MM/yyyy")+" - "+
+                     (ch.importe| number : "1.2-2")}}
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+      </div>
+      <!-- Tercera fila -->
+      <div class="row g-3 mb-1">
+      <div class="col-4">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Nro.de Cheque</mat-label>
+          <input matInput formControlName="nrocheque" style="text-align: center;"/>
+        </mat-form-field>
+      </div>
+      <div class="col-md-4 ms-auto">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Importe</mat-label>
+          <input matInput readonly="true" formControlName="importe" 
+           [value]="formEndoso.get('importe')?.value | number : '1.2-2'" 	
+           style="text-align: right" />
+        </mat-form-field>
+      </div>
+
+      </div>
+      <!-- Cuarta fila -->
+      <div class="row g-3 mb-1">
+      <div class="col-12">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Elija un Proveedor</mat-label>
+          <mat-select  formControlName="idprov"
+             [disabled]="this.cproveedores==null || this.cproveedores.length==0"
+             (selectionChange)="onSelectionProv($event)">
+               @for (pro of this.cproveedores; track pro.idProv){
+                <mat-option [value]="pro.idProv">                 
+                  {{ pro.nombre }}                 
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+      </div>  
+      <!-- Quinta fila -->
+      <div class="row g-3 mb-1">
+      
+       <div class="col-12">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Descripcion</mat-label>
+          <input matInput formControlName="descrip" />
+        </mat-form-field>
+       </div>     
+    </div>
+    <div class="botonera">
+      <button
+        class="btn btn-outline-primary"
+        [disabled]="formEndoso.invalid || data.accion != 'A'"
+        (click)="AgregarEndoso()"
+      >
+        Agregar
+      </button>
+      
+      <button
+        class="btn btn-outline-secondary"
+        (click)="Cancelar()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+     
+ 
+}

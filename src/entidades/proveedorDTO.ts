@@ -3,6 +3,7 @@ export interface proveedorDTO {
   nombre     : string;     
   domicilio  : string;
   localidad  : string;
+  cuit       : string;
   telefono   : string;
   email      : string;
   notas      : string;

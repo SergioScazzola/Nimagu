@@ -10,6 +10,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { cuitValidator } from '../../../services/cuit.validator';
+import { CuitFormatDirective } from '../../../Directivas/cuit-format.directive';
 
 @Component({
   selector: 'app-proveedor',
@@ -17,7 +19,8 @@ import { MatInputModule } from '@angular/material/input';
   imports: [MatFormField,
               MatLabel,         
               MatInputModule,
-              ReactiveFormsModule,                  
+              ReactiveFormsModule,   
+              CuitFormatDirective,               
               CommonModule,
               DragDropModule,
               FormsModule,
@@ -54,6 +57,7 @@ export class ProveedorComponent {
           nombre      : ['',[Validators.required]],
           domicilio   : [''],
           localidad   : [''],
+          cuit        : ['',[cuitValidator]],
           telefono    : [''],
           email       : [''],   
           notas       : [''],
@@ -85,6 +89,7 @@ export class ProveedorComponent {
           this.formProv.controls["nombre"].setValue(this.proveedor.nombre), 
           this.formProv.controls["domicilio"].setValue(this.proveedor.domicilio),                    
           this.formProv.controls["localidad"].setValue(this.proveedor.localidad),   
+          this.formProv.controls["localidad"].setValue(this.proveedor.cuit),   
           this.formProv.controls["telefono"].setValue(this.proveedor.telefono),   
           this.formProv.controls["email"].setValue(this.proveedor.email),   
           this.formProv.controls["notas"].setValue(this.proveedor.notas),   
@@ -102,6 +107,7 @@ export class ProveedorComponent {
       nombre     : this.formProv.controls["nombre"].value,
       domicilio  : this.formProv.controls["domicilio"].value,
       localidad  : this.formProv.controls["localidad"].value,
+      cuit       : this.formProv.controls["cuit"].value,
       telefono   : this.formProv.controls["telefono"].value,
       email      : this.formProv.controls["email"].value,
       notas      : this.formProv.controls["notas"].value,
@@ -126,6 +132,7 @@ export class ProveedorComponent {
       nombre     : this.formProv.controls["nombre"].value,
       domicilio  : this.formProv.controls["domicilio"].value,
       localidad  : this.formProv.controls["localidad"].value,
+      cuit       : this.formProv.controls["cuit"].value,
       telefono   : this.formProv.controls["telefono"].value,
       email      : this.formProv.controls["email"].value,
       notas      : this.formProv.controls["notas"].value,
@@ -143,7 +150,13 @@ export class ProveedorComponent {
                   
          
   }
-    
+   MostrarCuit(){
+    var cuitingre : String = this.formProv.controls["cuit"].value;
+    if (cuitingre.length < 13){
+        cuitingre = cuitingre.slice(0,11)+"-"+cuitingre.slice(11);
+        this.formProv.controls["cuit"].setValue(cuitingre);
+    }
+   }  
   Anular(){
       this.dialogRef.close({ clicked : "Cancelar"});
   }

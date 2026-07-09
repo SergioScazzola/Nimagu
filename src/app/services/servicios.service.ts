@@ -140,6 +140,9 @@ public elimCuentaB(idcuenta: number) {
     return this.http.delete(environment.apiUrl + `cuentab/borrar?id=` +idcuenta);
 }
 
+public elimMovCuentaB(idcuenta: number, nromov : number) {
+    return this.http.delete(environment.apiUrl + `cuentab/delmov?idcuenta=` +idcuenta+`&idmov=`+nromov);
+}
 public existeCbuPeriodo(periodo : string, cbu : string){
   return this.http.get<number>(this.apiUrl + `cuentasb/existecbuper?periodo=`+periodo+`&cbu=`+cbu,);    
 }
@@ -154,6 +157,14 @@ public getMaxMovCuenta(idcuenta: number) {
 public getDetalleCuentaB(idcuenta:Number,fechi : string,fechf : string) {
     return this.http.get<movcta[]>(this.apiUrl + `cuentasb/detalle?idcuenta=`+idcuenta+`&feci=`+fechi+`&fecf=`+fechf);
 }
+/*  @GetMapping(value="/cuentasb/detalleXTipoMov",params={"idcuenta","tipomov"})*/
+// Detalle de movimientos bancarios por tipo : "tipomov"
+
+public getDetalleCuentaXTipo(idcuenta:Number, tip1 : string, tip2 : string) {
+    return this.http.get<movcta[]>(this.apiUrl + `cuentasb/detalleXTipoMov?idcuenta=`+idcuenta+
+                                                `&mov1=`+tip1+`&mov2=`+tip2);
+}
+
 
 public leerMovCuentaB(idcuenta: number, nromov: number) {
     return this.http.get<movcta>(this.apiUrl + `cuentab?idcuenta=`+idcuenta+`&idmov=`+nromov);
@@ -312,12 +323,12 @@ public getTiposMovimiento() {
     return this.http.get<endoso[]>(this.apiUrl + `endososXCuenta?idcuenta=` + idcuenta);
   }
 
-  public getMaxEndososXCuenta(idcuenta: number) {
-    return this.http.get<number>(this.apiUrl + `endoso/max?idcuenta=` + idcuenta);
+  public getMaxEndosos() {
+    return this.http.get<number>(this.apiUrl + `endoso/max` );
   }
 
-  public leerEndoso(idcuenta: number, idmov: number) {
-    return this.http.get<endoso>(this.apiUrl + `endoso?idcta=` + idcuenta + `&idmov=` + idmov);
+  public leerEndoso(idendoso : number) {
+    return this.http.get<endoso>(this.apiUrl + `endoso?idendoso=` + idendoso);
   }
 
   public agregarEndoso(endoso: endoso) {
@@ -327,9 +338,14 @@ public getTiposMovimiento() {
   public updateEndoso(endoso: endoso) {
     return this.http.put<endoso>(environment.apiUrl + `endoso/actualizar`, endoso);
   }
-
-  public elimEndoso(idcuenta: number, idmov: number) {
-    return this.http.delete(environment.apiUrl + `endoso/borrar?idcta=` + idcuenta + `&idmov=` + idmov);
+/*    @DeleteMapping(value="/endoso/borrar", params={"idendoso","idcuenta","nromov"})  */
+  public elimEndoso(idendo : number,idc : number, nrom : number) {
+     const params = new HttpParams()
+    .set('idendoso', idendo.toString())
+    .set('idcuenta', idc.toString())
+    .set('nromov', nrom.toString());
+    return this.http.delete<endoso>(environment.apiUrl + `endoso/borrar`, { params })
+    
   }
 
 }

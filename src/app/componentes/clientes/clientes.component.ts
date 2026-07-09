@@ -112,7 +112,7 @@ ngOnInit(){
              this.cantcli = this.cclientes.length;
               this.dataSource.data = this.cclientes;         
               this.dataSource.filterPredicate = (dato : clienteDTO, fil : string) => {
-                   return dato.nombre.toLowerCase().includes(fil);
+                   return dato.nombre.toLowerCase().startsWith(fil);
                                    };    
               // Aplica filtro si hay uno
               if (this.filtro!=='') {                                 
