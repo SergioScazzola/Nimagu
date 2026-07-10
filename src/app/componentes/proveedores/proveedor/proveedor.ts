@@ -89,7 +89,7 @@ export class ProveedorComponent {
           this.formProv.controls["nombre"].setValue(this.proveedor.nombre), 
           this.formProv.controls["domicilio"].setValue(this.proveedor.domicilio),                    
           this.formProv.controls["localidad"].setValue(this.proveedor.localidad),   
-          this.formProv.controls["localidad"].setValue(this.proveedor.cuit),   
+          this.formProv.controls["cuit"].setValue(this.proveedor.cuit),   
           this.formProv.controls["telefono"].setValue(this.proveedor.telefono),   
           this.formProv.controls["email"].setValue(this.proveedor.email),   
           this.formProv.controls["notas"].setValue(this.proveedor.notas),   

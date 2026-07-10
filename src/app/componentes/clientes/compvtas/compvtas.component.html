@@ -1,0 +1,133 @@
+<div class="compvtas-container">
+   <div class="row">
+      <div class="col">
+        <div class="header">
+          <h4>COMPRAS/VENTAS</h4>
+        </div>
+      </div>      
+      <div class="col">
+       <input #filtroInput (keyup)="aplicarFiltro(filtroInput.value)" placeholder="Filtrar por nombre">
+      </div>          
+      
+      <div class="col-3">        
+      </div>
+        <div class="col">
+        <button class="btn btn-warning btn-sm add-button" (click)="agVenta()">
+          <i class="bi bi-plus-circle me-1"></i>Agregar Venta
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-success btn-sm add-button" (click)="agCompra()">
+          <i class="bi bi-plus-circle me-1"></i>Agregar Compra
+        </button>
+      </div>
+       <div class="col-2 text-end">
+        <button class="btn btn-sm btn-secondary" (click)="volver()">
+          <i class="bi bi-box-arrow-right me-1"></i>
+          Menu Ppal
+        </button>
+    </div>    
+    
+  </div>  
+  <div class="table-container" style="overflow-x: auto">
+    <table
+      mat-table
+      class="mat-elevation-z8"
+      [dataSource]="this.dataSource"
+      style="width: 100%"
+    >
+      <!-- Columna Fecha -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let renCV">{{  renCV.fecha | date : "dd/MM/yyyy"}}</td>
+      </ng-container>
+
+      <!-- Columna Compra/Venta -->
+      <ng-container matColumnDef="compvta">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.compvta }}</td>
+      </ng-container>
+
+      <!-- Columna nprovcli -->
+      <ng-container matColumnDef="nprovcli">
+        <th mat-header-cell *matHeaderCellDef>Cliente/Proveedor</th>
+        <td mat-cell *matCellDef="let renCli">{{ renCli.nprovcli }}</td>
+      </ng-container>
+
+      <!-- Columna nroliq -->
+      <ng-container matColumnDef="nroliq">
+        <th mat-header-cell *matHeaderCellDef>Nro.Liq</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.nroliq }}</td>
+      </ng-container>
+
+      <!-- Columna categoria -->
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef>Categoría</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.categoria }}</td>
+      </ng-container>
+
+      <!-- Columna Cantidad -->
+      <ng-container matColumnDef="cantidad">
+        <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.cantidad }}</td>
+      </ng-container>
+
+      <!-- Columna total kilos -->
+       <ng-container matColumnDef="totalk">
+        <th mat-header-cell *matHeaderCellDef>T.Kilos</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.totalk }}</td>
+      </ng-container>
+
+      <!-- Columna total promedio -->
+       <ng-container matColumnDef="promedio">
+        <th mat-header-cell *matHeaderCellDef>Promedio</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.promedio }}</td>
+      </ng-container>
+
+      <!-- Columna total Precio Un -->
+       <ng-container matColumnDef="preunit">
+        <th mat-header-cell *matHeaderCellDef>Precio.Un</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.preunit }}</td>
+      </ng-container>
+     
+
+      <!-- Columna total importe -->
+       <ng-container matColumnDef="importe">
+        <th mat-header-cell *matHeaderCellDef>Importe</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.importe | number : "1.2-2"  }}</td>
+      </ng-container>
+
+      <!-- Columna total procedencia -->
+       <ng-container matColumnDef="proced">
+        <th mat-header-cell *matHeaderCellDef>Procedencia</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.proced }}</td>
+      </ng-container>
+      
+       <!-- Columna total observ -->
+       <ng-container matColumnDef="observ">
+        <th mat-header-cell *matHeaderCellDef>Observaciones</th>
+        <td mat-cell *matCellDef="let renCV">{{ renCV.observ }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="M">
+        <th mat-header-cell *matHeaderCellDef>Mod</th>
+        <td mat-cell *matCellDef="let renCV">
+          <div class="text-center">
+            <button
+              mat-icon-button
+              class="action-btn"
+              title="modificar cliente"
+              (click)="modificarCompraVenta(renCV.idcompvta, renCV.compvta)"
+            >
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+     
+      <!-- Definición de filas -->
+      <tr mat-header-row *matHeaderRowDef="colComvtas; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index; columns: colComvtas"></tr>
+    </table>
+  </div>
+</div>

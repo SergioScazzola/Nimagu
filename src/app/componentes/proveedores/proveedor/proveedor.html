@@ -41,7 +41,8 @@
               <div class="col-4">
                 <mat-form-field  class="w-100" appearance="fill">
                   <mat-label>CUIT</mat-label>
-                  <input matInput cuitFormat formControlName="cuit">	
+                  <input matInput cuitFormat formControlName="cuit"
+                     (blur)="this.MostrarCuit()">	
                  </mat-form-field>                   
              </div> 
              <div class="col-4">

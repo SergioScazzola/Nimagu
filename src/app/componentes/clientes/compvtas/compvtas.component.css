@@ -1,5 +1,5 @@
 /* Contenedor principal */
-.proveedores-container {
+.compvtas-container {
   width: 100%;
   height: calc(100vh - 70px); /* Restar altura de navbar */
   display: flex;
@@ -99,51 +99,24 @@
 }
 
 /* Ancho de columnas */
-.mat-column-idProv {
+.mat-column-fecha {
   /*padding-left: 10px !important;*/
-  width: 50px;
-  text-align: center;
+  width: 40px;
+  text-align: left;
   white-space: nowrap;
   overflow: visible;
 }
 
-.mat-column-nombre {
+.mat-column-compvta {
   padding-left: 0;
-  width: 250px;
+  width: 30px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.mat-column-telefono {
-  padding-left: 0;
-  width: 150px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mat-column-domicilio {
-  padding-left: 0;
-  width: 250px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mat-column-localidad {
-  padding-left: 0;
-  width: 150px;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mat-column-cuit {
+.mat-column-nprovcli {
   padding-left: 0;
   width: 100px;
   text-align: left;
@@ -152,30 +125,64 @@
   text-overflow: ellipsis;
 }
 
-.mat-column-email {
+.mat-column-nroliq {
   padding-left: 0;
-  width: 150px;
+  width: 30px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.mat-column-notas {
+.mat-column-categoria {
   padding-left: 0;
-  width: 200px;
+  width: 40px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.mat-column-cantidad,
+.mat-column-totalk,
+.mat-column-promedio,
+.mat-column-preunit {
+  padding-left: 0;
+  width: 40px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mat-column-importe {
+   padding-left: 0;
+  width: 60px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-column-proced {
+  padding-left: 0;
+  width: 40px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mat-column-observ {
+  padding-left: 0;
+  width: 80px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /* Estilos para columnas de acción M, B */
 .mat-column-M,
- .mat-column-B,
- .mat-column-EG,
- .mat-column-PAG,
-  .mat-column-CC{
+ .mat-column-B
+ {
   width: 50px !important;
   min-width: 50px !important;
   max-width: 50px !important;

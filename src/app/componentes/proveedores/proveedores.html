@@ -55,6 +55,12 @@
         <th mat-header-cell *matHeaderCellDef>Localidad</th>
         <td mat-cell *matCellDef="let renPro">{{ renPro.localidad }}</td>
       </ng-container>
+      
+      <!-- Columna Cuit -->
+      <ng-container matColumnDef="cuit">
+        <th mat-header-cell *matHeaderCellDef>Cuit</th>
+        <td mat-cell *matCellDef="let renPro">{{ renPro.cuit }}</td>
+      </ng-container>
 
       <!-- Columna Telefono -->
       <ng-container matColumnDef="telefono">

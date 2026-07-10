@@ -11,6 +11,7 @@ import { DetcuentaComponent } from './componentes/cuentasb/detcuenta/detcuenta.c
 import { ClientesComponent } from './componentes/clientes/clientes.component';
 
 import { ProveedoresComponent } from './componentes/proveedores/proveedores';
+import { CompvtasComponent } from './componentes/clientes/compvtas/compvtas.component';
 
 
 export const routes: Routes = [
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'cuentas/:filtro', component: CuentasbComponent },     
       { path: 'bancos',component: CuentasbComponent},     
       { path: 'proveedores/:filtro', component: ProveedoresComponent },      
+      { path: 'comprasvtas/:filtro', component: CompvtasComponent },     
           
     ],
   },

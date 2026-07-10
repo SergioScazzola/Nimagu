@@ -30,7 +30,7 @@ export class ProveedoresComponent {
   cantprov          : number;
   formprov          : boolean;
   provmod           : number;
-  colProveedores    : string[] = ["idProv" , "nombre", "domicilio","localidad","telefono",
+  colProveedores    : string[] = ["idProv" , "nombre", "domicilio","localidad","cuit","telefono",
                                   "email","notas","M","B"];
 
   dataSource = new MatTableDataSource<any>();

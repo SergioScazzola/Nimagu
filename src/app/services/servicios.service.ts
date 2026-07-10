@@ -23,6 +23,7 @@ import { salidaDTO } from '../../entidades/salidaDTO';
 import { dpagoDTO, pagoComp, pagoDTO } from '../../entidades/pagoDTO';
 import { dpagxprov } from '../../entidades/dpagxprov';
 import { endoso } from '../../entidades/endoso';
+import { compVtaDTO } from '../../entidades/compVta';
 
 @Injectable({
   providedIn: 'root',
@@ -348,6 +349,27 @@ public getTiposMovimiento() {
     
   }
 
+  // COMPRAS / VENTAS 
+
+   public getCompVtas() {
+    return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/compvtas`);
+  }
+
+  public getMaxCompVtas() {
+    return this.http.get<number>(this.apiUrl + `compvta/max` );
+  }
+
+  public leerCompVta(idcomp : number) {
+    return this.http.get<compVtaDTO>(this.apiUrl + `compvta/compvta?id=` + idcomp);
+  }
+
+  public agregarCompVta( comp : compVtaDTO) {
+    return this.http.post<compVtaDTO>(this.apiUrl + `compvta/compvta/nuevo`, comp);
+  }
+
+  public updateCompVta(comp : compVtaDTO) {
+    return this.http.put<compVtaDTO>(environment.apiUrl + `compvta/compvta/actualizar`, comp);
+  }
 }
 
 
