@@ -79,8 +79,15 @@
           <input matInput formControlName="descrip" />
         </mat-form-field>
       </div>     
+      <div class="col-2">         
+       <mat-checkbox 
+         [checked]="formMov.controls['marcada'].value!==0"
+         (change)="marcaFila($event.checked)">
+              Marcada
+        </mat-checkbox>
+    </div> 
     </div>
-
+   
     
 
      <!-- Cuarta fila -->

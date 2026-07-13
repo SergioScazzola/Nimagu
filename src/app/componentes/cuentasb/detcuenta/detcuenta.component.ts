@@ -168,7 +168,8 @@ export class DetcuentaComponent {
            impingre  : this.cmovscta[i].ingegre=="IN"?this.cmovscta[i].importe:0,
            impegre   : this.cmovscta[i].ingegre=="EG"?this.cmovscta[i].importe:0,
            saldo     : saldocte,
-           coment    : this.cmovscta[i].coment
+           coment    : this.cmovscta[i].coment,
+           marcada   : this.cmovscta[i].marcada,
         };
         if (this.cmovscta[i].movvinc!==0){  // hay cheque endosado? -> modificar rendisp con endoso
            const indend = this.cendosos.findIndex(p=>p.idendoso==this.cmovscta[i].movvinc);
@@ -435,7 +436,7 @@ export class DetcuentaComponent {
     const [ anioi,aniof ] = this.periodo.split('-').map(Number);
                       
     var feci = new Date(anioi,6,1);   // inicial 1 de Julio del anio inicial
-    var fecf = new Date(aniof,5,30);   // final 30 de Junio del anio final
+    var fecf = new Date(2050,5,30);   // final 30 de Junio del anio final, 
           
     this.dfecha = this.datepipe.transform(feci,"yyyy-MM-dd")+"T00:05";
     this.hfecha = this.datepipe.transform(fecf,"yyyy-MM-dd")+"T23:59";

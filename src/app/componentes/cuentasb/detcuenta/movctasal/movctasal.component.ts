@@ -10,7 +10,7 @@ import { CommonModule, DatePipe,CurrencyPipe } from '@angular/common';
 import { MatFormField, MatInputModule, MatLabel } from '@angular/material/input';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ImporteDirective } from "../../../../Directivas/importeDirective";
 import { SelecTextDirective } from '../../../../Directivas/selec-text.directive';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
@@ -41,6 +41,7 @@ imports: [MatFormField,
     MatLabel,
     MatInputModule,
     MatSelectModule,
+    MatCheckboxModule,
     ReactiveFormsModule,
     MatDatepickerModule,
     CommonModule,
@@ -155,7 +156,8 @@ export class MovctasalComponent {
         descrip     : ['', Validators.required],
         nroliq      : [''],
         importe     : [0],
-        coment      : ['']  
+        coment      : [''],
+        marcada     : [0]
       
       })
     }
@@ -172,7 +174,7 @@ export class MovctasalComponent {
         this.formMov.controls["nroliq"].setValue(this.movimcta.nroliq);      
         this.formMov.controls["importe"].setValue(this.movimcta.importe);      
         this.formMov.controls["coment"].setValue(this.movimcta.coment);
-
+        this.formMov.controls["marcada"].setValue(this.movimcta.marcada);
     }
     actualizarParaAlta(){
       this.formMov.controls["nromov"].setValue(this.data.nromov);
@@ -204,7 +206,8 @@ export class MovctasalComponent {
      nroliq        : this.formMov.controls["nroliq"].value,
      importe       : this.formMov.controls["importe"].value,
      coment        : this.formMov.controls["coment"].value,
-     movvinc       : 0
+     movvinc       : 0,
+     marcada       : this.formMov.controls["marcada"].value,
  
     }   
  
@@ -236,6 +239,7 @@ export class MovctasalComponent {
     this.movimcta.nroliq        = this.formMov.controls["nroliq"].value;
     this.movimcta.importe       = this.formMov.controls["importe"].value;
     this.movimcta.coment        = this.formMov.controls["coment"].value;
+    this.movimcta.marcada       = this.formMov.controls["marcada"].value;
    
     var subscri : Subscription;
     var resu    : string;
@@ -323,6 +327,14 @@ onSelectionTmov(event: any){
 
 }
 
+
+marcaFila(checked : boolean){
+if (checked){
+  this.formMov.controls['marcada'].setValue(1)
+} else {
+  this.formMov.controls['marcada'].setValue(0)
+}
+}
 
 Anular(){
       this.dialogRef.close({ clicked : "Cancelar"})

@@ -12,6 +12,7 @@ export interface movcta {
   importe       : number,
   coment        : string;
   movvinc       : number;
+  marcada       : number;
 }
 
 export interface intMovCtab {
@@ -34,6 +35,8 @@ export interface dispmovcta {
   impingre      : number,
   impegre       : number,
   saldo         : number,
-  coment        : string
+  coment        : string,
+  marcada       : number;
+
 
 }

@@ -355,6 +355,10 @@ public getTiposMovimiento() {
     return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/compvtas`);
   }
 
+   public getCompVtasxFecha(feci : String,fecf : String) {
+    return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetCyVxFecha?feci=`+feci+`&fecf=`+fecf);
+  }
+
   public getMaxCompVtas() {
     return this.http.get<number>(this.apiUrl + `compvta/max` );
   }

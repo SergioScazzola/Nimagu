@@ -68,20 +68,26 @@
       <!-- Segunda fila -->
       <div class="row g-3 mb-1">
       
-       <div class="col-md-4">
+       <div class="col-4">
         <mat-form-field class="w-100" appearance="fill">
           <mat-label>Nro.Liq</mat-label>
           <input matInput formControlName="nroliq" />
         </mat-form-field>
       </div>
-      <div class="col-8">
+      <div class="col-6">
          <mat-form-field class="w-100" appearance="fill">
           <mat-label>Descripción</mat-label>                    
           <input matInput formControlName="descrip" />
         </mat-form-field>
       </div>
-    </div>
-     
+      <div class="col-2">         
+      <mat-checkbox 
+         [checked]="formMov.controls['marcada'].value!==0"
+         (change)="marcaFila($event.checked)">
+              Marcada
+            </mat-checkbox>
+        </div> 
+    </div>     
     <!-- Tercera fila -->
     <div class="row g-3 mb-1">
        <div class="col-8">

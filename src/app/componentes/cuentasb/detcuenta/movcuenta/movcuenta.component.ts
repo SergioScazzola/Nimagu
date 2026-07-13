@@ -8,6 +8,8 @@ import { finalize, forkJoin, Subscription } from 'rxjs';
 
 import { CommonModule, DatePipe,CurrencyPipe } from '@angular/common';
 import { MatFormField, MatInputModule, MatLabel } from '@angular/material/input';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -40,6 +42,7 @@ export const DATE_FORMATS : MatDateFormats = {
     MatLabel,
     MatInputModule,
     MatSelectModule,
+    MatCheckboxModule,
     ReactiveFormsModule,
     MatDatepickerModule,
     CommonModule,
@@ -160,7 +163,8 @@ export class MovcuentaComponent {
         descrip     : ['', Validators.required],
         nroliq      : [''],
         importe     : [0],
-        coment      : ['']  
+        coment      : [''],
+        marcada     : [0]  
       
       })
     }
@@ -176,7 +180,7 @@ export class MovcuentaComponent {
         this.formMov.controls["nroliq"].setValue(this.movimcta.nroliq);      
         this.formMov.controls["importe"].setValue(this.movimcta.importe);      
         this.formMov.controls["coment"].setValue(this.movimcta.coment);
-
+        this.formMov.controls["marcada"].setValue(this.movimcta.marcada);
     }
     actualizarParaAlta(){
       this.formMov.controls["nromov"].setValue(this.data.nromov);
@@ -207,10 +211,11 @@ export class MovcuentaComponent {
      nroliq        : this.formMov.controls["nroliq"].value,
      importe       : this.formMov.controls["importe"].value,
      coment        : this.formMov.controls["coment"].value,
-     movvinc       : 0
+     movvinc       : 0,
+     marcada       : this.formMov.controls["marcada"].value,
  
     }   
-    console.log("movctaban : "+JSON.stringify(movctaban));
+   
     var subscri : Subscription;
     var resu    : string;
     subscri = this.servicio.agMovCuentaB(movctaban)
@@ -239,6 +244,7 @@ export class MovcuentaComponent {
     this.movimcta.nroliq        = this.formMov.controls["nroliq"].value;
     this.movimcta.importe       = this.formMov.controls["importe"].value;
     this.movimcta.coment        = this.formMov.controls["coment"].value;
+    this.movimcta.marcada       = this.formMov.controls["marcada"].value;
 
  
    
@@ -326,8 +332,13 @@ generarRangoFechas(){
 onSelectionClte(event:any){
   this.cliSel = event.value;
   this.formMov.controls["descrip"].setValue(this.cclientes.find(c => c.idCliente === this.cliSel)?.nombre);
-
-
+}
+marcaFila(checked : boolean){
+if (checked){
+  this.formMov.controls['marcada'].setValue(1)
+} else {
+  this.formMov.controls['marcada'].setValue(0)
+}
 }
 Anular(){
       this.dialogRef.close({ clicked : "Cancelar"})

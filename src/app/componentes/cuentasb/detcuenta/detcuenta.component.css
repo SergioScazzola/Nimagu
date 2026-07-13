@@ -278,6 +278,11 @@
   text-align: center;
 }
 
+.celda-marcada {
+  background-color: yellow;
+  color : black;
+  font-weight: 400;
+}
 .saldo-negativo {
   color: red;
   font-weight: 400;

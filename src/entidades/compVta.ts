@@ -1,7 +1,7 @@
 export interface compVtaDTO {
     idcomvta  : number;
     compvta   : string;  // compra o venta
-    fecha     : Date;
+    fecha     : Date|null;
     idprocli  : number;  // proveedor o cliente
     nprovcli  : string;
     nroliq    : string;
@@ -13,4 +13,12 @@ export interface compVtaDTO {
     importe   : number;
     proced    : string;
     observ    : string;
+}
+
+export interface intCompVta {
+    idcomvta  : number;
+    idprocli  : number;  // proveedor o cliente
+    nprovcli  : string;
+    accion    : string
+
 }

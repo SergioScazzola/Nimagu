@@ -1,5 +1,5 @@
 /* Contenedor principal */
-.compvtas-container {
+.laboreos-container {
   width: 100%;
   height: calc(100vh - 70px); /* Restar altura de navbar */
   display: flex;
@@ -8,7 +8,6 @@
   margin-top: 45px;
   overflow: hidden;
 }
-
 
 /* Cabecera con título y botón */
 .header {
@@ -25,39 +24,23 @@
   margin: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-.add-button {
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  padding: 6px 15px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.fila-totales {
+  background-color: #053966; /* Celeste claro, cambia a tu gusto */
+  font-weight: bold;
 }
-
-.add-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
 /* Contenedor de la tabla */
 .table-container {
   flex: 1;
-  height: 350px;
-  overflow-y: auto;
+  overflow: auto;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
-.importe-compra {
-  background-color: green;
-  color : white;
-}
 
-/* Estilos de la tabla
+/* Estilos de la tabla */
 .mat-mdc-table {
   table-layout: fixed;
   width: 100%;
-}*/
+}
 
 .mat-mdc-header-row {
   background-color: #b6c1dd;
@@ -71,7 +54,7 @@
 
 .mat-mdc-row {
   height: auto;
-  min-height: 10px;
+  min-height: 40px;
   font-size: 14px;
   transition: background-color 0.2s ease;
 }
@@ -185,63 +168,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Estilos para columnas de acción M, B */
-.mat-column-M,
- .mat-column-B
- {
-  width: 50px !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
-  padding: 0 !important;
-  flex: 0 0 50px !important;
-  text-align: center !important;
-  overflow: visible !important;
+ .fixed-section {
+    flex-shrink: 0; /* Evita que la sección se encoja */
+    width: 100%;
+    padding: 1px;
+    background-color:white;
+    z-index: 2; /* Asegurar que esté por encima de la tabla */
+  }
+ /* Contenedor específico para el footer */
+.footer-container {
+  padding-top: 0;
+  padding-bottom: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+  position: relative; /* Para que el z-index funcione */
+  background-color: #fff; /* Asegurar que el fondo sea visible */
 }
-
-/* Añadimos el centrado de texto */
-.text-center {
-  text-align: center !important;
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-}
-
-/* Botones de acción */
-.action-btn {
-  background-color: rgb(130, 130, 141) !important;
-  width: 32px !important;
-  height: 32px !important;
-  padding: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 2px !important;
-  margin: 0 auto !important;
-}
-
-.action-btn:hover {
-  background-color: #73738c !important;
-  transform: scale(1.1);
-}
-
-.action-btn i {
-  font-size: 10px;
-}
-
 /* Pie de página con info adicional */
 .footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: 20px;
   padding: 15px;
-  background-color: #f5f7fa;
+  /*background-color: #f5f7fa;*/
+  background-color: #b6c1dd;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-.centrado {
-  text-align : center
+.total {
+  font-size: 16px;
+  font-weight: 600;
 }

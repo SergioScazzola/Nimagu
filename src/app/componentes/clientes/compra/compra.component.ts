@@ -24,6 +24,7 @@ import { clienteDTO } from '../../../../entidades/clienteDTO';
 import { categoria } from '../../../../entidades/categoria';
 import { procedencia } from '../../../../entidades/procedencia';
 import { compVtaDTO, intCompVta } from '../../../../entidades/compVta';
+import { proveedorDTO } from '../../../../entidades/proveedorDTO';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -39,8 +40,8 @@ export const DATE_FORMATS : MatDateFormats = {
 }
 
 @Component({
-  selector: 'app-venta',
-    imports: [MatFormField,
+  selector: 'app-compra',
+   imports: [MatFormField,
     MatLabel,
     MatInputModule,
     ReactiveFormsModule,
@@ -58,28 +59,28 @@ export const DATE_FORMATS : MatDateFormats = {
       { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
       { provide : MAT_DATE_LOCALE, useValue: es}
     ],              
-  templateUrl: './venta.component.html',
-  styleUrl: './venta.component.css'
+  templateUrl: './compra.component.html',
+  styleUrl: './compra.component.css'
 })
-export class VentaComponent {
+export class CompraComponent {
 operacion       : string;
-formVta         : FormGroup;
+formCom         : FormGroup;
 proxCV          : number;
-cclientes       : clienteDTO[]=[];
+cproveedores    : proveedorDTO[]=[];
 ccategorias     : categoria[]=[];
 cprocedencias   : procedencia[]=[];
-ventaa          : compVtaDTO;
+compraa         : compVtaDTO;
 catSel          : string;
 procSel         : string;
-cliSel          : number;
+proSel          : number;
 hoy             : Date = new Date;
 importeformat   : string = "";
 
 
-  constructor(    public  fb             : FormBuilder,
+  constructor(    public  fb          : FormBuilder,
                   private currencyPipe: CurrencyPipe,
                   private servicio    : ServiciosService,                
-                  public dialogRef    : MatDialogRef<VentaComponent>,
+                  public dialogRef    : MatDialogRef<CompraComponent>,
                   private cdr         : ChangeDetectorRef,
                   private zone        : NgZone,
                   @Inject(MAT_DIALOG_DATA) public data: intCompVta,  
@@ -91,46 +92,46 @@ importeformat   : string = "";
     //registerLocaleData(localeEsAR, 'es-AR');
     this.initFormulario();      
     
-    if (this.data.accion==="A"){  // Alta de Venta
+    if (this.data.accion==="A"){  // Alta de Compra
       this.mostrarHora();
       forkJoin({             
-          clientes  : this.servicio.getClientes(),                           
+          proveed   : this.servicio.getProveedores(),                           
           proce     : this.servicio.getProcedencias(), 
           categ     :  this.servicio.getCategorias(0),//traer todas las categorias 
    
          }).subscribe(res2 => {
-            this.cclientes      =  res2.clientes,
-            this.cprocedencias  =  res2.proce,
-            this.ccategorias    =  res2.categ
+            this.cproveedores      =  res2.proveed,
+            this.cprocedencias     =  res2.proce,
+            this.ccategorias       =  res2.categ
       
-            if (this.cclientes!==null && this.cclientes.length>0){
+            if (this.cproveedores!==null && this.cproveedores.length>0){
              
     
-                this.operacion = "Agregar Venta Nro.: "+this.data.idcomvta //+" al Cliente : "+this.data.nprovcli;
+                this.operacion = "Agregar Compra Nro.: "+this.data.idcomvta //+" al Cliente : "+this.data.nprovcli;
                 this.prepararAlta();            
             } else { 
-               this.notiService.showNotification("No existen clientes registrados",'Aceptar','mensaje',500);  
+               this.notiService.showNotification("No existen proveedores registrados",'Aceptar','mensaje',500);  
             }
          })     
-        } else {  // "M" -> Modificacion de Venta
+        } else {  // "M" -> Modificacion de Compra
            forkJoin({             
-             clientes  : this.servicio.getClientes(),                           
+             proveed   : this.servicio.getProveedores(),                           
              proce     : this.servicio.getProcedencias(), 
              categ     :  this.servicio.getCategorias(0),//traer todas las categorias 
-             venta     : this.servicio.leerCompVta(this.data.idcomvta)
+             compra     : this.servicio.leerCompVta(this.data.idcomvta)
    
          }).subscribe(res2 => {
-            this.cclientes      =  res2.clientes,
+            this.cproveedores   =  res2.proveed,
             this.cprocedencias  =  res2.proce,
             this.ccategorias    =  res2.categ,
-            this.ventaa         =  res2.venta
+            this.compraa         =  res2.compra
       
-            if (this.cclientes!==null && this.cclientes.length>0){                 
-                this.operacion = "Modificar Venta Nro.: "+this.data.idcomvta+" al Cliente : "+this.data.nprovcli;
+            if (this.cproveedores!==null && this.cproveedores.length>0){                 
+                this.operacion = "Modificar Compra Nro.: "+this.data.idcomvta+" al Proveedor : "+this.data.nprovcli;
                 this.prepararModi();            
             } else { 
 
-              this.notiService.showNotification("No existen clientes registrados",'Aceptar','mensaje',500);  
+              this.notiService.showNotification("No existen proveedores registrados",'Aceptar','mensaje',500);  
             }
 
         })
@@ -138,9 +139,9 @@ importeformat   : string = "";
 
    }
   initFormulario(){
-     this.formVta = this.fb.group({        
+     this.formCom = this.fb.group({        
       idcompvta     : [''], 
-      compvta       : ['Venta'],
+      compvta       : ['Compra'],
       fecha         : [''],     
       idprocli      : [0],
       nprovcli      : [''],           
@@ -157,38 +158,38 @@ importeformat   : string = "";
   }
 
   prepararAlta(){
-    this.formVta.controls['idcompvta'].setValue(this.data.idcomvta);
-    this.formVta.controls['fecha'].setValue(this.hoy);
-    this.formVta.controls['idprocli'].setValue(this.cclientes[0].idCliente);
-    this.formVta.controls['nprovcli'].setValue(this.cclientes[0].nombre);
-    this.formVta.controls['categoria'].setValue(this.ccategorias[0].nombre);  
-    this.formVta.controls['proced'].setValue(this.cprocedencias[0].procedencia);
+    this.formCom.controls['idcompvta'].setValue(this.data.idcomvta);
+    this.formCom.controls['fecha'].setValue(this.hoy);
+    this.formCom.controls['idprocli'].setValue(this.cproveedores[0].idProv);
+    this.formCom.controls['nprovcli'].setValue(this.cproveedores[0].nombre);
+    this.formCom.controls['categoria'].setValue(this.ccategorias[0].nombre);  
+    this.formCom.controls['proced'].setValue(this.cprocedencias[0].procedencia);
   }
 
   prepararModi(){
-    this.formVta.controls['idcompvta'].setValue(this.ventaa.idcomvta);
-    this.formVta.controls['compvta'].setValue(this.ventaa.compvta);
-    this.formVta.controls['fecha'].setValue(this.ventaa.fecha);
-    this.formVta.controls['idprocli'].setValue(this.ventaa.idprocli);
-    this.formVta.controls['nprovcli'].setValue(this.ventaa.nprovcli);
-    this.formVta.controls['nroliq'].setValue(this.ventaa.nroliq);
-    this.formVta.controls['categoria'].setValue(this.ventaa.categoria);
-    this.formVta.controls['cantidad'].setValue(this.ventaa.cantidad);
-    this.formVta.controls['totalk'].setValue(this.ventaa.totalk);
-    this.formVta.controls['promedio'].setValue(this.ventaa.promedio);
-    this.formVta.controls['preunit'].setValue(this.ventaa.preunit);
-    this.formVta.controls['importe'].setValue(this.ventaa.importe);
-    this.formVta.controls['proced'].setValue(this.ventaa.proced);
-    this.formVta.controls['observ'].setValue(this.ventaa.observ);
+    this.formCom.controls['idcompvta'].setValue(this.compraa.idcomvta);
+    this.formCom.controls['compvta'].setValue(this.compraa.compvta);
+    this.formCom.controls['fecha'].setValue(this.compraa.fecha);
+    this.formCom.controls['idprocli'].setValue(this.compraa.idprocli);
+    this.formCom.controls['nprovcli'].setValue(this.compraa.nprovcli);
+    this.formCom.controls['nroliq'].setValue(this.compraa.nroliq);
+    this.formCom.controls['categoria'].setValue(this.compraa.categoria);
+    this.formCom.controls['cantidad'].setValue(this.compraa.cantidad);
+    this.formCom.controls['totalk'].setValue(this.compraa.totalk);
+    this.formCom.controls['promedio'].setValue(this.compraa.promedio);
+    this.formCom.controls['preunit'].setValue(this.compraa.preunit);
+    this.formCom.controls['importe'].setValue(this.compraa.importe);
+    this.formCom.controls['proced'].setValue(this.compraa.proced);
+    this.formCom.controls['observ'].setValue(this.compraa.observ);
 
 
   }
    
   
-  onSelectionChangeCliente(event : any){
-    this.cliSel = event.value;   
-    const indcli = this.cclientes.findIndex(p=>p.idCliente==this.cliSel);
-    this.formVta.controls['nprovcli'].setValue(this.cclientes[indcli].nombre);
+  onSelectionChangeProveedor(event : any){
+    this.proSel = event.value;   
+    const indpro = this.cproveedores.findIndex(p=>p.idProv==this.proSel);
+    this.formCom.controls['nprovcli'].setValue(this.cproveedores[indpro].nombre);
   }
 
    onSelectionChangeCategoria(event : any){
@@ -217,31 +218,31 @@ importeformat   : string = "";
     return numero
   } 
 
-  AgregarVenta(){
+  AgregarCompra(){
     
-    var venta : compVtaDTO = {
-        idcomvta        :  this.formVta.controls['idcompvta'].value,
-        compvta         :  "Venta",
-        fecha           :  this.formVta.controls['fecha'].value,
-        idprocli        :  this.formVta.controls['idprocli'].value,
-        nprovcli        :  this.formVta.controls['nprovcli'].value,
-        nroliq          : this.formVta.controls['nroliq'].value,
-        categoria       : this.formVta.controls['categoria'].value,
-        cantidad        : this.formVta.controls['cantidad'].value,       
-        totalk          : this.formVta.controls['totalk'].value,
-        promedio        : this.formVta.controls['promedio'].value,
-        preunit         : this.formVta.controls['preunit'].value,
-        importe         : this.formVta.controls['importe'].value,
-        proced          : this.formVta.controls['proced'].value,       
-        observ          : this.formVta.controls['observ'].value,
+    var compra : compVtaDTO = {
+        idcomvta        :  this.formCom.controls['idcompvta'].value,
+        compvta         :  "Compra",
+        fecha           :  this.formCom.controls['fecha'].value,
+        idprocli        :  this.formCom.controls['idprocli'].value,
+        nprovcli        :  this.formCom.controls['nprovcli'].value,
+        nroliq          : this.formCom.controls['nroliq'].value,
+        categoria       : this.formCom.controls['categoria'].value,
+        cantidad        : this.formCom.controls['cantidad'].value,       
+        totalk          : this.formCom.controls['totalk'].value,
+        promedio        : this.formCom.controls['promedio'].value,
+        preunit         : this.formCom.controls['preunit'].value,
+        importe         : this.formCom.controls['importe'].value,
+        proced          : this.formCom.controls['proced'].value,       
+        observ          : this.formCom.controls['observ'].value,
     }
-    console.log("Ventaaaaa : "+JSON.stringify(venta));                
+    console.log("compraaaaa : "+JSON.stringify(compra));                
     var subscri : Subscription;
     var resu = "";
-    subscri = this.servicio.agregarCompVta(venta)
+    subscri = this.servicio.agregarCompVta(compra)
             .pipe(finalize(() => {   
                console.log("Resultado00000000 : "+resu);
-               this.notiService.showNotification("La Venta Nro "+venta.idcomvta+
+               this.notiService.showNotification("La Compra Nro "+compra.idcomvta+
                                     " se ha agregado con éxito ("+resu+")",
                                     "Aceptar","mensaje",500);                          
                this.dialogRef.close({ clicked : "Alta"})
@@ -250,30 +251,30 @@ importeformat   : string = "";
    
   }
 
-  ModificarVenta(){
-        var venta : compVtaDTO = {
-        idcomvta        :  this.formVta.controls['idcompvta'].value,
-        compvta         :  "Venta",
-        fecha           :  this.formVta.controls['fecha'].value,
-        idprocli        :  this.formVta.controls['idprocli'].value,
-        nprovcli        :  this.formVta.controls['nprovcli'].value,
-        nroliq          : this.formVta.controls['nroliq'].value,
-        categoria       : this.formVta.controls['categoria'].value,
-        cantidad        : this.formVta.controls['cantidad'].value,       
-        totalk          : this.formVta.controls['totalk'].value,
-        promedio        : this.formVta.controls['promedio'].value,
-        preunit         : this.formVta.controls['preunit'].value,
-        importe         : this.formVta.controls['importe'].value,
-        proced          : this.formVta.controls['proced'].value,       
-        observ          : this.formVta.controls['observ'].value,
+  ModificarCompra(){
+        var compra : compVtaDTO = {
+        idcomvta        :  this.formCom.controls['idcompvta'].value,
+        compvta         :  "Compra",
+        fecha           :  this.formCom.controls['fecha'].value,
+        idprocli        :  this.formCom.controls['idprocli'].value,
+        nprovcli        :  this.formCom.controls['nprovcli'].value,
+        nroliq          : this.formCom.controls['nroliq'].value,
+        categoria       : this.formCom.controls['categoria'].value,
+        cantidad        : this.formCom.controls['cantidad'].value,       
+        totalk          : this.formCom.controls['totalk'].value,
+        promedio        : this.formCom.controls['promedio'].value,
+        preunit         : this.formCom.controls['preunit'].value,
+        importe         : this.formCom.controls['importe'].value,
+        proced          : this.formCom.controls['proced'].value,       
+        observ          : this.formCom.controls['observ'].value,
     }
-    console.log("Ventaaaaa : "+JSON.stringify(venta));                
+    console.log("Ventaaaaa : "+JSON.stringify(compra));                
     var subscri : Subscription;
     var resu = "";
-    subscri = this.servicio.updateCompVta(venta)
+    subscri = this.servicio.updateCompVta(compra)
             .pipe(finalize(() => {   
                console.log("Resultado00000000 : "+resu);
-               this.notiService.showNotification("La Venta Nro "+venta.idcomvta+" al cliente "+venta.nprovcli+
+               this.notiService.showNotification("La Compra Nro "+compra.idcomvta+" al proveedor "+compra.nprovcli+
                                     " se ha modificado con éxito ("+resu+")",
                                     "Aceptar","mensaje",500);                          
                this.dialogRef.close({ clicked : "Modi"})
@@ -290,7 +291,7 @@ importeformat   : string = "";
    this.zone.runOutsideAngular(() => {
     setInterval(() => {
       const hoy = new Date();
-      const valorControl = this.formVta.controls['fecha'].value;
+      const valorControl = this.formCom.controls['fecha'].value;
       
       if (valorControl) {
         const fechaform = new Date(valorControl);
@@ -298,7 +299,7 @@ importeformat   : string = "";
 
         // Volvemos a la zona de Angular solo para actualizar el valor
         this.zone.run(() => {
-          this.formVta.controls['fecha'].setValue(fechaform, { emitEvent: false });
+          this.formCom.controls['fecha'].setValue(fechaform, { emitEvent: false });
           this.cdr.detectChanges(); // Forzamos la actualización sin romper el ciclo
         });
       }
@@ -314,14 +315,8 @@ importeformat   : string = "";
     nuevaFecha.setHours(ahora.getHours(), ahora.getMinutes(), ahora.getSeconds(), 0);
 
     // Establecer la fecha con hora en el form
-    this.formVta.controls['fecha'].setValue(nuevaFecha);
+    this.formCom.controls['fecha'].setValue(nuevaFecha);
   }
 
 
-  
 }
-
-  
-
-
-

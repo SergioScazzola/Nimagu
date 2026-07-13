@@ -1,7 +1,7 @@
 <div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <h4 mat-dialog-title>{{operacion}}</h4>  
     <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
-     <form [formGroup]="formVta" class="p-3">        
+     <form [formGroup]="formCom" class="p-3">        
        <div class="row g-3 mb-1">
          <div class="col-2">
           <mat-form-field class="w-100" appearance="fill">
@@ -17,20 +17,19 @@
                  placeholder = "Elija una fecha" formControlName="fecha" > 
                 <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
                 <mat-datepicker #picker> </mat-datepicker>  
-                <mat-hint>{{ formVta.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+                <mat-hint>{{ formCom.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
 
             </mat-form-field >
           </div>
-
          <div class="col-7">
            <mat-form-field class="w-100" appearance="fill">
             <mat-label>Elija un Cliente</mat-label>
               <mat-select  formControlName="idprocli"
-                [disabled]="this.cclientes.length==null || this.cclientes.length==0"
-                (selectionChange)="onSelectionChangeCliente($event)">
-                @for (cl of this.cclientes; track cl.idCliente){
-                <mat-option [value]="cl.idCliente">                 
-                  {{ cl.nombre }}                 
+                [disabled]="this.cproveedores.length==null || this.cproveedores.length==0"
+                (selectionChange)="onSelectionChangeProveedor($event)">
+                @for (pr of this.cproveedores; track pr.idProv){
+                <mat-option [value]="pr.idProv">                 
+                  {{ pr.nombre }}                 
                 </mat-option>
                 }
               </mat-select>
@@ -123,15 +122,14 @@
         
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 
-                       [disabled]="formVta.invalid || data.accion!='A'" 
-                       (click)="AgregarVenta()">Agregar Venta</button>                                
+                       [disabled]="formCom.invalid || data.accion!='A'" 
+                       (click)="AgregarCompra()">Agregar</button>                                
               <button class="btn btn-sm btn-outline-success me-5" 
-                       [disabled]="formVta.invalid || data.accion!='M'" 
-                       (click)="ModificarVenta()">Modificar</button>  
+                       [disabled]="formCom.invalid || data.accion!='M'" 
+                       (click)="ModificarCompra()">Modificar</button>  
               <button class="btn btn-sm btn-outline-secondary"                
                        (click)="Anular()">Cancelar</button>                       
         </div>  
           
     </form>
 </div>
-

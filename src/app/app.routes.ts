@@ -12,6 +12,7 @@ import { ClientesComponent } from './componentes/clientes/clientes.component';
 
 import { ProveedoresComponent } from './componentes/proveedores/proveedores';
 import { CompvtasComponent } from './componentes/clientes/compvtas/compvtas.component';
+import { RepoCompyvtasComponent } from './componentes/clientes/repo-compyvtas/repo-compyvtas.component';
 
 
 export const routes: Routes = [
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: 'bancos',component: CuentasbComponent},     
       { path: 'proveedores/:filtro', component: ProveedoresComponent },      
       { path: 'comprasvtas/:filtro', component: CompvtasComponent },     
+      { path: 'comprasvtas/:filtro/infovyc', component: RepoCompyvtasComponent },     
           
     ],
   },
