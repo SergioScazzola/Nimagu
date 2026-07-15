@@ -269,7 +269,8 @@
   max-width: 150px;
   text-align: left;  
 }
-.mat-column-M {  
+.mat-column-M,
+.mat-column-B {  
   max-width: 15px;
   text-align: center;  
 }

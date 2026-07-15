@@ -6,9 +6,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { finalize, Subscription } from 'rxjs';
+import { finalize, forkJoin, Subscription } from 'rxjs';
 import { ServiciosService } from '../../../services/servicios.service';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -17,7 +17,8 @@ import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { cuentaB } from '../../../../entidades/cuentaB';
-import { movcta } from '../../../../entidades/movcta';
+import { dispmovcta, movcta } from '../../../../entidades/movcta';
+import { endoso } from '../../../../entidades/endoso';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -53,13 +54,15 @@ export const DATE_FORMATS : MatDateFormats = {
   templateUrl: './repo-cuentas.component.html',
   styleUrl: './repo-cuentas.component.css'
 })
-export class RepoLaboreosComponent {
+export class RepocuentasComponent {
   
-  public formInfoLab   : FormGroup;
+  public formInfoMov   : FormGroup;
   public   dfecha      : Date;
   public   hfecha      : Date = new Date();
   public   ccuentas    : cuentaB[]=[];
   public   cmovscuenta : movcta[]=[];
+  public   dispcta     : dispmovcta[]=[];
+  public   endosos     : endoso[]=[];
  
   public   resumen   : number = 0;
  
@@ -71,15 +74,11 @@ export class RepoLaboreosComponent {
   public   totalhect  : number;
   public   cantlab    : number;
   private  hoy        : Date = new Date();
-/*  idCuenta      : number,
-  nromov        : number,
-  fechamov      : Date,
-  ingegre       : string,
-  tipocomp      : string,
-  comprob       : string,
-  concepto      : string,
-  importe       : number,
-  coment        : string;*/
+  private  idcuenta   : number;
+  public   saldoinic  : number; 
+  private  posMovIn   : number; // posicion del movimiento inicial a mostrar
+  public   cuentaB    : cuentaB;
+
   colspdf = [
     { header: 'Nro', dataKey: 'nromov' },
     { header: 'Fecha', dataKey: 'fechamov' },
@@ -103,13 +102,14 @@ export class RepoLaboreosComponent {
     'coment'
   ];
    
- 
-   constructor(private servicio : ServiciosService,
-               private rutaActiva : ActivatedRoute,
-               private router   : Router,
-               public  fb       : FormBuilder,
-               public datepipe  : DatePipe,
-               private currencyPipe: CurrencyPipe,){}
+ dataSource = new MatTableDataSource<any>(); 
+ colMovsCta : string[] = ["fecha","tipomov","nrocheque","descrip","nroliq","impingre","impegre","saldo","coment"];
+   constructor(private servicio    : ServiciosService,
+               private rutaActiva  : ActivatedRoute,
+               private router      : Router,
+               public  fb          : FormBuilder,
+               public datepipe     : DatePipe,
+               private currencyPipe: CurrencyPipe){}
 
 
    ngOnInit(){
@@ -117,150 +117,146 @@ export class RepoLaboreosComponent {
     
       this.filter     = this.rutaActiva.snapshot.params['filtro'];
       console.log("filtro a devolver : "+this.filter);
+      this.idcuenta   = this.rutaActiva.snapshot.params['idcuenta']; // parametro de ruta     
       var fecprim  = new Date(this.hoy.getFullYear(),this.hoy.getMonth(),1);
       var cad = this.datepipe.transform(fecprim,"yyyy-MM-dd");
       this.dfec = cad!=null?cad:" ";
       cad = this.datepipe.transform(this.hoy,"yyyy-MM-dd")+"T23:59"; 
       this.hfec = cad!=null?cad:" ";
-      this.formInfoLab = this.fb.group({        
+      this.formInfoMov = this.fb.group({        
         dfecha     : [fecprim], 
         hfecha     : [this.hoy], 
         clte       : [0],
         tipoinfo   : [0]})
-      var subs : Subscription;
-      subs = this.servicio.getClientes()
-        .pipe(finalize(() => {                               
-            subs.unsubscribe();
-        }))
-        .subscribe((data : any): void => {
-            this.cclientes = data});
-
-    //this.mostrarHora();
     
     }
 
     ondFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
-       this.formInfoLab.controls['dfecha'].setValue(nuevaFecha);             
+       this.formInfoMov.controls['dfecha'].setValue(nuevaFecha);             
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd");    
        this.dfec = cad!=null?cad:" ";
        this.borrarArreglos();
     }
     onhFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
-       this.formInfoLab.controls['hfecha'].setValue(nuevaFecha);  
+       this.formInfoMov.controls['hfecha'].setValue(nuevaFecha);  
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd")+"T23:59";     
        this.hfec = cad!=null?cad:" ";
        this.borrarArreglos();
     }
-    desplegarInforme(){
-    var subs : Subscription;
-   
+
+    desplegarInforme(){    
     this.borrarArreglos();
-    subs = this.servicio.getInfoLaboreosxFecha(this.dfec,this.hfec)
-       .pipe(
-          finalize(() => {             
-            subs.unsubscribe();
-            this.eligiocli = false;
-            this.armarconSubtotales(); // Armar arreglo con subtotales para desplegar
-          })
-             )
-             .subscribe((data: any): void => {
-               this.claboreos = data;
-             }); 
+    forkJoin({
+    
+            detalle  : this.servicio.getDetalleCuentaB(this.idcuenta,"",""),
+            endosoo  : this.servicio.getEndososXCuenta(this.idcuenta),
+            cuentaa  : this.servicio.leerCuentaB(this.idcuenta)
+    
+
+           }).subscribe(res => {   
+            this.cmovscuenta   = res.detalle;
+            this.endosos       = res.endosoo;
+            this.cuentaB       = res.cuentaa
+
+            
+            this.calcularSaldoInicial(); 
+            this.generarMovimientosSolic();
+            this.dataSource.data = this.dispcta;       
+           })   
+         
     }
-    armarconSubtotales(){
-    // genera el array "clabosub" a partir de "claboreos" insertando subtotales por cliente
-   
-    var subtcliv = 0;
-    var subtclih = 0
-    var totalv   = 0;
-    var totalh   = 0;
-    var i        = 0;
-    var labcli   = 0;
-    while (i<this.claboreos.length){
-      subtcliv = 0;
-      subtclih = 0;
-      labcli   = 0;
-      var nrocli = this.claboreos[i].idCliente;
-      while (i<this.claboreos.length && this.claboreos[i].idCliente==nrocli){
-        labcli++;
-        subtcliv += this.claboreos[i].valorLaboreo;
-        subtclih += this.claboreos[i].hasTrab;
-        this.claboreos[i].nmaquina = this.claboreos[i].nmaquina.substring(0,23);
-        this.clabosubt.push(this.claboreos[i]);        
-        i++;
-      }
-      var labo : laboreoDTO = {
-        idLaboreo    : 0,
-        fecha        : new Date(),        
-        idCliente    : nrocli,
-        idCampo      : 0,
-        idCultivo    : 0,
-        idmaquina    : 0,
-        nroLabor     : 0,
-        ncultivo     : "",
-        ncliente     : "* TOTALES - Cant.: "+labcli+" *",
-        nlabor       : "",
-        ncampo       : "",
-        hasTrab      : subtclih,
-        potreros     : "",
-        nmaquina     : "",
-        valorxHect   : 0,
-        valorLaboreo : subtcliv,
-        tasaiva      : 0,
-        nroaporte    : this.claboreos[i-1].nroaporte,  
-        facturado    : this.claboreos[i-1].facturado
+
+  calcularSaldoInicial(){
+    // Calcula en saldoinic el saldo al primer movimiento solicitado
+    var saldoi   = this.cuentaB.saldoini;
+    var desdefec : Date = this.formInfoMov.controls['dfecha'].value;
+    var fechamov   = new Date(this.cmovscuenta[0].fechamov);
+    var i = 0;
+    while (i<this.cmovscuenta.length && fechamov.getTime() < desdefec.getTime()){
+      if (this.cmovscuenta[i].ingegre==='IN'){
+        saldoi += this.cmovscuenta[i].importe;
+        if (this.cmovscuenta[i].movvinc !== 0){ // endoso
+          saldoi -= this.cmovscuenta[i].importe;
+        };
+      } else { // egreso
+        saldoi -= this.cmovscuenta[i].importe;
       };
-      totalv   += subtcliv;
-      totalh   += subtclih;
-      this.clabosubt.push(labo);
-    }
-    var labo : laboreoDTO = {
-        idLaboreo    : 0,
-        fecha        : new Date(),        
-        idCliente    : 0,
-        idCampo      : 0,
-        idCultivo    : 0,
-        idmaquina    : 0,
-        nroLabor     : 0,
-        ncultivo     : "",
-        ncliente     : "* TOTALES - Cant.: "+i+" *",
-        nlabor       : "",
-        ncampo       : "",
-        hasTrab      : totalh,
-        potreros     : "",
-        nmaquina     : "",
-        valorxHect   : 0,
-        valorLaboreo : totalv,
-        tasaiva      : 0,
-        nroaporte    : 0,
-        facturado    : false,
-      };
-    this.clabosubt.push(labo);
-    this.totallabor = totalv;
-    this.totalhect  = totalh;
-    this.cantlab    = i;
-    console.log("Subtotales : "+this.clabosubt.length);
+      i++;      
+      fechamov = new Date(this.cmovscuenta[i].fechamov);
+    };
+    this.posMovIn = i;
+    this.saldoinic = saldoi;
+    /*console.log("Posmovin  : "+this.posMovIn);
+    console.log("Saldo Ini : "+this.saldoinic);
+    console.log("Array : "+JSON.stringify(this.cmovscuenta,null,2));
+    console.log("Long. Array : "+this.cmovscuenta.length);
+    console.log("Array : "+JSON.stringify(this.cmovscuenta,null,2));
+    console.log("PosMovim : "+this.posMovIn+" Saldo a "+desdefec+" $ "+this.saldoinic);*/
   }
 
+  generarMovimientosSolic(){
+ 
+    // Arma el array dispcta con los movimientos en cuenta de "cmovscta" para mostrar en el html
+    // a partir de la fecha inicial y tomando el saldo inicial "saldoinic"
+     this.dispcta     = []; // se borra para que el html tome los cambios
+    
+     var saldocte     = this.saldoinic;
+     
+     var i            = this.posMovIn;
+     const fechafin : Date  = this.formInfoMov.controls['hfecha'].value;
+     var femov = new Date(this.cmovscuenta[i].fechamov);
+     while (i<this.cmovscuenta.length && femov.getTime()<=fechafin.getTime()){
+        if (this.cmovscuenta[i].ingegre=="IN"){
+           saldocte += this.cmovscuenta[i].importe;         
+        } else{ // EG
+           saldocte -= this.cmovscuenta[i].importe;         
+        };         
+
+        var rendisp : dispmovcta = {
+           nromov    : this.cmovscuenta[i].nromov,
+           fecha     : this.cmovscuenta[i].fechamov,
+           tipomov   : this.cmovscuenta[i].tipomov,
+           ingegre   : this.cmovscuenta[i].ingegre,
+           nrocheque : this.cmovscuenta[i].nrocheque,
+           endoso    : this.cmovscuenta[i].movvinc,
+           descrip   : this.cmovscuenta[i].descrip,
+           nroliq    : this.cmovscuenta[i].nroliq,
+           impingre  : this.cmovscuenta[i].ingegre=="IN"?this.cmovscuenta[i].importe:0,
+           impegre   : this.cmovscuenta[i].ingegre=="EG"?this.cmovscuenta[i].importe:0,
+           saldo     : saldocte,
+           coment    : this.cmovscuenta[i].coment,
+           marcada   : this.cmovscuenta[i].marcada,
+        };
+        if (this.cmovscuenta[i].movvinc > 0){  // hay cheque endosado? -> modificar rendisp con endoso
+           const indend = this.endosos.findIndex(p=>p.idendoso==this.cmovscuenta[i].movvinc);
+           saldocte        -= this.cmovscuenta[i].importe
+           rendisp.saldo   = saldocte;
+           rendisp.impegre = this.endosos[indend].importe;
+           rendisp.coment  = this.endosos[indend].descrip
+        }
+        i++;
+        femov = new Date(this.cmovscuenta[i].fechamov);
+        this.dispcta.push(rendisp);          
+      }; 
+    
+  }
   Cancelar() {
   // Volver a la página de laboreos con filtro
   
   this.router.navigate(['/laboreos',this.filter]);
 }  
-generarPDF(nomcli : string):void{
+/*generarPDF(nomcli : string):void{
  // si nomcli es distinto de "" es un informe de laboreos del cliente
 
   const doc = new jsPDF('l','mm','A4');
-   var fd = this.datepipe.transform(this.formInfoLab.controls['dfecha'].value,"dd/MM/yyyy");
-   var fh = this.datepipe.transform(this.formInfoLab.controls['hfecha'].value,"dd/MM/yyyy");
+   var fd = this.datepipe.transform(this.formInfoMov.controls['dfecha'].value,"dd/MM/yyyy");
+   var fh = this.datepipe.transform(this.formInfoMov.controls['hfecha'].value,"dd/MM/yyyy");
    var title = "";
-   if (nomcli!==''){
-        title = "Informe de Laboreos de "+nomcli+" desde el "+fd+" al "+fh;
-   } else {
-        title = 'Informe de Laboreos desde el '+fd+' al '+fh;
-   }
+   
+   title = "Informe de Movimientos Bancarios de "+this.cuentaB.banco+" desde el "+fd+" al "+fh;
+   
    
 
   // Fecha actual
@@ -335,274 +331,10 @@ generarPDF(nomcli : string):void{
   }
  doc.save('InformeDeLaboreos');       
  
-}
-desplegarXCultivo(){
-  var subs : Subscription;
-
-    subs = this.servicio.agruparLaboreosXCult(this.dfec,this.hfec)
-       .pipe(
-          finalize(() => {           
-            this.totalizarCultivos();  
-            this.resumen = 1;
-            subs.unsubscribe();
-            // this.armarconSubtotales(); // Armar arreglo con subtotales para desplegar
-          })
-             )
-             .subscribe((data: any): void => {
-               this.cresucult = data;
-             }); 
-}  
-
-desplegarXLabor(){
-  var subs : Subscription;
-
-    subs = this.servicio.agruparLaboreosXLabor(this.dfec,this.hfec)
-       .pipe(
-          finalize(() => {        
-            this.totalizarLabores();    
-            this.resumen = 1; 
-            subs.unsubscribe();
-            console.log("Agrupamiento por labor long : "+this.cresulab.length);
-            //this.armarconSubtotales(); // Armar arreglo con subtotales para desplegar
-          }))
-        .subscribe((data: any): void => {
-               this.cresulab = data;
-             }); 
-}
-desplegarXCampo(){
-  var subs : Subscription;
-
-    subs = this.servicio.agruparLaboreosXCampo(this.dfec,this.hfec)
-       .pipe(
-          finalize(() => {             
-            subs.unsubscribe();
-            this.totalizarCampos();
-            this.resumen = 1;
-             console.log("Agrupamiento por campo long : "+this.cresucamp.length);
-            //this.armarconSubtotales(); // Armar arreglo con subtotales para desplegar
-          }))
-      .subscribe((data: any): void => {
-               this.cresucamp = data;
-             }); 
-}    
-desplegarXMaquina(){
-  var subs : Subscription;
-
-    subs = this.servicio.agruparLaboreosXMaquina(this.dfec,this.hfec)
-       .pipe(
-          finalize(() => {             
-            subs.unsubscribe();
-            this.totalizarMaquinas();
-            this.resumen = 1;
-            // this.armarconSubtotales(); // Armar arreglo con subtotales para desplegar
-          })
-             )
-             .subscribe((data: any): void => {
-               this.cresumaq = data;
-             }); 
-}    
-
-desplegarXCliente(nrocli : number){
-  var subs : Subscription;
-  subs = this.servicio.getInfoLaboreosxCliNumeroyF(nrocli,this.dfec,this.hfec) //laboreos del cliente en rango de fechas
-      .pipe(
-         finalize(() => {
-            this.totalizarCliente();
-            subs.unsubscribe();          
-         }))
-      .subscribe((data: any): void => {
-               this.claboreos = data;
-             });
-} 
-totalizarCliente(){
-  var cantlab  = 0;
-  var tothast  = 0;
-  var totvalor = 0;  
-  var i : number;
-  for(i=0;i<this.claboreos.length;i++){
-    cantlab  ++;
-    tothast  += this.claboreos[i].hasTrab;
-    totvalor += this.claboreos[i].valorLaboreo;   
-    var labo : laboreoDTO = {
-        idLaboreo    : this.claboreos[i].idLaboreo,
-        fecha        : this.claboreos[i].fecha,        
-        idCliente    : this.claboreos[i].idCliente,
-        idCampo      : 0,
-        idCultivo    : 0,
-        idmaquina    : 0,
-        nroLabor     : 0,
-        ncultivo     : this.claboreos[i].ncultivo,
-        ncliente     : this.claboreos[i].ncliente.substring(0,20),
-        nlabor       : this.claboreos[i].nlabor,
-        ncampo       : this.claboreos[i].ncampo,
-        hasTrab      : this.claboreos[i].hasTrab,
-        potreros     : this.claboreos[i].potreros,
-        nmaquina     : this.claboreos[i].nmaquina.substring(0,23),
-        valorxHect   : this.claboreos[i].valorxHect,
-        valorLaboreo : this.claboreos[i].valorLaboreo,
-        tasaiva      : this.claboreos[i].tasaiva,
-        nroaporte    : this.claboreos[i].nroaporte,
-        facturado    : this.claboreos[i].facturado
-      };
-      this.clabosubt.push(labo);
-  };
-   var labo : laboreoDTO = {
-        idLaboreo    : 0,
-        fecha        : new Date(),        
-        idCliente    : 0,
-        idCampo      : 0,
-        idCultivo    : 0,
-        idmaquina    : 0,
-        nroLabor     : 0,
-        ncultivo     : "",
-        ncliente     : "*"+this.claboreos[i-1].ncliente+" ("+i+")",
-        nlabor       : "",
-        ncampo       : "",
-        hasTrab      : tothast,
-        potreros     : "",
-        nmaquina     : "",
-        valorxHect   : 0,
-        valorLaboreo : totvalor,
-        tasaiva      : 0,
-        nroaporte    : 0,
-        facturado    : false,
-      };
-  this.clabosubt.push(labo);
-
-  this.totallabor  = totvalor;
-  this.cantlab = i;
-  this.totalhect = tothast;
-}
-totalizarCultivos(){
-  var cantlab  = 0;
-  var tothast  = 0;
-  var totvalor = 0;
-  var totneto  = 0;
-  for(let i=0;i<this.cresucult.length;i++){
-    cantlab  += this.cresucult[i].clab;
-    tothast  += this.cresucult[i].hasTrab;
-    totvalor += this.cresucult[i].valorLaboreo;
-    totneto  += this.cresucult[i].valorNeto
-  };
-  var resucult : resuCult = {
-      ncultivo      : "TOTALES",
-      clab          : cantlab,
-      hasTrab       : tothast,
-      valorLaboreo  : totvalor,
-      valorNeto     : totneto,
-  }
-  this.cresucult.push(resucult);
-}
-totalizarLabores(){
-  var cantlab  = 0;
-  var tothast  = 0;
-  var totvalor = 0;
-  var totneto  = 0;
-  for(let i=0;i<this.cresulab.length;i++){
-    cantlab  += this.cresulab[i].clab;
-    tothast  += this.cresulab[i].hasTrab;
-    totvalor += this.cresulab[i].valorLaboreo;
-    totneto  += this.cresulab[i].valorNeto;
-  };
-  var resulab : resuLabor = {
-      nlabor      : "TOTALES",
-      clab          : cantlab,
-      hasTrab       : tothast,
-      valorLaboreo  : totvalor,
-      valorNeto     : totneto
-  }
-  this.cresulab.push(resulab);
-}
-totalizarCampos(){
-  var cantlab  = 0;
-  var tothast  = 0;
-  var totvalor = 0;
-  var totneto  = 0; 
-  for(let i=0;i<this.cresucamp.length;i++){
-    cantlab  += this.cresucamp[i].clab;
-    tothast  += this.cresucamp[i].hasTrab;
-    totvalor += this.cresucamp[i].valorLaboreo;
-    totneto  += this.cresucamp[i].valorNeto;
-  };
-  var resucampo : resuCampo = {
-      ncampo        : "TOTALES",
-      clab          : cantlab,
-      hasTrab       : tothast,
-      valorLaboreo  : totvalor,
-      valorNeto     : totneto,
-  }
-  this.cresucamp.push(resucampo);
-}
-totalizarMaquinas(){
-  var cantlab  = 0;
-  var tothast  = 0;
-  var totvalor = 0;
-  var totneto  = 0;
-  for(let i=0;i<this.cresumaq.length;i++){
-    cantlab  += this.cresumaq[i].clab;
-    tothast  += this.cresumaq[i].hasTrab;
-    totvalor += this.cresumaq[i].valorLaboreo;
-    totneto  += this.cresumaq[i].valorNeto;
-  }
-  var resumaq : resuMaq = {
-      nmaquina      : "TOTALES",
-      clab          : cantlab,
-      hasTrab       : tothast,
-      valorLaboreo  : totvalor,
-      valorNeto     : totneto
-  }
-  this.cresumaq.push(resumaq);
-}
-pdfAgrupadoXCultivo(){
-    var colspdf = [
-    { header: 'Cultivo', dataKey: 'ncultivo' },
-    { header: 'Cant.Lab', dataKey: 'clab' },
-    { header: 'Has.Trab', dataKey: 'hasTrab' },
-    { header: 'Valor Neto', dataKey: 'valorNeto' },
-    { header: 'Valor Laboreo', dataKey: 'valorLaboreo' },
-  ];
-
-}
-
-onSelectionChangeCliente(event:any){
-    this.clabosubt = [];
-    this.cresucamp = [];
-    this.cresucult = [];
-    this.cresulab  = [];
-    this.cresumaq  = [];
-    this.eligiocli = true;
-    this.desplegarXCliente(event.value);
-}
-onSelectionChangeInforme(event:any){
-    this.clabosubt = [];
-    this.cresucamp = [];
-    this.cresucult = [];
-    this.cresulab  = [];
-    this.cresumaq  = [];
-    console.log("Tipo de informe : "+event.value);
-    switch (event.value){
-      case 1 : {  
-                  this.desplegarXCultivo();
-                  break
-               };
-      case 2 : { this.desplegarXLabor();
-                 break
-               };
-      case 3 : { this.desplegarXCampo();
-                 break
-               };
-      case 4 : { this.desplegarXMaquina();
-                 break
-               };               
-      default : {break};
-      
-    }
-}
+}*/
 borrarArreglos(){
-  this.cresucult = [];
-  this.cresucamp = [];
-  this.cresulab  = []; // para ocultar tablas de resumenes
-  this.cresumaq  = [];
-  this.clabosubt = [];
+  //this.cmovscuenta = [];
+  this.dispcta     = [];
+  this.endosos     = []
 }
 }

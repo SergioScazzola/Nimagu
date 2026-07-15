@@ -1,11 +1,15 @@
-.laboreos-container {
-  width: 100%;
-  height: calc(100vh - 70px); /* Restar altura de navbar */
-  display: flex;
-  flex-direction: column;
-  /*padding: 5px;*/
-  margin-top: 40px;
-  overflow: hidden;
+.movimcta-container {
+    width: 100%;
+    height: 100vh; /* Usar toda la altura de la ventana */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Evita scroll en el contenedor principal */
+    position: fixed; /* Fijar todo el contenedor */
+    top: 5px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding-top: 45px; /* Espacio para la barra de navegación */
 }
 /*.table-container {
   flex: 1;  
@@ -16,10 +20,8 @@
 }*/
 .table-container {
   flex: 1;
-  padding-left: 10px;
-  padding-right: 10px;
+  height: 350px;
   overflow-y: auto;
-  max-height: 400px;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
@@ -48,6 +50,49 @@
   margin: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.cta-info {
+    /*background-color: #f5f7fa;*/
+    background-color: #b6c1dd;
+    border-radius: 4px;
+    padding: 1px;
+    margin-bottom: 1px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+  
+  .cta-info .field {
+    display: flex;
+    margin-bottom: 2px;
+  }
+  
+  .cta-info .field-label {
+    font-size : 16px;
+    font-weight: 500;
+    /*width: 150px;*/
+  }
+
+    .cta-info .field-banco {
+    font-size : 20px;
+    color : blue;
+    font-weight: 500;
+    /*width: 150px;*/
+  }
+
+  .cta-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .cta-header h5 {
+    margin: 0;
+    color: #b34428;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  
+  .cta-details {
+    padding: 5px 0;
+  }
 
 
 .mat-mdc-header-row {
@@ -160,68 +205,63 @@
   border: none !important;
   border-radius: 2px !important;
 }
-.mat-column-idLaboreo {
-  /*padding-left: 5px !important;*/
-  width: 50px;
-  text-align: left;
-}
 .mat-column-fecha {
-  padding-left: 0rem;
-  width: 100px;
+  max-width: 40px;
+  text-align: left;
+  
+}
+.mat-column-tipomov {  
+  max-width: 40px;
+  text-align: left;  
+}
+.mat-column-nrocheque {
+  max-width: 40px;
+  text-align: left;  
+}
+.mat-column-descrip {  
+  max-width: 100px;
+  text-align: left;  
+}
+.mat-column-nroliq {  
+  max-width: 50px;
+  text-align: center;  
+}
+.mat-column-impingre,
+.mat-column-impegre{
+  max-width: 60px;
+  text-align: right;  
+}
+.mat-column-saldo {
+  max-width: 60px;
+  text-align: right;  
+  color : blue;
+  font-weight: 400;
+
+}
+.mat-column-coment {  
+  max-width: 150px;
+  text-align: left;  
+}
+.center-col {
   text-align: center;
 }
-.mat-column-ncliente {
-  padding-left: 0rem;
-  width: 150px;
-  text-align: left;
+
+.celda-marcada {
+  background-color: yellow;
+  color : black;
+  font-weight: 400;
 }
-.mat-column-ncampo {
-  padding-left: 10px;
-  width: 100px;
-  text-align: left;
+.saldo-negativo {
+  color: red;
+  font-weight: 400;
 }
-.mat-column-hasTrab {
-  padding-left: 0rem;
-  width: 100px;
-  text-align: right;
+.ingreso-positivo {
+  background-color:gray;
+  color:yellow;
+  font-weight: 400;
 }
-.mat-column-potreros {
-  padding-left: 0rem;
-  width: 80px;
-  text-align: center;
-}
-.mat-column-nlabor {
-  padding-left: 10px;
-  width: 100px;
-  text-align: left;
-}
-.mat-column-ncultivo {
-  padding-left: 10px;
-  width: 80px;
-  text-align: left;
-}
-.mat-column-nmaquina { 
-  width: 200px;
-  text-align: left;
-}
-.mat-column-nmaquina1 {
-  padding-left: 10px;
-  width: 400px;
-  text-align: left;
-}
-.mat-column-valorxHect {
-  padding-left: 0rem;
-  width: 100px;
-  text-align: right;
-}
-.mat-column-valorLaboreo,
- .mat-column-valorNeto {
-  padding-left: 0rem;
-  width: 100px;
-  text-align: right;
-}
-.mat-column-clab {
-  /*padding-left: 5px !important;*/
-  width: 80px;
-  text-align: center;
+.egreso-positivo {
+  background-color:gray;
+  color:lightgreen;
+  font-weight: 400;
 }

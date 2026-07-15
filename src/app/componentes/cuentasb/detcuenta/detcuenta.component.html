@@ -15,6 +15,9 @@
                 (click)="generarDetalleCuentaPDF()">
                 <i class="bi bi-printer"></i>               
         </button>
+        <button class="btn btn-secondary btn-sm add-button" (click)="InformeDetCuenta()">
+          <i class="bi bi-plus-circle me-1"></i>Informes
+         </button>
         <button class="btn btn-warning btn-sm add-button" (click)="agregarIngreso()">
           <i class="bi bi-plus-circle me-1"></i>Agregar Ingreso
          </button>
@@ -37,9 +40,7 @@
               <div class="field">
                 <div class="field-banco">Titular :   </div>
                 <div class="field-banco">{{ this.titular+" - Banco : "+this.banco }}</div>           
-                <!--div style="padding-left: 100px;">Banco : </div-->
-                <!--div class="field-banco">Banco : </div-->
-                <!--div class="field-banco">{{ this.banco }}</div-->                 
+                           
                 <div style="padding-left: 100px;">CBU : </div>
                 <div class="field-label">{{ this.cuentab.cbu }}</div>   
               </div>              
@@ -141,7 +142,7 @@
         <th mat-header-cell *matHeaderCellDef class="center-col">Comentario</th>
         <td mat-cell *matCellDef="let renCta">{{ renCta.coment }}</td>
       </ng-container>
-
+     
       <!-- Columna Modificar -->
       <ng-container matColumnDef="M">
         <th mat-header-cell *matHeaderCellDef >M</th>
@@ -169,7 +170,23 @@
           }          
         </td>
       </ng-container>
-      
+      <!-- Columna Borrar --> 
+        <ng-container matColumnDef="B">
+        <th mat-header-cell *matHeaderCellDef >B</th>
+        <td mat-cell *matCellDef="let renCta">
+        @if (renCta.ingegre==='EG' || renCta.impegre===0){  
+          <div class="text-center">
+              <button
+              mat-icon-button
+              class="action-btn"
+              title="borrar movimiento"
+              (click)="eliminarMovCuentaB( renCta.nromov,renCta.descrip,renCta.impingre,renCta.impegre)">
+              <i class="bi bi-trash-fill"></i>
+             </button>
+            </div>
+          }
+        </td>
+      </ng-container>
       <!-- Definición de filas -->
       <tr mat-header-row *matHeaderRowDef="colMovsCta; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; let index; columns: colMovsCta"></tr>

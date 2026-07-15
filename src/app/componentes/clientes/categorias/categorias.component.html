@@ -1,0 +1,46 @@
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formCat" class="p-3">        
+      <div class="row g-3 mb-3">
+        <div class="col-4">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Nro</mat-label>
+                 <input matInput [readonly]="true" formControlName="idcat" style="text-align: center;">	
+            </mat-form-field>    
+        </div>
+
+        <div class="col-8">
+           <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Nombre Categoria</mat-label>
+                <input matInput formControlName="nombre" style="text-align: left;">	
+            </mat-form-field>    
+        </div>   
+        </div>   
+        <div class="row g-3 mb-3">
+        <div class="col-4">
+              <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Ingreso/Egreso</mat-label>
+               <mat-select formControlName="ingeg" >      
+                  <mat-option *ngFor="let tipo of this.ingegresos" [value]="tipo">
+                    {{ tipo }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>                
+            </div> 
+        </div>
+     
+        <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formCat.invalid" 
+                       (click)="AgregarCategoria()">Agregar
+              </button>                                
+              
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Anular()">Cancelar
+              </button>                       
+        </div>                      
+    </form>
+</div>
+}

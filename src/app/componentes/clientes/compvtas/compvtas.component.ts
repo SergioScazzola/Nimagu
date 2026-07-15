@@ -15,6 +15,7 @@ import { intCompVta,compVtaDTO } from '../../../../entidades/compVta';
 import { VentaComponent } from '../venta/venta.component';
 import { CompraComponent } from '../compra/compra.component';
 import jsPDF from 'jspdf';
+import { CategoriasComponent } from '../categorias/categorias.component';
 
 @Component({
   selector: 'app-compvtas',
@@ -170,14 +171,51 @@ ngOnInit(){
 
   eliminarCompraVenta(idc : number, nrocp: number,npc : string , tcomp : string){
 
+    var subs : Subscription;
+    var resu : number;
+     this.sinoServicio.abrirSiNoDialogo("Confirmación",
+                              "¿ Está seguro de quiere borrar la "+tcomp+" Nro.: "+nrocp+" de "+npc+" ?")
+      .then(result => {
+       if (result) {                              
+         subs = this.servicio.borrarCompVta(idc)
+          .pipe(finalize(()=> {         
+            subs.unsubscribe(); 
+            this.notiServicio.showNotification("Se ha borrado la "+tcomp+" Nro.: "+nrocp+" ("+resu+") ",
+                                            "Aceptar","mensaje",3000);
+                this.leerComprasYVentas()
+          }))
+          .subscribe((datas : any): void => {
+                resu = datas });
+      }})                    
   }
+  agCategoria(){
+     const data = {      
+      accion     : "A"
+    }       
+ 
+    const dialogConfig = new MatDialogConfig();   
+    dialogConfig.autoFocus = false; 
+    dialogConfig.data      = data;
+    dialogConfig.width        =  '900';         // ancho máximo de la ventana
+    dialogConfig.maxWidth     = '50vw' //'95vw';      
+    dialogConfig.height       = 'auto';        // altura se ajusta al contenido
+    dialogConfig.panelClass   = 'custom-dialog-container';
+    dialogConfig.disableClose =  false; // opcional según necesidad
+    
+    const dialogRef =  this.dialog.open(CategoriasComponent, dialogConfig);
+    
+    dialogRef.afterClosed().subscribe( // 
+          (datas:any) => { if (datas.clicked === 'Alta'){                   
+              this.leerComprasYVentas (); // refrescar                                             
+          }})  
+ }
   volver(){
     this.router.navigate(['/ppal']);
  }
   manejarOperacion($event:any){
     if ($event==="Alta" || $event==="Modi"){
         this.formCV = false;
-        this.leerComprasYVentas (); // refrescar         
+             
     } else {
       this.formCV = false;
     }

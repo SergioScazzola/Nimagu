@@ -197,6 +197,14 @@ public agregarIngreso(ingreso : ingresoDTO) {
 public getCategorias(ineg : number) {
     return this.http.get<categoria[]>(this.apiUrl + `ingreso/categorias?ingeg=`+ineg);
   }
+public getMaxCategorias() {
+  // devuelve el nro del último movimiento registrado en la tabla de ingresos
+    return this.http.get<number>(this.apiUrl + `ingreso/categorias/max`);
+}
+public agregarCategoria(categ : categoria) {
+    return this.http.post<categoria>( this.apiUrl + `ingreso/categoria/nuevo`,categ);
+}
+
 
 public getProcedencias() {
     return this.http.get<procedencia[]>(this.apiUrl + `ingreso/procedencias`);
@@ -374,6 +382,10 @@ public getTiposMovimiento() {
   public updateCompVta(comp : compVtaDTO) {
     return this.http.put<compVtaDTO>(environment.apiUrl + `compvta/compvta/actualizar`, comp);
   }
+
+  public borrarCompVta(idcompv: number) {
+    return this.http.delete(environment.apiUrl + `compvta/compvta/borrar?id=`+idcompv);
+}
 }
 
 

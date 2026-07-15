@@ -196,7 +196,7 @@ export class CtabancoComponent {
      .subscribe((data : any): void => { cta = data });   
     }
     
-    ModificarCuenta(){
+  ModificarCuenta(){
    
     var ctaban : cuentaB = {
         idCuenta     : this.formCta.controls["idCuenta"].value,
@@ -210,29 +210,17 @@ export class CtabancoComponent {
         cantmovs     : this.formCta.controls["cantmovs"].value,
         observ       : this.formCta.controls["observ"].value 
     }    
-    var resu    : string;
-    var subs : Subscription;
-    var cta  : number;
-    subs = this.servicio.existeCbuPeriodo(ctaban.periodo,ctaban.cbu)
-     .pipe(finalize(() => {   
-             if (cta!=0 && cta!=ctaban.idCuenta){// existe y no es la cuenta que voy a grabar
-               this.notiService.showNotification("Yá existe la cuenta "+cta+" para el período : "+ctaban.periodo+
-                                                " y CBU : "+ctaban.cbu,'Aceptar','mensaje',500); 
-             } else {
-                var subs1 : Subscription;    
-                subs1 = this.servicio.updateCuentaB(ctaban)  
-                   .pipe(finalize(() => {   
-                     this.notiService.showNotification("La Cuenta nro. : "+this.data.nrocuenta+" - Banco : "+
-                                                ctaban.banco+" se ha modificado con éxito",'Aceptar','mensaje',500); 
-                     subs1.unsubscribe();
-                     this.dialogRef.close({ clicked : "Modi"})
-                    }))                  
-                    .subscribe((data : any): void => {resu=data});   
-            }             
-             subs.unsubscribe();             
-            }))  
-          .subscribe((data : any): void => {cta=data});             
-    }
+    var resu    : string;  
+    var subs1 : Subscription;    
+    subs1 = this.servicio.updateCuentaB(ctaban)  
+    .pipe(finalize(() => {   
+         this.notiService.showNotification("La Cuenta nro. : "+this.data.nrocuenta+" - Banco : "+
+                                           ctaban.banco+" se ha modificado con éxito",'Aceptar','mensaje',500); 
+         subs1.unsubscribe();
+         this.dialogRef.close({ clicked : "Modi"})
+    }))                  
+    .subscribe((data : any): void => {resu=data});   
+}             
              
 onFechaChange(event: any) {
     const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker

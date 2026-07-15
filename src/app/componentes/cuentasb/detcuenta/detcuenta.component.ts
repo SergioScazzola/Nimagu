@@ -54,7 +54,7 @@ export class DetcuentaComponent {
   cargandoCta       : boolean = false;
   
  
-  colMovsCta : string[] = ["fecha","tipomov","nrocheque","descrip","nroliq","impingre","impegre","saldo","coment","M"];
+  colMovsCta : string[] = ["fecha","tipomov","nrocheque","descrip","nroliq","impingre","impegre","saldo","coment","M","B"];
                            
   
   dataSource = new MatTableDataSource<any>();
@@ -214,9 +214,9 @@ export class DetcuentaComponent {
         item.nrocheque,
         item.descrip,
         item.nroliq,
-        this.currencypipe.transform(item.impingre, '$', 'symbol', '1.2-2'),
-        this.currencypipe.transform(item.impegre, '$', 'symbol', '1.2-2'),
-        this.currencypipe.transform(item.saldo, '$', 'symbol', '1.2-2'),              
+        this.currencypipe.transform(item.impingre, '$', 'symbol', '1.2-2')?.replace('$',''),
+        this.currencypipe.transform(item.impegre, '$', 'symbol', '1.2-2')?.replace('$',''),
+        this.currencypipe.transform(item.saldo, '$', 'symbol', '1.2-2')?.replace('$',''),              
   ])
   autoTable(doc, 
       {
@@ -384,11 +384,14 @@ export class DetcuentaComponent {
                        }})  
   }
 
-  eliminarMovCuentaB( nromov : number){
+  eliminarMovCuentaB( nromov : number,desc : string, impi : number,impe : number){
     var subs : Subscription;
     var resu : number;
      this.sinoServicio.abrirSiNoDialogo("Confirmación",
-                              "¿ Está seguro de quiere borrar el movimiento Nro."+nromov+" ?")
+                              "¿ Está seguro de quiere borrar el movimiento Nro."+nromov+
+                              " de "+desc+" por "+
+                              (impi!==0?this.currencypipe.transform(impi, '$', 'symbol', '1.2-2'):
+                              this.currencypipe.transform(impe, '$', 'symbol', '1.2-2'))+" ?")
       .then(result => {
        if (result) {                              
          subs = this.ctaService.elimMovCuentaB(this.cuentab.idCuenta,nromov)
@@ -493,6 +496,9 @@ export class DetcuentaComponent {
          }))
          .subscribe((datas : any): void => {
                 this.cendosos = datas });
+  }
+  InformeDetCuenta(){
+     this.router.navigate(['/cuentas',this.cuentab.idCuenta,this.filtro,'infodetcta']);
   }
   Volver(){
      this.router.navigate(['/cuentas',this.filtrorec]);

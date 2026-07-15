@@ -23,7 +23,7 @@
           </div>
          <div class="col-7">
            <mat-form-field class="w-100" appearance="fill">
-            <mat-label>Elija un Cliente</mat-label>
+            <mat-label>Elija un Proveedor</mat-label>
               <mat-select  formControlName="idprocli"
                 [disabled]="this.cproveedores.length==null || this.cproveedores.length==0"
                 (selectionChange)="onSelectionChangeProveedor($event)">
@@ -73,7 +73,7 @@
             <div class="col-4">
              <mat-form-field class="w-100" appearance="fill">
               <mat-label>Promedio</mat-label>
-                <input matInput formControlName="promedio"
+                <input matInput appImporte formControlName="promedio"
                   style="text-align: right;">	
              </mat-form-field>                   
             </div> 

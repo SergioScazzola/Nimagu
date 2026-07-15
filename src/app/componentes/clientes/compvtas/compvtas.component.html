@@ -9,22 +9,28 @@
        <input #filtroInput (keyup)="aplicarFiltro(filtroInput.value)" placeholder="Filtrar por nombre">
       </div>          
       
-      <div class="col-3">        
+      <div class="col">        
       </div>
-        <div class="col">
+
+      <div class="col">
         <button class="btn btn-secondary btn-sm" (click)="informeVyCs()">
           <i class="bi bi-plus-circle me-1"></i>Informes
         </button>
       </div>
      
-        <div class="col">
-        <button class="btn btn-warning btn-sm add-button" (click)="agVenta()">
-          <i class="bi bi-plus-circle me-1"></i>Agregar Venta
+      <div class="col">
+        <button class="btn btn-warning btn-sm" (click)="agVenta()">
+          <i class="bi bi-plus-circle me-1"></i>Ag.Venta
         </button>
       </div>
       <div class="col">
-        <button class="btn btn-success btn-sm add-button" (click)="agCompra()">
-          <i class="bi bi-plus-circle me-1"></i>Agregar Compra
+        <button class="btn btn-success btn-sm" (click)="agCompra()">
+          <i class="bi bi-plus-circle me-1"></i>Ag.Compra
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-info btn-sm" (click)="agCategoria()">
+          <i class="bi bi-plus-circle me-1"></i>Ag.Categoría
         </button>
       </div>
        <div class="col-2 text-end">
