@@ -17,7 +17,7 @@ import { NotiserviceService } from '../../../services/notiservice.service';
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { compVtaDTO } from '../../../../entidades/compVta';
+import { compVtaDTO, resCyV } from '../../../../entidades/compVta';
 
 export const DATE_FORMATS : MatDateFormats = {
 
@@ -54,8 +54,8 @@ export const DATE_FORMATS : MatDateFormats = {
 })
 export class RepoCompyvtasComponent {
 public formVyC : FormGroup;
- public ccomvtas  : compVtaDTO[]=[];
-
+public ccomvtas  : compVtaDTO[]=[];
+public cresCyV   : resCyV[]=[];  // para mostrar resumen de compras y ventas
 public   dfecha    : Date;
 public   hfecha    : Date = new Date();
 private  hoy       : Date = new Date();
@@ -63,11 +63,15 @@ private  dfec      : string = " ";
 private  hfec      : string = " ";
 public   totalcob  : number; 
 public   cantidad  : number;
+public   mostrardetalle : boolean;
+public   mostrarresumen : boolean;
+
 
  colComvtas: string[] = ["fecha","compvta", "nprovcli", "nroliq","categoria","cantidad","totalk",
                           "promedio","preunit","importe","proced","observ"];
  
-    
+ colResumen : string[] = ["D","cant","impo"];  
+
  constructor(private servicio : ServiciosService,
                private router   : Router,
                public  fb       : FormBuilder,
@@ -102,7 +106,7 @@ public   cantidad  : number;
     
   }
 
-  desplegarInforme(){
+  armarYTotalizar(){
     var subs : Subscription;
   
     subs = this.servicio.getCompVtasxFecha(this.dfec,this.hfec)
@@ -230,11 +234,11 @@ public   cantidad  : number;
       
      }
 
-     Cancelar(){
-       this.router.navigate(['/clientes','']);
+     volver(){
+       this.router.navigate(['/comprasvtas','']);
      }
 
-     // Calculo de totales cuando se elije informe detallado
+     // Calculo de totales cuando se elije informe detallado y genera el resumen
      calcTotales(){
        var total : number=0;
        var cantventas  : number=0;
@@ -252,28 +256,46 @@ public   cantidad  : number;
             cantcompras++
         }
        }
-      
+             
 
       this.totalcob = total;
     
-      var infoVyC  : compVtaDTO = {
-              idcomvta    : cantventas + cantcompras,
-              compvta     : "",
-              fecha       : null,
-              idprocli  : 0,
-              nprovcli  : "TOTALES",
-              nroliq    : "Ventas  : "+cantventas,
-              categoria : "Compras : "+cantcompras,
-              cantidad  : 0,
-              totalk    : 0,
-              promedio  : 0,
-              preunit   : 0,
-              importe   : total,
-              proced    : "",
-              observ    : "Imp.Ventas  : "+ this.currencyPipe.transform(impventas, '$', 'symbol', '1.2-2')?.replace('ARS','')+" "+
-                          "Imp.Compras : "+ this.currencyPipe.transform(impcompras, '$', 'symbol', '1.2-2')?.replace('ARS','') 
-        } 
-        this.ccomvtas.push(infoVyC);  // Agrego Totales
+      var infoVyC  : resCyV = {
+             vct      : 'Ventas',
+             cantidad : cantventas,
+             totalvct : impventas
+      };
+      this.cresCyV.push(infoVyC);
+      var infoVyC1  : resCyV = {
+             vct      : 'Compras',
+             cantidad : cantcompras,
+             totalvct : impcompras
+      };
+      this.cresCyV.push(infoVyC1);
+      var infoVyC2  : resCyV = {
+             vct      : '*TOTALES*',
+             cantidad : cantventas+cantcompras,
+             totalvct : total
+      };
+      this.cresCyV.push(infoVyC2);
+              
      }
 
+desplegarDetallado(){
+  if (this.ccomvtas==null || this.ccomvtas.length==0){
+     this.armarYTotalizar();
+  }
+  this.mostrardetalle = true;
+  this.mostrarresumen = false;
+  
+}
+
+desplegarResumen(){
+  if (this.ccomvtas==null || this.ccomvtas.length==0){
+     this.armarYTotalizar();
+  }
+     this.mostrardetalle = false;
+     this.mostrarresumen = true;
+     
+}
 }

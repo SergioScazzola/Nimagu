@@ -10,9 +10,10 @@ export interface movcta {
   descrip       : string,
   nroliq        : string,
   importe       : number,
-  coment        : string;
-  movvinc       : number;
-  marcada       : number;
+  coment        : string,
+  movvinc       : number,
+  marca1        : number,
+  marca2        : number
 }
 
 export interface intMovCtab {
@@ -20,7 +21,7 @@ export interface intMovCtab {
   periodo       : string,
   nromov        : number,
   titular       : string,
-  banco         : string
+  banco         : string,
   accion        : string
 } 
 export interface dispmovcta { 
@@ -36,7 +37,8 @@ export interface dispmovcta {
   impegre       : number,
   saldo         : number,
   coment        : string,
-  marcada       : number;
+  marca1        : number,
+  marca2        : number
 
 
 }

@@ -79,28 +79,7 @@ export class RepocuentasComponent {
   private  posMovIn   : number; // posicion del movimiento inicial a mostrar
   public   cuentaB    : cuentaB;
 
-  colspdf = [
-    { header: 'Nro', dataKey: 'nromov' },
-    { header: 'Fecha', dataKey: 'fechamov' },
-    { header: 'Ing/Egr', dataKey: 'ingegre' },
-    { header: 'T.Comprob', dataKey: 'tipocomp' },
-    { header: 'Comprob.', dataKey: 'comprob' },
-    { header: 'Concepto', dataKey: 'concepto' },
-    { header: 'Importe', dataKey: 'importe' },
-    { header: 'Comentario', dataKey: 'coment' }
-    
-  ];
-  filas    : any[];
-   colMovs: string[] = [
-    'nromov',
-    'fechamov',
-    'ingegre',
-    'tipocomp',
-    'comprob',
-    'concepto',
-    'importe',
-    'coment'
-  ];
+  
    
  dataSource = new MatTableDataSource<any>(); 
  colMovsCta : string[] = ["fecha","tipomov","nrocheque","descrip","nroliq","impingre","impegre","saldo","coment"];
@@ -227,7 +206,8 @@ export class RepocuentasComponent {
            impegre   : this.cmovscuenta[i].ingegre=="EG"?this.cmovscuenta[i].importe:0,
            saldo     : saldocte,
            coment    : this.cmovscuenta[i].coment,
-           marcada   : this.cmovscuenta[i].marcada,
+           marca1    : this.cmovscuenta[i].marca1,
+           marca2    : this.cmovscuenta[i].marca2,
         };
         if (this.cmovscuenta[i].movvinc > 0){  // hay cheque endosado? -> modificar rendisp con endoso
            const indend = this.endosos.findIndex(p=>p.idendoso==this.cmovscuenta[i].movvinc);
@@ -242,20 +222,42 @@ export class RepocuentasComponent {
       }; 
     
   }
-  Cancelar() {
-  // Volver a la página de laboreos con filtro
-  
-  this.router.navigate(['/laboreos',this.filter]);
+  volver() {
+  // Volver a la página de detalle de cuenta con filtro  
+  this.router.navigate(['/cuentas',this.idcuenta,"",this.filter,'detcuenta']);
 }  
-/*generarPDF(nomcli : string):void{
- // si nomcli es distinto de "" es un informe de laboreos del cliente
+generarPDF():void{
+  const colspdf = [    
+    { header: 'Fecha', dataKey: 'fecha' },
+    { header: 'Tipo.Mov', dataKey: 'tipomov' },
+    { header: 'Nro.Cheque', dataKey: 'nrocheque' },
+    { header: 'Descripción', dataKey: 'descrip' },
+    { header: 'Nro.Liq.', dataKey: 'nroliq' },
+    { header: 'Ingreso', dataKey: 'impingre' },
+    { header: 'Egreso', dataKey: 'impegre' },
+    { header: 'Saldo', dataKey: 'saldo' },
+    { header: 'Comentario', dataKey: 'coment' }        
+  ];
+  var filas    : any[];
+  const colMovs: string[] = [
+    'fecha',
+    'tipomov',
+    'nrocheque',
+    'descrip',
+    'nroliq',
+    'impingre',
+    'impegre',
+    'saldo',
+    'coment'
+  ];
+
 
   const doc = new jsPDF('l','mm','A4');
    var fd = this.datepipe.transform(this.formInfoMov.controls['dfecha'].value,"dd/MM/yyyy");
    var fh = this.datepipe.transform(this.formInfoMov.controls['hfecha'].value,"dd/MM/yyyy");
    var title = "";
    
-   title = "Informe de Movimientos Bancarios de "+this.cuentaB.banco+" desde el "+fd+" al "+fh;
+   title = "Informe de Movimientos Bancarios del Banco "+this.cuentaB.banco+" desde el "+fd+" al "+fh;
    
    
 
@@ -264,43 +266,36 @@ export class RepocuentasComponent {
   const fechaStr = fecha.toLocaleDateString('es-AR');
 
   
-  this.filas = this.clabosubt.map((item)=> [
-    item.idLaboreo,
+  filas = this.dispcta.map((item)=> [    
     this.datepipe.transform(item.fecha,"dd/MM/yyyy"),
-    item.ncliente,
-    item.ncampo,
-     this.currencyPipe.transform(item.hasTrab, 'ARS','code','1.2-2')?.replace('ARS',''),
-    item.potreros,
-    item.nlabor,
-    item.ncultivo,
-    item.nmaquina,
-    this.currencyPipe.transform(item.valorxHect, 'ARS','code','1.2-2')?.replace('ARS',''),
-    item.tasaiva,
-    this.currencyPipe.transform(item.valorLaboreo,'ARS','code','1.2-2')?.replace('ARS',''),
-    item.facturado==true?'F':''
+    item.tipomov,
+    item.nrocheque,
+    item.descrip,
+    item.nroliq,
+    this.currencyPipe.transform(item.impingre, 'ARS','code','1.2-2')?.replace('ARS',''),
+    this.currencyPipe.transform(item.impegre, 'ARS','code','1.2-2')?.replace('ARS',''),
+    this.currencyPipe.transform(item.saldo, 'ARS','code','1.2-2')?.replace('ARS',''),
+    item.coment
   ])
   autoTable(doc, 
     {
-     head: [this.colspdf.map((item)=>item.header)],
-     body: this.filas,
-     columns: this.colspdf,
+     head: [colspdf.map((item)=>item.header)],
+     body: filas,
+     columns: colspdf,
      styles: { fontSize: 8 },
      headStyles: { fillColor: [63, 81, 181], halign: 'center' },
      startY: 25, // Espacio debajo del título
-     columnStyles: {
-        idLaboreo : { halign: 'center' },
+     columnStyles: {        
         fecha     : { halign: 'left' },        
-        ncliente  : { halign: 'left' },
-        ncampo    : { halign: 'left' },
-        hasTrab   : { halign: 'right' },
-        potreros  : { halign: 'left' },
-        nlabor    : { halign: 'left' },
-        ncultivo  : { halign: 'left' },
-        nmaquina  : { halign: 'left' },        
-        valorxHect: { halign: 'right' },
-        tasaiva   : { halign: 'center' },
-        valorLaboreo: { halign: 'right' },
-        facturado   : { halign: 'center' }
+        tipomov   : { halign: 'left' },
+        nrocheque : { halign: 'center' },
+        descrip   : { halign: 'left' },
+        nroliq    : { halign: 'center' },
+        impingre  : { halign: 'right' },
+        impegre   : { halign: 'right' },
+        saldo     : { halign: 'right' },        
+        coment    : { halign: 'left' },        
+      
      },
       didDrawPage: (data) => {        
           if (data.pageNumber>=1){
@@ -317,7 +312,7 @@ export class RepocuentasComponent {
     const pageSize = doc.internal.pageSize;
     const text = `Página ${i} de ${totalPages}`;
     doc.setFontSize(10);
-    doc.text("Degros S.A.", 10, 15, { align: 'left' });
+    doc.text("Nimagu S.A.", 10, 15, { align: 'left' });
 
      // Título centrado
     doc.setFontSize(10);
@@ -327,11 +322,17 @@ export class RepocuentasComponent {
     doc.setFontSize(10);
     doc.text(`Fecha: ${fechaStr}`, doc.internal.pageSize.getWidth() - 20, 10, { align: 'right' });
     doc.setFontSize(10);
-    doc.text(text, pageSize.width - 20, 15, { align: 'right' });
+    doc.text(text, pageSize.width - 20, 15, { align: 'right' });// nro. de pagina
+    if (i==1){ // saldo anterior
+       doc.setFontSize(10);       
+       doc.text(`Saldo : ${this.currencyPipe.transform(this.saldoinic, 'ARS','code','1.2-2')?.replace('ARS','')}`,
+                doc.internal.pageSize.getWidth() - 20, 23, { align: 'right' });
+    }
+    
   }
- doc.save('InformeDeLaboreos');       
+ doc.save(this.cuentaB.banco+this.datepipe.transform(new Date(),"dd/MM/yyyy")+'.pdf');       
  
-}*/
+}
 borrarArreglos(){
   //this.cmovscuenta = [];
   this.dispcta     = [];

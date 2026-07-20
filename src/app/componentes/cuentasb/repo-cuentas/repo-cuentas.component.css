@@ -5,7 +5,7 @@
     flex-direction: column;
     overflow: hidden; /* Evita scroll en el contenedor principal */
     position: fixed; /* Fijar todo el contenedor */
-    top: 5px;
+    top: 18px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -26,10 +26,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 /* Estilos de la tabla */
-.mat-mdc-table {  
+/*.mat-mdc-table {  
   table-layout: fixed;
   width: 100%;
-}
+}*/
 /*::ng-deep form .mat-mdc-form-field-hint-wrapper{
   padding-bottom : 1px !important;
 }*/
@@ -72,6 +72,11 @@
 
     .cta-info .field-banco {
     font-size : 20px;
+    color : blue;
+    font-weight: 500;
+    /*width: 150px;*/
+  }
+  .cta-info .field-saldo {    
     color : blue;
     font-weight: 500;
     /*width: 150px;*/
@@ -132,18 +137,20 @@
 }
 
 /* Estilos para las celdas */
-/*.mat-mdc-cell,
-.mat-mdc-header-cell {
-  padding: 0 8px;
-}*/
+.mat-mdc-cell,
+.mat-mdc-header-cell { 
+  padding: 0 5px;
+}
 
 /* Asegurar que los encabezados no se truncan */
 .mat-mdc-header-cell {
+  padding-left: 0px!important;
+  padding-right: 0px!important;
   text-align: center;
   white-space: nowrap;
   overflow: visible !important;
   text-overflow: clip;
-  /*padding: 0 8px;*/
+ 
 }
 
 
@@ -157,11 +164,11 @@
  /* Contenedor específico para el footer */
 .footer-container {
   padding-top: 0;
-  padding-bottom: 10px;
+  padding-bottom: 1px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
   z-index: 5;
   position: relative; /* Para que el z-index funcione */
-  background-color: #fff; /* Asegurar que el fondo sea visible */
+  background-color:#426edf; /* Asegurar que el fondo sea visible */
 }
 /* Pie de página con info adicional */
 .footer {
@@ -206,33 +213,47 @@
   border-radius: 2px !important;
 }
 .mat-column-fecha {
-  max-width: 40px;
-  text-align: left;
-  
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  padding-left: 5px;
+  white-space: nowrap;
 }
 .mat-column-tipomov {  
-  max-width: 40px;
-  text-align: left;  
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  white-space: nowrap;
 }
 .mat-column-nrocheque {
-  max-width: 40px;
-  text-align: left;  
+ width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  white-space: nowrap;
 }
 .mat-column-descrip {  
   max-width: 100px;
   text-align: left;  
 }
 .mat-column-nroliq {  
-  max-width: 50px;
-  text-align: center;  
+ width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  white-space: nowrap;
 }
 .mat-column-impingre,
 .mat-column-impegre{
-  max-width: 60px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  white-space: nowrap;
   text-align: right;  
 }
 .mat-column-saldo {
-  max-width: 60px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  white-space: nowrap;
   text-align: right;  
   color : blue;
   font-weight: 400;
@@ -243,14 +264,22 @@
   text-align: left;  
 }
 .center-col {
+  max-width: 30px;
   text-align: center;
 }
 
-.celda-marcada {
+.celda-marca1 {
   background-color: yellow;
   color : black;
   font-weight: 400;
 }
+
+.celda-marca2 {
+  background-color:green;
+  color : white;
+  font-weight: 400;
+}
+
 .saldo-negativo {
   color: red;
   font-weight: 400;

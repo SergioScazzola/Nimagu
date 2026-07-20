@@ -24,8 +24,9 @@
   margin: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.fila-totales {
-  background-color: #053966; /* Celeste claro, cambia a tu gusto */
+.fila-totales {  
+  background-color: yellow;
+  color: blue;
   font-weight: bold;
 }
 /* Contenedor de la tabla */
@@ -123,7 +124,8 @@
   text-overflow: ellipsis;
 }
 
-.mat-column-categoria {
+.mat-column-categoria
+ {
   padding-left: 0;
   width: 70px;
   text-align: left;
@@ -131,7 +133,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.mat-column-D {
+  padding-left: 20;
+  width: 30px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
+}
+
+.mat-column-cant {
+  width: 30px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
 .mat-column-cantidad,
 .mat-column-totalk,
 .mat-column-promedio,
@@ -142,6 +160,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.mat-column-impo {
+  width: 40px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;  
 }
 .mat-column-importe {
    padding-left: 0;
@@ -198,4 +223,8 @@
 .total {
   font-size: 16px;
   font-weight: 600;
+}
+
+.centrado {
+  text-align : center
 }

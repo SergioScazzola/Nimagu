@@ -1,4 +1,4 @@
-import { Directive, HostListener, ElementRef } from '@angular/core';
+import { Directive, HostListener, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 @Directive({
@@ -7,6 +7,11 @@ import { NgControl } from '@angular/forms';
 export class ImporteDirective {
 
   constructor(private el: ElementRef, private control: NgControl) {}
+
+  public refrescar(): void {
+    console.log('Paso por refrescarrrrrrrr');
+    this.onBlur();
+}
 
 @HostListener('focus')
 onFocus() {

@@ -22,3 +22,9 @@ export interface intCompVta {
     accion    : string
 
 }
+
+export interface resCyV {
+    vct       : string;
+    cantidad  : number;
+    totalvct  : number
+}

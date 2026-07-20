@@ -86,7 +86,8 @@
       <!-- Columna Tipo de Comprobante -->
       <ng-container matColumnDef="tipomov">
         <th mat-header-cell *matHeaderCellDef>Tipo Mov</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.tipomov }}</td>
+        <td mat-cell *matCellDef="let renCta"
+        [ngClass]="{'celda-marca2': renCta.marca2 !== 0}">{{ renCta.tipomov }}</td>
       </ng-container>
 
       <!-- Columna Nro.Comp -->
@@ -99,7 +100,8 @@
       <ng-container matColumnDef="descrip">
         <th mat-header-cell *matHeaderCellDef class="center-col">Descripción</th>
         <td mat-cell *matCellDef="let renCta"
-           [ngClass]="{'celda-marcada': renCta.marcada !== 0}">
+           [ngClass]="{'celda-marca1': renCta.marca1 !== 0}"
+           >
            {{ renCta.descrip }}
         </td>
       </ng-container>

@@ -57,6 +57,21 @@
         </mat-form-field>
       </div>
     </div>
+      <!-- Segunda fila -->
+      <div class="row g-3 mb-1">
+        <div class="col-4">
+          <mat-checkbox 
+            [checked]="formMov.controls['marca1'].value!==0"
+            (change)="marcaFila1($event.checked)">
+              Marca1
+          </mat-checkbox>
+         <mat-checkbox 
+           [checked]="formMov.controls['marca2'].value!==0"
+           (change)="marcaFila2($event.checked)">
+              Marca2
+            </mat-checkbox>
+        </div>
+      </div>  
      <!-- Segunda fila -->  
       <div class="row g-3">
        <div class="col-10">
@@ -78,14 +93,7 @@
           <mat-label>Descripción</mat-label>                    
           <input matInput formControlName="descrip" />
         </mat-form-field>
-      </div>     
-      <div class="col-2">         
-       <mat-checkbox 
-         [checked]="formMov.controls['marcada'].value!==0"
-         (change)="marcaFila($event.checked)">
-              Marcada
-        </mat-checkbox>
-    </div> 
+      </div>          
     </div>
    
     

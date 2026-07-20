@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, ElementRef, EventEmitter, Inject, Input, NgZone, Output, viewChild, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, ElementRef, EventEmitter, Inject, Input, NgZone, Output, QueryList, viewChild, ViewChild, ViewChildren } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import {MatDatepickerModule,MatDatepickerInputEvent} from '@angular/material/datepicker';
@@ -61,6 +61,8 @@ imports: [MatFormField,
 })
 export class MovctasalComponent {
  public nameInput = viewChild<ElementRef>('inputFocus');
+ @ViewChildren(ImporteDirective)  // ver todos los input que tienen appImporte
+  importes!: QueryList<ImporteDirective>;
   formMov             : FormGroup;
   operacion           : string = "";
   cproveedores        : proveedorDTO[]=[];
@@ -157,7 +159,8 @@ export class MovctasalComponent {
         nroliq      : [''],
         importe     : [0],
         coment      : [''],
-        marcada     : [0]
+        marca1      : [0],
+        marca2      : [0]
       
       })
     }
@@ -174,7 +177,13 @@ export class MovctasalComponent {
         this.formMov.controls["nroliq"].setValue(this.movimcta.nroliq);      
         this.formMov.controls["importe"].setValue(this.movimcta.importe);      
         this.formMov.controls["coment"].setValue(this.movimcta.coment);
-        this.formMov.controls["marcada"].setValue(this.movimcta.marcada);
+        this.formMov.controls["marca1"].setValue(this.movimcta.marca1);
+        this.formMov.controls["marca2"].setValue(this.movimcta.marca2);
+
+        setTimeout(() => { // formatea importes en campos numericos
+           this.importes.forEach(i => i.refrescar());
+        
+        })
     }
     actualizarParaAlta(){
       this.formMov.controls["nromov"].setValue(this.data.nromov);
@@ -207,7 +216,8 @@ export class MovctasalComponent {
      importe       : this.formMov.controls["importe"].value,
      coment        : this.formMov.controls["coment"].value,
      movvinc       : 0,
-     marcada       : this.formMov.controls["marcada"].value,
+     marca1        : this.formMov.controls["marca1"].value,
+     marca2        : this.formMov.controls["marca2"].value,
  
     }   
  
@@ -239,7 +249,8 @@ export class MovctasalComponent {
     this.movimcta.nroliq        = this.formMov.controls["nroliq"].value;
     this.movimcta.importe       = this.formMov.controls["importe"].value;
     this.movimcta.coment        = this.formMov.controls["coment"].value;
-    this.movimcta.marcada       = this.formMov.controls["marcada"].value;
+    this.movimcta.marca1        = this.formMov.controls["marca1"].value;
+    this.movimcta.marca2        = this.formMov.controls["marca2"].value;
    
     var subscri : Subscription;
     var resu    : string;
@@ -328,11 +339,19 @@ onSelectionTmov(event: any){
 }
 
 
-marcaFila(checked : boolean){
+marcaFila1(checked : boolean){
 if (checked){
-  this.formMov.controls['marcada'].setValue(1)
+  this.formMov.controls['marca1'].setValue(1)
 } else {
-  this.formMov.controls['marcada'].setValue(0)
+  this.formMov.controls['marca1'].setValue(0)
+}
+}
+
+marcaFila2(checked : boolean){
+if (checked){
+  this.formMov.controls['marca2'].setValue(1)
+} else {
+  this.formMov.controls['marca2'].setValue(0)
 }
 }
 

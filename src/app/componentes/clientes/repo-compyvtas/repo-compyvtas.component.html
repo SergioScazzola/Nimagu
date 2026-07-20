@@ -29,29 +29,6 @@
       </div>
       <!--div class="col-3">        
       </div-->
-      
-   
-      <div class="col">
-        <button class="btn btn-primary btn-sm add-button" (click)="desplegarInforme()">
-          Informe Detallado
-        </button>
-      </div>
-      <!--div class="col">
-        <button class="btn btn-secondary btn-sm add-button" (click)="desplegarResumido()">
-          Informe Resumido
-        </button>
-      </div-->
-      <!--div class="col-auto">
-        <button 
-          [disabled]="cinfosbcob==undefined || cinfosbcob.length==0"
-          mat-icon-button
-          class="action-btn ml-10"
-          title="imprimir informe de Cobros resumido"
-          (click)="generarResPDF()"
-        >
-         <i class="bi bi-printer"></i>               
-        </button>
-      </div-->  
       <div class="col-auto">
         <button 
           [disabled]="ccomvtas==undefined || ccomvtas.length==0"
@@ -63,8 +40,27 @@
          <i class="bi bi-printer"></i>               
         </button>
       </div>  
+   
+      <div class="col">
+        <button class="btn btn-primary btn-sm add-button" (click)="desplegarDetallado()">
+          Informe Detallado
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-warning btn-sm add-button" (click)="desplegarResumen()">
+          Informe Resumido
+        </button>
+      </div>
+       <div class="col-auto ms-auto">
+          <button class="btn btn-secondary btn-sm add-button ms-auto" (click)="volver()">
+             <i class="bi bi-arrow-left me-1"></i>Volver
+         </button>
+       </div>
+      
+      
   </form>   
-  @if(ccomvtas!=null && ccomvtas.length>0){
+  <!-- Tabla detallada -->
+  @if(ccomvtas!=null && ccomvtas.length>0 && mostrardetalle){
   <div class="table-container" style="overflow-x: auto">
     
      <table  
@@ -128,6 +124,41 @@
                 [ngClass]="{'fila-totales': ccomvtas[index].nprovcli.includes('TOTA')}"></tr>
     </table>
    
+  </div>
+  }
+  <!-- Tabla de Resumen -->
+  @if(cresCyV!=null && cresCyV.length>0 && mostrarresumen==true){
+  <div class="row justify-content-md-center">
+    <div class="col-6">
+
+     <div class="table-container" style="overflow-x: auto">
+    
+     <table  
+      mat-table
+      class="mat-elevation-z8"
+      [dataSource]="cresCyV"
+      style="width: 30%"
+      >
+      <ng-container matColumnDef="D">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.vct }}</td>
+      </ng-container>
+      <ng-container matColumnDef="cant">
+        <th mat-header-cell *matHeaderCellDef class="centrado">Cantidad</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.cantidad | number : "1.2-2"}}</td>
+      </ng-container>
+      <ng-container matColumnDef="impo">
+        <th mat-header-cell *matHeaderCellDef class="centrado">Importe</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.totalvct | number : "1.2-2"}}</td>
+      </ng-container>
+    
+        <!-- Definición de filas -->
+      <tr mat-header-row *matHeaderRowDef="colResumen; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colResumen"
+                [ngClass]="{'fila-totales': cresCyV[index].vct.includes('TOTAL')}"></tr>
+    </table>   
+   </div>
+  </div>
   </div>
   }
 

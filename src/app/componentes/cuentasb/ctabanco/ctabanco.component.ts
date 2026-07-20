@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, ElementRef, EventEmitter, Inject, Input, NgZone, Output, viewChild, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, ElementRef, EventEmitter, Inject, Input, NgZone, Output, QueryList, viewChild, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import {MatDatepickerModule,MatDatepickerInputEvent} from '@angular/material/datepicker';
@@ -56,6 +56,8 @@ export const DATE_FORMATS : MatDateFormats = {
 })
 export class CtabancoComponent {
  //@ViewChild('nombreempleado') nameInput: ElementRef;
+ @ViewChildren(ImporteDirective)  // ver todos los input que tienen appImporte
+  importes!: QueryList<ImporteDirective>;
   public nameInput = viewChild<ElementRef>('inputFocus');
   formCta          : FormGroup;
   operacion        : string = "";
@@ -99,7 +101,9 @@ export class CtabancoComponent {
                     subs2.unsubscribe();            
                     console.log("Cuenta a modificar : ",JSON.stringify(this.ctab));      
                     this.operacion = "Modificar Cta Bancaria Nro. "+this.data.nrocuenta+" - "+this.data.nbanco;
+                    
                     this.actualizarControles();
+                  
                     this.isloading = false;
                     this.cdr.detectChanges(); // <--- Asegura que el nuevo valor se pinte sin errores }))
                     }))
@@ -135,24 +139,26 @@ export class CtabancoComponent {
         saldoini    : [0],
         saldofin    : [0],
         cantmovs    : [0],
-        observ      : ['']    
-      
+        observ      : ['']          
       })
     }
     actualizarControles(){
     // Actualiza controles para modificar
                                            
-    this.formCta.controls["idCuenta"].setValue(this.ctab.idCuenta), 
-    this.formCta.controls["periodo"].setValue(this.ctab.periodo), 
-    this.formCta.controls["titular"].setValue(this.ctab.titular), 
-    this.formCta.controls["banco"].setValue(this.ctab.banco), 
-    this.formCta.controls["cbu"].setValue(this.ctab.cbu), 
-    this.formCta.controls["fecsaldo"].setValue(this.ctab.fecsaldo), 
-    this.formCta.controls["saldoini"].setValue(this.ctab.saldoini),
-    this.formCta.controls["saldofin"].setValue(this.ctab.saldofin),  
-    this.formCta.controls["cantmovs"].setValue(this.ctab.cantmovs),
-    this.formCta.controls["observ"].setValue(this.ctab.observ) 
-      
+    this.formCta.controls["idCuenta"].setValue(this.ctab.idCuenta); 
+    this.formCta.controls["periodo"].setValue(this.ctab.periodo);
+    this.formCta.controls["titular"].setValue(this.ctab.titular); 
+    this.formCta.controls["banco"].setValue(this.ctab.banco); 
+    this.formCta.controls["cbu"].setValue(this.ctab.cbu);
+    this.formCta.controls["fecsaldo"].setValue(this.ctab.fecsaldo);
+    this.formCta.controls["saldoini"].setValue(this.ctab.saldoini);
+    this.formCta.controls["saldofin"].setValue(this.ctab.saldofin);
+    this.formCta.controls["cantmovs"].setValue(this.ctab.cantmovs);
+    this.formCta.controls["observ"].setValue(this.ctab.observ);
+    setTimeout(() => {
+       this.importes.forEach(i => i.refrescar());
+    })
+  
    }
 
    AgregarCuenta(){

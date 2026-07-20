@@ -169,7 +169,8 @@ export class DetcuentaComponent {
            impegre   : this.cmovscta[i].ingegre=="EG"?this.cmovscta[i].importe:0,
            saldo     : saldocte,
            coment    : this.cmovscta[i].coment,
-           marcada   : this.cmovscta[i].marcada,
+           marca1    : this.cmovscta[i].marca1,
+           marca2    : this.cmovscta[i].marca2,
         };
         if (this.cmovscta[i].movvinc!==0){  // hay cheque endosado? -> modificar rendisp con endoso
            const indend = this.cendosos.findIndex(p=>p.idendoso==this.cmovscta[i].movvinc);
@@ -311,7 +312,11 @@ export class DetcuentaComponent {
     const dialogConfig = new MatDialogConfig();   
     dialogConfig.autoFocus = false;
     dialogConfig.data = data;
-    dialogConfig.panelClass = "custom-dialog-container";
+    dialogConfig.width =  '900';         // ancho máximo de la ventana
+    dialogConfig.maxWidth = '95vw';      
+    dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+    dialogConfig.panelClass = 'custom-dialog-container';
+    dialogConfig.disableClose =  false; // opcional según necesidad
     const dialogRef =  this.dialog.open(MovctasalComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 
           (datas:any) => { if (datas.clicked === 'Alta'){                   
@@ -331,11 +336,12 @@ export class DetcuentaComponent {
    
      const dialogConfig = new MatDialogConfig();   
      dialogConfig.autoFocus = false;
-     dialogConfig.data = data;
-     dialogConfig.width =  '900';         // ancho máximo de la ventana
-     dialogConfig.maxWidth = '95vw';      
-     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
-     dialogConfig.panelClass = 'custom-dialog-container';
+    dialogConfig.data = data;
+    dialogConfig.width =  '900';         // ancho máximo de la ventana
+    dialogConfig.maxWidth = '95vw';      
+    dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+    dialogConfig.panelClass = 'custom-dialog-container';
+    dialogConfig.disableClose =  false; // opcional según necesidad
 
     const dialogRef =  this.dialog.open(EndosoComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 

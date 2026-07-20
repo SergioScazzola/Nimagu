@@ -1,4 +1,4 @@
-import { Component, Inject,NgZone,ChangeDetectorRef} from '@angular/core';
+import { Component, Inject,NgZone,ChangeDetectorRef, ViewChildren, QueryList} from '@angular/core';
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
 import { ImporteDirective } from '../../../Directivas/importeDirective';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -62,6 +62,8 @@ export const DATE_FORMATS : MatDateFormats = {
   styleUrl: './venta.component.css'
 })
 export class VentaComponent {
+  @ViewChildren(ImporteDirective)  // ver todos los input que tienen appImporte
+  importes!: QueryList<ImporteDirective>;
 operacion       : string;
 formVta         : FormGroup;
 proxCV          : number;
@@ -180,8 +182,9 @@ importeformat   : string = "";
     this.formVta.controls['importe'].setValue(this.ventaa.importe);
     this.formVta.controls['proced'].setValue(this.ventaa.proced);
     this.formVta.controls['observ'].setValue(this.ventaa.observ);
-
-
+    setTimeout(() => { // formatea importes en campos numericos
+       this.importes.forEach(i => i.refrescar());
+    })
   }
    
   
