@@ -8,8 +8,7 @@ export class ImporteDirective {
 
   constructor(private el: ElementRef, private control: NgControl) {}
 
-  public refrescar(): void {
-    console.log('Paso por refrescarrrrrrrr');
+  public refrescar(): void { // para formatear inputs al inicio   
     this.onBlur();
 }
 

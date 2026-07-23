@@ -13,6 +13,7 @@ import { MatTableModule,MatTableDataSource } from '@angular/material/table';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { cuentaB, intCtab } from '../../../entidades/cuentaB';
 import { CtabancoComponent } from './ctabanco/ctabanco.component';
+import { saldoCta } from '../../../entidades/saldoCta';
 
 @Component({
   selector: 'app-cuentasb',
@@ -29,7 +30,7 @@ export class CuentasbComponent {
   //public inputRef = viewChild.required<ElementRef>('filtroInput');
   
   public cuentasb : cuentaB[]=[];
- 
+  public csaldos  : saldoCta[]=[];
   
   
   cantctas          : number;
@@ -86,6 +87,7 @@ ngOnInit(){
       var subs : Subscription;
       subs = this.ctaService.getCuentasB()
          .pipe(finalize(()=> {
+             subs.unsubscribe();            
              this.cantctas = this.cuentasb.length;
               this.dataSource.data = this.cuentasb;         
               this.dataSource.filterPredicate = (dato : cuentaB, fil : string) => {
@@ -124,8 +126,17 @@ ngOnInit(){
   }
   VerDetalledeCuenta(idcuenta : number,periodo : string){ 
     var filter = this.inputRef.nativeElement.value;// se envia, para luego recibirlo y retomar filtro
+    var subs1 : Subscription;
+    subs1 = this.ctaService.getSaldosCuentasB(idcuenta)  // leer saldos iniciales para enviar el periodo correcto
+      .pipe(finalize(() => {                    
+          subs1.unsubscribe();                    
+          var periodo = this.csaldos[0].periodo;
+          this.router.navigate(['/cuentas',idcuenta,periodo,filter,'detcuenta']);
+        }))
+      .subscribe((data : any): void => {
+         this.csaldos = data});         
+
     
-    this.router.navigate(['/cuentas', idcuenta,periodo,filter,'detcuenta']);
   }
 
   borrarCuentaB(nrcuenta : number){

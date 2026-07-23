@@ -1,7 +1,8 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_FORMATS, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
+import { AppDateAdapter } from '../../../adapters/app-date-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,13 +13,12 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { es } from 'date-fns/locale';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
 
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { cuentaB } from '../../../../entidades/cuentaB';
 import { dispmovcta, movcta } from '../../../../entidades/movcta';
 import { endoso } from '../../../../entidades/endoso';
+import { saldoMov } from '../../../../entidades/saldoMov';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -46,11 +46,11 @@ export const DATE_FORMATS : MatDateFormats = {
               MatSelectModule,
               MatInputModule,   ],
               
-  providers : [ DatePipe,CurrencyPipe,
-    { provide : DateAdapter, useClass: DateFnsAdapter },
-    { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-    { provide : MAT_DATE_LOCALE, useValue: es}
-  ],            
+   providers: [
+    DatePipe,
+    CurrencyPipe
+   
+],       
   templateUrl: './repo-cuentas.component.html',
   styleUrl: './repo-cuentas.component.css'
 })
@@ -58,7 +58,7 @@ export class RepocuentasComponent {
   
   public formInfoMov   : FormGroup;
   public   dfecha      : Date;
-  public   hfecha      : Date = new Date();
+  public   hfecha      : Date;
   public   ccuentas    : cuentaB[]=[];
   public   cmovscuenta : movcta[]=[];
   public   dispcta     : dispmovcta[]=[];
@@ -70,14 +70,17 @@ export class RepocuentasComponent {
   private  filter     : string;   //filtro de laboreos para devolver
   private  dfec       : string = " ";
   private  hfec       : string = " ";
-  public   totallabor : number;
-  public   totalhect  : number;
-  public   cantlab    : number;
-  private  hoy        : Date = new Date();
+
+  private  hoy        : Date;
   private  idcuenta   : number;
   public   saldoinic  : number; 
-  private  posMovIn   : number; // posicion del movimiento inicial a mostrar
+  public   periodo    : string;
+
   public   cuentaB    : cuentaB;
+  public   qsaldo     : saldoMov;
+  private  fecprmmov  : string = "";
+  public   fecprim    : Date;
+  public   fecpr      : Date;
 
   
    
@@ -88,33 +91,45 @@ export class RepocuentasComponent {
                private router      : Router,
                public  fb          : FormBuilder,
                public datepipe     : DatePipe,
-               private currencyPipe: CurrencyPipe){}
+               private currencyPipe: CurrencyPipe ){
+                                    
+               }
 
 
    ngOnInit(){
      //this.rutaActiva.paramMap.subscribe((params) => {
-    
+     const opt = Intl.DateTimeFormat().resolvedOptions();
+
+     console.log("yyyyyyyyy : "+opt.locale);
+     console.log("xxxxxxxxx : "+opt.timeZone);
       this.filter     = this.rutaActiva.snapshot.params['filtro'];
+      this.periodo    = this.rutaActiva.snapshot.params['periodo'];
       console.log("filtro a devolver : "+this.filter);
-      this.idcuenta   = this.rutaActiva.snapshot.params['idcuenta']; // parametro de ruta     
-      var fecprim  = new Date(this.hoy.getFullYear(),this.hoy.getMonth(),1);
-      var cad = this.datepipe.transform(fecprim,"yyyy-MM-dd");
-      this.dfec = cad!=null?cad:" ";
-      cad = this.datepipe.transform(this.hoy,"yyyy-MM-dd")+"T23:59"; 
-      this.hfec = cad!=null?cad:" ";
-      this.formInfoMov = this.fb.group({        
-        dfecha     : [fecprim], 
-        hfecha     : [this.hoy], 
-        clte       : [0],
-        tipoinfo   : [0]})
-    
+      this.idcuenta   = this.rutaActiva.snapshot.params['idcuenta']; // parametro de ruta    
+      this.initFormulario(); 
+      this.generarRangoFechas();
+              
     }
 
+    initFormulario(){
+     this.formInfoMov = this.fb.group({        
+        dfecha     : [''], 
+        hfecha     : [''], 
+        clte       : [0],
+        tipoinfo   : [0]})
+    }
     ondFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
        this.formInfoMov.controls['dfecha'].setValue(nuevaFecha);             
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd");    
        this.dfec = cad!=null?cad:" ";
+       const fechaAnterior = new Date(this.formInfoMov.controls['dfecha'].value);
+       fechaAnterior.setDate(fechaAnterior.getDate() - 1);
+       this.fecpr = fechaAnterior;
+       cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59";     
+       this.fecprmmov = cad!=null?cad:" ";
+         console.log("fd : "+this.dfec+" fh : "+this.hfec+" fprm : "+this.fecprmmov);
+
        this.borrarArreglos();
     }
     onhFechaChange(event : any){
@@ -126,21 +141,23 @@ export class RepocuentasComponent {
     }
 
     desplegarInforme(){    
-    this.borrarArreglos();
-    forkJoin({
-    
-            detalle  : this.servicio.getDetalleCuentaB(this.idcuenta,"",""),
+      this.borrarArreglos();
+      forkJoin({
+           
+            detalle  : this.servicio.getDetalleCuentaB(this.idcuenta,this.dfec,this.hfec),
             endosoo  : this.servicio.getEndososXCuenta(this.idcuenta),
-            cuentaa  : this.servicio.leerCuentaB(this.idcuenta)
+            cuentaa  : this.servicio.leerCuentaB(this.idcuenta),
+            saldoo   : this.servicio.getSaldoEntreFechas(this.idcuenta,"2026-07-01",this.fecprmmov)
     
 
            }).subscribe(res => {   
             this.cmovscuenta   = res.detalle;
             this.endosos       = res.endosoo;
-            this.cuentaB       = res.cuentaa
-
+            this.cuentaB       = res.cuentaa;
+            this.qsaldo        = res.saldoo;
             
-            this.calcularSaldoInicial(); 
+            //this.calcularSaldoInicial(); 
+            this.saldoinic = this.qsaldo.totsaldo;
             this.generarMovimientosSolic();
             this.dataSource.data = this.dispcta;       
            })   
@@ -165,7 +182,7 @@ export class RepocuentasComponent {
       i++;      
       fechamov = new Date(this.cmovscuenta[i].fechamov);
     };
-    this.posMovIn = i;
+    
     this.saldoinic = saldoi;
     /*console.log("Posmovin  : "+this.posMovIn);
     console.log("Saldo Ini : "+this.saldoinic);
@@ -181,12 +198,15 @@ export class RepocuentasComponent {
     // a partir de la fecha inicial y tomando el saldo inicial "saldoinic"
      this.dispcta     = []; // se borra para que el html tome los cambios
     
-     var saldocte     = this.saldoinic;
+     var saldocte     = this.qsaldo.totsaldo;
      
-     var i            = this.posMovIn;
+     var i            = 0;  
      const fechafin : Date  = this.formInfoMov.controls['hfecha'].value;
-     var femov = new Date(this.cmovscuenta[i].fechamov);
-     while (i<this.cmovscuenta.length && femov.getTime()<=fechafin.getTime()){
+    
+     var salir : boolean = false;
+     while (i<this.cmovscuenta.length && !salir){
+       var femov = new Date(this.cmovscuenta[i].fechamov);
+       if (femov.getTime()<=fechafin.getTime()){
         if (this.cmovscuenta[i].ingegre=="IN"){
            saldocte += this.cmovscuenta[i].importe;         
         } else{ // EG
@@ -216,9 +236,11 @@ export class RepocuentasComponent {
            rendisp.impegre = this.endosos[indend].importe;
            rendisp.coment  = this.endosos[indend].descrip
         }
-        i++;
-        femov = new Date(this.cmovscuenta[i].fechamov);
-        this.dispcta.push(rendisp);          
+        this.dispcta.push(rendisp);   
+      } else {
+        salir = true
+      }
+      i++;                       
       }; 
     
   }
@@ -332,6 +354,33 @@ generarPDF():void{
   }
  doc.save(this.cuentaB.banco+this.datepipe.transform(new Date(),"dd/MM/yyyy")+'.pdf');       
  
+}
+generarRangoFechas(){
+     // desde y hasta : dfec, hfec y actualiza formulario
+     this.hoy = new Date();
+    const primerDia = new Date(this.hoy);
+    primerDia.setDate(1);
+    primerDia.setHours(12, 0, 0, 0);
+
+   
+
+    this.formInfoMov.controls['dfecha'].setValue(primerDia);
+   
+     var cad = this.datepipe.transform(primerDia,"yyyy-MM-dd");
+     this.dfec = cad!=null?cad:" ";
+     //this.formInfoMov.controls['dfecha'].setValue(primerDia);
+
+    
+     cad = this.datepipe.transform(this.hoy,"yyyy-MM-dd")+"T23:59"; 
+     this.hfec = cad!=null?cad:" ";
+     this.formInfoMov.controls['hfecha'].setValue(this.hoy);
+
+     // un dia antes de dfec : fecprmov y fecpr
+     const fechaAnterior = new Date(primerDia.getTime());    // un dia anterior a la fecha inicial
+     fechaAnterior.setDate(fechaAnterior.getDate()-1)      
+     this.fecpr = new Date(fechaAnterior.getTime()); // para mostrar en html
+     cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59"; ;    
+     this.fecprmmov = cad!=null?cad:" ";
 }
 borrarArreglos(){
   //this.cmovscuenta = [];

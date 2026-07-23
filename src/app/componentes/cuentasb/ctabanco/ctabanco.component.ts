@@ -6,7 +6,7 @@ import { ServiciosService } from '../../../services/servicios.service';
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
 
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatFormField, MatInputModule, MatLabel } from '@angular/material/input';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -14,9 +14,8 @@ import { cuentaB, intCtab } from '../../../../entidades/cuentaB';
 import { PeriodoValidatorDirective } from '../../../Directivas/periodoValidatorDirective';
 import { ImporteDirective } from "../../../Directivas/importeDirective";
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
-import {es} from 'date-fns/locale';
+import {  MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
+
 
 export const DATE_FORMATS : MatDateFormats = {
   
@@ -44,13 +43,13 @@ export const DATE_FORMATS : MatDateFormats = {
     FormsModule,
     PeriodoValidatorDirective,
     ImporteDirective],
-   providers : [
+     providers: [
+    DatePipe,
     CurrencyPipe,
-    { provide : DateAdapter, useClass: DateFnsAdapter },
-    { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-    { provide : MAT_DATE_LOCALE, useValue: es},
     
-  ],     
+    
+   
+],        
   templateUrl: './ctabanco.component.html',
   styleUrl: './ctabanco.component.css'
 })

@@ -17,6 +17,7 @@ import { endoso } from '../../../../entidades/endoso';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { ModendosoComponent } from './modendoso/modendoso.component';
+import { saldoCta } from '../../../../entidades/saldoCta';
 
 @Component({
   selector: 'app-detcuenta',
@@ -37,6 +38,7 @@ export class DetcuentaComponent {
   public cuentab   : cuentaB;
   public dispcta   : dispmovcta[]=[];
   public cendosos  : endoso[]=[];
+  public csaldos   : saldoCta[]=[];
 
   filtrorec         : string;
   cantmovs          : number;
@@ -45,8 +47,8 @@ export class DetcuentaComponent {
   nrocuenta         : number;
   ctaSel            : number;
   titular           : string|null = "";
-  banco             : string;
   periodo           : string;
+  banco             : string; 
   dfecha            : string;
   hfecha            : string;
   isloading         : boolean = true;
@@ -78,8 +80,8 @@ export class DetcuentaComponent {
    
      // Extraer parámetros de la ruta
      this.rutaActiva.paramMap.subscribe((params) => {
-     this.nrocuenta      = Number(params.get('idcuenta'));     
-     this.periodo        = params.get('periodo')||'';        
+     this.nrocuenta      = Number(params.get('idcuenta'));      
+     this.periodo        = params.get('periodo')||'';
       var fil              = params.get('filtro')||'';
       this.filtro          = fil;
       this.filtrorec       = fil; 
@@ -103,18 +105,21 @@ export class DetcuentaComponent {
             cuenta  : this.ctaService.leerCuentaB(nroc),
             detalle : this.ctaService.getDetalleCuentaB(nroc,this.dfecha,this.hfecha),
             endoso  : this.ctaService.getEndososXCuenta(nroc),
-            maxdet  : this.ctaService.getMaxMovCuenta(nroc)  // para obtener el nro.del ultimo movimiento
+            maxdet  : this.ctaService.getMaxMovCuenta(nroc),  // para obtener el nro.del ultimo movimiento
+            saldos  : this.ctaService.getSaldosCuentasB(nroc), // primero el último saldo ingresado para la cuenta 
 
            }).subscribe(res => {   
             this.cuentab    = res.cuenta;
             this.cmovscta   = res.detalle;
             this.cendosos   = res.endoso;
             this.proxnromov = res.maxdet;
+            this.csaldos    = res.saldos;
 
            
                     
            this.titular    = this.cuentab.titular;
            this.banco      = this.cuentab.banco;                      
+
            this.cantmovs = this.cmovscta==undefined ? 0 : this.cmovscta.length;
            if (this.cantmovs==0){
                this.notiServicio.showNotification("No hay movimientos para la cuenta del banco"+this.banco+" de "+this.titular,"Aceptar","mensaje",3000);
@@ -148,7 +153,7 @@ export class DetcuentaComponent {
     // y actualiza el saldo final y cant.de movimientos en cabecera de cuenta
      this.dispcta     = []; // se borra para que el html tome los cambios
      this.banco       = this.cuentab.banco;   
-     var saldocte     = this.cuentab.saldoini;
+     var saldocte     = this.csaldos[0].saldo;
      for (let i=0;i<this.cmovscta.length;i++){
         if (this.cmovscta[i].ingegre=="IN"){
            saldocte += this.cmovscta[i].importe;         
@@ -441,11 +446,11 @@ export class DetcuentaComponent {
   }
 
   generarRangodeFechas(){
-    // el periodo viene como parametro de ruta;
+    // el periodo se pasa como parametro de ruta desde cuentasb    
     const [ anioi,aniof ] = this.periodo.split('-').map(Number);
                       
     var feci = new Date(anioi,6,1);   // inicial 1 de Julio del anio inicial
-    var fecf = new Date(2050,5,30);   // final 30 de Junio del anio final, 
+    var fecf = new Date(2050,5,30);   // la fecha final es libre para ver movimientos a futuro
           
     this.dfecha = this.datepipe.transform(feci,"yyyy-MM-dd")+"T00:05";
     this.hfecha = this.datepipe.transform(fecf,"yyyy-MM-dd")+"T23:59";
@@ -504,7 +509,7 @@ export class DetcuentaComponent {
                 this.cendosos = datas });
   }
   InformeDetCuenta(){
-     this.router.navigate(['/cuentas',this.cuentab.idCuenta,this.filtro,'infodetcta']);
+     this.router.navigate(['/cuentas',this.cuentab.idCuenta,this.periodo,this.filtro,'infodetcta']);
   }
   Volver(){
      this.router.navigate(['/cuentas',this.filtrorec]);

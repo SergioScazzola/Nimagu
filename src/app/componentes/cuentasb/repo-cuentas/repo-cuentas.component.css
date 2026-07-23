@@ -66,6 +66,7 @@
   
   .cta-info .field-label {
     font-size : 16px;
+     color : blue;
     font-weight: 500;
     /*width: 150px;*/
   }

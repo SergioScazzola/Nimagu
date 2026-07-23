@@ -24,6 +24,8 @@ import { dpagoDTO, pagoComp, pagoDTO } from '../../entidades/pagoDTO';
 import { dpagxprov } from '../../entidades/dpagxprov';
 import { endoso } from '../../entidades/endoso';
 import { compVtaDTO } from '../../entidades/compVta';
+import { saldoMov } from '../../entidades/saldoMov';
+import { saldoCta } from '../../entidades/saldoCta';
 
 @Injectable({
   providedIn: 'root',
@@ -147,7 +149,11 @@ public elimMovCuentaB(idcuenta: number, nromov : number) {
 public existeCbuPeriodo(periodo : string, cbu : string){
   return this.http.get<number>(this.apiUrl + `cuentasb/existecbuper?periodo=`+periodo+`&cbu=`+cbu,);    
 }
+// SALDOS INICIALES CUENTA BANCARIA
 
+public getSaldosCuentasB(idcuenta:number) {
+    return this.http.get<saldoCta[]>(this.apiUrl + `cuentasb/saldoscta?idcuenta=`+idcuenta);
+}
 
 public getMaxMovCuenta(idcuenta: number) {
   // devuelve el nro del último movimiento registrado en la cuenta "idcuenta"
@@ -158,9 +164,11 @@ public getMaxMovCuenta(idcuenta: number) {
 public getDetalleCuentaB(idcuenta:Number,fechi : string,fechf : string) {
     return this.http.get<movcta[]>(this.apiUrl + `cuentasb/detalle?idcuenta=`+idcuenta+`&feci=`+fechi+`&fecf=`+fechf);
 }
-/*  @GetMapping(value="/cuentasb/detalleXTipoMov",params={"idcuenta","tipomov"})*/
-// Detalle de movimientos bancarios por tipo : "tipomov"
 
+// Detalle de movimientos bancarios por tipo : "tipomov"
+public getSaldoEntreFechas(idcuenta:Number,fechi : string,fechf : string){
+    return this.http.get<saldoMov>(this.apiUrl + `cuentasb/saldoentrefec?idcuenta=`+idcuenta+`&feci=`+fechi+`&fecf=`+fechf);
+}
 public getDetalleCuentaXTipo(idcuenta:Number, tip1 : string, tip2 : string) {
     return this.http.get<movcta[]>(this.apiUrl + `cuentasb/detalleXTipoMov?idcuenta=`+idcuenta+
                                                 `&mov1=`+tip1+`&mov2=`+tip2);

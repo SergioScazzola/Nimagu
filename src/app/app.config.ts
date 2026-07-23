@@ -13,6 +13,12 @@ import {
   MAT_DIALOG_DEFAULT_OPTIONS,
   MatDialogModule,
 } from '@angular/material/dialog';
+import { DateAdapter, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
+import { AppDateAdapter } from './adapters/app-date-adapter';
+
+
+    // los demás providers...
+
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),
@@ -30,5 +36,10 @@ export const appConfig: ApplicationConfig = {
         autoFocus: false,
         disableClose: false,
       },
-    },]
+
+    },
+    provideNativeDateAdapter(),
+    { provide: DateAdapter, useClass: AppDateAdapter },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-AR' }
+]
 };

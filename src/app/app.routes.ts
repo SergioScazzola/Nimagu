@@ -40,7 +40,7 @@ export const routes: Routes = [
       { path: 'clientes/:filtro', component: ClientesComponent },    
       { path: 'cuentas/:idcuenta/:periodo/:filtro/detcuenta', component: DetcuentaComponent },
       { path: 'cuentas/:filtro', component: CuentasbComponent },   
-      { path: 'cuentas/:idcuenta/:filtro/infodetcta', component: RepocuentasComponent  },        
+      { path: 'cuentas/:idcuenta/:periodo/:filtro/infodetcta', component: RepocuentasComponent  },        
       { path: 'bancos',component: CuentasbComponent},     
       { path: 'proveedores/:filtro', component: ProveedoresComponent },      
       { path: 'comprasvtas/:filtro', component: CompvtasComponent },     

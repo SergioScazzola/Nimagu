@@ -15,9 +15,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { ImporteDirective } from "../../../../Directivas/importeDirective";
 
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
-import {es} from 'date-fns/locale';
+import { MAT_DATE_FORMATS,MatDateFormats } from '@angular/material/core';
+
 import { intMovCtab, movcta } from '../../../../../entidades/movcta';
 import { clienteDTO } from '../../../../../entidades/clienteDTO';
 
@@ -49,15 +48,11 @@ export const DATE_FORMATS : MatDateFormats = {
     DragDropModule,
     FormsModule,
     ImporteDirective],
-   providers : [
+     providers: [
     DatePipe,
-    CurrencyPipe,
-    { provide : DateAdapter, useClass: DateFnsAdapter },
-    { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-    { provide : MAT_DATE_LOCALE, useValue: es},
-    
-  ],     
-  templateUrl: './movcuenta.component.html',
+    CurrencyPipe
+  
+],      templateUrl: './movcuenta.component.html',
   styleUrl: './movcuenta.component.css'
 })
 export class MovcuentaComponent {

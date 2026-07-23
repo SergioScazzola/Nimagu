@@ -5,13 +5,12 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatFormField, MatLabel, MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
+import {  MAT_DATE_FORMATS, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { es } from 'date-fns/locale';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
+
 import { ServiciosService } from '../../../services/servicios.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -52,12 +51,11 @@ export const DATE_FORMATS : MatDateFormats = {
     MatSelectModule,
     DragDropModule,
     ImporteDirective, SelecTextDirective],
-   providers : [
-        CurrencyPipe,
-      { provide : DateAdapter, useClass: DateFnsAdapter },
-      { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-      { provide : MAT_DATE_LOCALE, useValue: es}
-    ],              
+      providers: [
+    DatePipe,
+    CurrencyPipe
+    
+],                
   templateUrl: './venta.component.html',
   styleUrl: './venta.component.css'
 })

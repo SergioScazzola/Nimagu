@@ -1,14 +1,14 @@
 import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
+
+import { MAT_DATE_FORMATS,  MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { es } from 'date-fns/locale';
+
 import { ServiciosService } from '../../../services/servicios.service';
 import { Router } from '@angular/router';
 
@@ -43,11 +43,11 @@ export const DATE_FORMATS : MatDateFormats = {
                 MatTableModule,
                 MatSelectModule,
                 MatInputModule,],
-    providers : [ DatePipe,CurrencyPipe,
-      { provide : DateAdapter, useClass: DateFnsAdapter },
-      { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-      { provide : MAT_DATE_LOCALE, useValue: es}
-    ], 
+   providers: [
+    DatePipe,
+    CurrencyPipe
+   
+],    
 
   templateUrl: './repo-compyvtas.component.html',
   styleUrl: './repo-compyvtas.component.css'

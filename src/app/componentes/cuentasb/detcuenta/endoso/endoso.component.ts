@@ -14,9 +14,8 @@ import { tipomov } from '../../../../../entidades/tipomov';
 import { endoso, intEndoso } from '../../../../../entidades/endoso';
 import { proveedorDTO } from '../../../../../entidades/proveedorDTO';
 import { movcta } from '../../../../../entidades/movcta';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
-import { es } from 'date-fns/locale';
+import {  MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
+
 
 export const DATE_FORMATS : MatDateFormats = {
   
@@ -41,14 +40,11 @@ export const DATE_FORMATS : MatDateFormats = {
     DragDropModule,
     FormsModule,
    ],
-   providers : [
-      DatePipe,
-      CurrencyPipe,
-      { provide : DateAdapter, useClass: DateFnsAdapter },
-      { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-      { provide : MAT_DATE_LOCALE, useValue: es},
-      
-    ],      
+    providers: [
+    DatePipe,
+    CurrencyPipe
+   
+],          
   templateUrl: './endoso.component.html',
   styleUrl: './endoso.component.css'
 })

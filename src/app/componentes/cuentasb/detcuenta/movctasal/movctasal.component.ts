@@ -13,9 +13,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ImporteDirective } from "../../../../Directivas/importeDirective";
 import { SelecTextDirective } from '../../../../Directivas/selec-text.directive';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
-import { DateFnsAdapter } from '@angular/material-date-fns-adapter';
-import {es} from 'date-fns/locale';
+import {  MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
+
 import { intMovCtab, movcta } from '../../../../../entidades/movcta';
 
 import { proveedorDTO } from '../../../../../entidades/proveedorDTO';
@@ -48,14 +47,11 @@ imports: [MatFormField,
     DragDropModule,
     FormsModule,
     ImporteDirective],
-   providers : [
+     providers: [
     DatePipe,
-    CurrencyPipe,
-    { provide : DateAdapter, useClass: DateFnsAdapter },
-    { provide : MAT_DATE_FORMATS, useValue: DATE_FORMATS},
-    { provide : MAT_DATE_LOCALE, useValue: es},
-    
-  ],     
+    CurrencyPipe
+   
+],    
   templateUrl: './movctasal.component.html',
   styleUrl: './movctasal.component.css'
 })
