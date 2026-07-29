@@ -69,7 +69,7 @@
 
 /* Espacio para compensar la navbar fija */
 .navbar-spacer {
-  height: 20px; /* Ajustar según la altura de tu navbar */
+  height: 56px; /* Ajustar según la altura de tu navbar */
 }
 
 /* Estilo para el botón de logout */

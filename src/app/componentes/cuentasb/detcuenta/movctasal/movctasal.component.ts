@@ -146,7 +146,7 @@ export class MovctasalComponent {
         idcuenta    : [this.data.idCuenta],   
         nromov      : [''],   
         fecha       : [new Date()],
-        fechamov    : [''],
+        fechamov    : [new Date()],
         prove       : [0],
         ingegre     : ['EG'],    
         tipomov     : [''],       

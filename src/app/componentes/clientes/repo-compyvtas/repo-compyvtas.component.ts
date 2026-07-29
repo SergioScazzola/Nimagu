@@ -55,6 +55,7 @@ export const DATE_FORMATS : MatDateFormats = {
 export class RepoCompyvtasComponent {
 public formVyC : FormGroup;
 public ccomvtas  : compVtaDTO[]=[];
+public ccyvagrup : compVtaDTO[]=[];
 public cresCyV   : resCyV[]=[];  // para mostrar resumen de compras y ventas
 public   dfecha    : Date;
 public   hfecha    : Date = new Date();
@@ -63,12 +64,16 @@ private  dfec      : string = " ";
 private  hfec      : string = " ";
 public   totalcob  : number; 
 public   cantidad  : number;
+public   tipoinf   : number;
 public   mostrardetalle : boolean;
 public   mostrarresumen : boolean;
+public   mostraragrup   : boolean;
 
 
  colComvtas: string[] = ["fecha","compvta", "nprovcli", "nroliq","categoria","cantidad","totalk",
                           "promedio","preunit","importe","proced","observ"];
+
+ totalesPor : string[] = ["Detallado x fecha","Resumido","Cliente/Proveedor","Categoria","Procedencia"];                          
  
  colResumen : string[] = ["D","cant","impo"];  
 
@@ -95,6 +100,7 @@ public   mostrarresumen : boolean;
        this.formVyC.controls['dfecha'].setValue(nuevaFecha);             
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd")+"T00:10";    
        this.dfec = cad!=null?cad:" ";
+       this.ccomvtas = [];  // cambio el rango -> regenerar
    
 
   }
@@ -103,10 +109,11 @@ public   mostrarresumen : boolean;
        this.formVyC.controls['hfecha'].setValue(nuevaFecha);  
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd")+"T23:59";    
        this.hfec = cad!=null?cad:" ";
+       this.ccomvtas = [];  // cambio el rango -> regenerar
     
   }
 
-  armarYTotalizar(){
+  armarYTotalizarDetallado(){
     var subs : Subscription;
   
     subs = this.servicio.getCompVtasxFecha(this.dfec,this.hfec)
@@ -135,7 +142,97 @@ public   mostrarresumen : boolean;
                }); 
       }
     
+ armarYTotalizarXCliProv(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getCompVtasCliPxFecha(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.ccomvtas!=null && this.ccomvtas.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotalesXCliProv()
+            } else {
+                var dfec = this.datepipe.transform(this.formVyC.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formVyC.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServicio.showNotification(
+                  'No existen registros de Ventas/Compras para ningun cliente desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.ccomvtas = data;
+               }); 
+}      
+armarYTotalizarXCategoria(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getCompVtasCatyF(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.ccomvtas!=null && this.ccomvtas.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotalesXCategoria()
+            } else {
+                var dfec = this.datepipe.transform(this.formVyC.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formVyC.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServicio.showNotification(
+                  'No existen registros de Ventas/Compras para ningun cliente desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.ccomvtas = data;
+               }); 
+}
 
+armarYTotalizarXProcedencia(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getCompVtasProcyF(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.ccomvtas!=null && this.ccomvtas.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotalesXProcedencia()
+            } else {
+                var dfec = this.datepipe.transform(this.formVyC.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formVyC.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServicio.showNotification(
+                  'No existen registros de Ventas/Compras para ningun cliente desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.ccomvtas = data;
+               }); 
+}
+ onSelectionTipoInf(event : any){
+    this.tipoinf = event.value;
+    this.ccomvtas  =[];
+    this.ccyvagrup =[];
+    this.cresCyV   =[]; 
+ }
  generarDetPDF() : void {
    var filas                 : any;
    var colspdf : any = [
@@ -170,6 +267,7 @@ public   mostrarresumen : boolean;
          item.nprovcli,
          item.nroliq,
          item.categoria,
+         item.cantidad,
          item.totalk,
          item.promedio,
          item.preunit,
@@ -191,7 +289,8 @@ public   mostrarresumen : boolean;
              compvta           : { halign: 'left' },                                                        
              nprovcli          : { halign: 'left' },                  
              nroliq            : { halign: 'left' },
-             categoria         : { halign: 'left' },             
+             categoria         : { halign: 'left' },    
+             cantidad          : { halign: 'right' },          
              totalk            : { halign: 'right' },
              promedio          : { halign: 'right' },
              preunit           : { halign: 'right' },
@@ -280,22 +379,304 @@ public   mostrarresumen : boolean;
       this.cresCyV.push(infoVyC2);
               
      }
+calcTotalesXCliProv(){  // Totalizar x cliente/Proveedor      
+       var totcp : number=0;
+       var cantventas  : number=0;
+       var cantcompras : number=0;
 
-desplegarDetallado(){
-  if (this.ccomvtas==null || this.ccomvtas.length==0){
-     this.armarYTotalizar();
-  }
-  this.mostrardetalle = true;
-  this.mostrarresumen = false;
-  
+       var total    : number = 0;
+       var totvtas  : number = 0;
+       var totcomp  : number = 0;
+       var i = 0;
+       this.ccyvagrup = [];
+       while (i<this.ccomvtas.length){
+         var nrocp = this.ccomvtas[i].idprocli;                  
+         while (i<this.ccomvtas.length && this.ccomvtas[i].idprocli==nrocp){
+           if (this.ccomvtas[i].compvta=='Venta'){
+              totcp += this.ccomvtas[i].importe;  
+              cantventas++;         
+           } else { // Compra -> Resta
+            totcp -= this.ccomvtas[i].importe;         
+            cantcompras++;   
+           };
+           var item : compVtaDTO = {
+             idcomvta  : this.ccomvtas[i].idcomvta,
+             compvta   : this.ccomvtas[i].compvta,
+             fecha     : this.ccomvtas[i].fecha,
+             idprocli  : this.ccomvtas[i].idprocli,
+             nprovcli  : this.ccomvtas[i].nprovcli,
+             nroliq    : this.ccomvtas[i].nroliq,
+             categoria : this.ccomvtas[i].categoria,
+             cantidad  : this.ccomvtas[i].cantidad,
+             totalk    : this.ccomvtas[i].totalk,
+             promedio  : this.ccomvtas[i].promedio,
+             preunit   : this.ccomvtas[i].preunit,
+             importe   : this.ccomvtas[i].importe,
+             proced    : this.ccomvtas[i].proced,
+             observ    : this.ccomvtas[i].observ,
+           };
+           this.ccyvagrup.push(item);
+           i++;
+          }
+          // Corte por cliente/proveedor
+          total    += totcp;
+          totvtas  += cantventas;
+          totcomp  += cantcompras;
+          var subtcp : compVtaDTO = {
+             idcomvta  : 0,
+             compvta   : " ",
+             fecha     : null,
+             idprocli  : this.ccomvtas[i-1].idprocli,
+             nprovcli  : "TOT: "+this.ccomvtas[i-1].nprovcli,
+             nroliq    : " ",
+             categoria : " ",
+             cantidad  : 0,
+             totalk    : 0,
+             promedio  : 0,
+             preunit   : 0,
+             importe   : totcp,
+             proced    : " ",
+             observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
+           };
+           this.ccyvagrup.push(subtcp);
+           totcp       = 0;
+           cantventas  = 0;
+           cantcompras = 0;
+       } // while externo
+       var totales : compVtaDTO = {
+             idcomvta  : 0,
+             compvta   : " ",
+             fecha     : null,
+             idprocli  : 0,
+             nprovcli  : "** TOTALES: ",
+             nroliq    : " ",
+             categoria : " ",
+             cantidad  : 0,
+             totalk    : 0,
+             promedio  : 0,
+             preunit   : 0,
+             importe   : total,
+             proced    : " ",
+             observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
+           };
+        this.ccyvagrup.push(totales);
+         
+}
+calcTotalesXCategoria(){  // Totalizar x Categoria      
+       var totcat : number=0;
+       var cantventas  : number=0;
+       var cantcompras : number=0;
+       
+       var total    : number = 0;
+       var totvtas  : number = 0;
+       var totcomp  : number = 0;
+       var i = 0;
+       this.ccyvagrup = [];
+       while (i<this.ccomvtas.length){
+         var categ = this.ccomvtas[i].categoria;                  
+         while (i<this.ccomvtas.length && this.ccomvtas[i].categoria==categ){
+           if (this.ccomvtas[i].compvta=='Venta'){
+              totcat += this.ccomvtas[i].importe;  
+              cantventas++;         
+           } else { // Compra -> Resta
+            totcat -= this.ccomvtas[i].importe;         
+            cantcompras++;   
+           };
+           var item : compVtaDTO = {
+             idcomvta  : this.ccomvtas[i].idcomvta,
+             compvta   : this.ccomvtas[i].compvta,
+             fecha     : this.ccomvtas[i].fecha,
+             idprocli  : this.ccomvtas[i].idprocli,
+             nprovcli  : this.ccomvtas[i].nprovcli,
+             nroliq    : this.ccomvtas[i].nroliq,
+             categoria : this.ccomvtas[i].categoria,
+             cantidad  : this.ccomvtas[i].cantidad,
+             totalk    : this.ccomvtas[i].totalk,
+             promedio  : this.ccomvtas[i].promedio,
+             preunit   : this.ccomvtas[i].preunit,
+             importe   : this.ccomvtas[i].importe,
+             proced    : this.ccomvtas[i].proced,
+             observ    : this.ccomvtas[i].observ,
+           };
+           this.ccyvagrup.push(item);
+           i++;
+          }
+          // Corte por categoria
+          total    += totcat;
+          totvtas  += cantventas;
+          totcomp  += cantcompras;
+          var subtcp : compVtaDTO = {
+             idcomvta  : 0,
+             compvta   : " ",
+             fecha     : null,
+             idprocli  : 0,
+             nprovcli  : "TOT: "+this.ccomvtas[i-1].categoria,
+             nroliq    : " ",
+             categoria : " ",
+             cantidad  : 0,
+             totalk    : 0,
+             promedio  : 0,
+             preunit   : 0,
+             importe   : totcat,
+             proced    : " ",
+             observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
+           };
+           this.ccyvagrup.push(subtcp);
+           totcat       = 0;
+           cantventas  = 0;
+           cantcompras = 0;
+       } // while externo
+       var totales : compVtaDTO = {
+             idcomvta  : 0,
+             compvta   : " ",
+             fecha     : null,
+             idprocli  : 0,
+             nprovcli  : "** TOTALES: ",
+             nroliq    : " ",
+             categoria : " ",
+             cantidad  : 0,
+             totalk    : 0,
+             promedio  : 0,
+             preunit   : 0,
+             importe   : total,
+             proced    : " ",
+             observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
+           };
+        this.ccyvagrup.push(totales);
+         
 }
 
-desplegarResumen(){
-  if (this.ccomvtas==null || this.ccomvtas.length==0){
-     this.armarYTotalizar();
-  }
-     this.mostrardetalle = false;
-     this.mostrarresumen = true;
-     
+calcTotalesXProcedencia(){  // Totalizar x Procedencia     
+       var totproc : number=0;
+       var cantventas  : number=0;
+       var cantcompras : number=0;
+       
+       var total    : number = 0;
+       var totvtas  : number = 0;
+       var totcomp  : number = 0;
+       var i = 0;
+       this.ccyvagrup = [];
+       while (i<this.ccomvtas.length){
+         var proced = this.ccomvtas[i].proced;                  
+         while (i<this.ccomvtas.length && this.ccomvtas[i].proced==proced){
+           if (this.ccomvtas[i].compvta=='Venta'){
+              totproc += this.ccomvtas[i].importe;  
+              cantventas++;         
+           } else { // Compra -> Resta
+            totproc -= this.ccomvtas[i].importe;         
+            cantcompras++;   
+           };
+           var item : compVtaDTO = {
+             idcomvta  : this.ccomvtas[i].idcomvta,
+             compvta   : this.ccomvtas[i].compvta,
+             fecha     : this.ccomvtas[i].fecha,
+             idprocli  : this.ccomvtas[i].idprocli,
+             nprovcli  : this.ccomvtas[i].nprovcli,
+             nroliq    : this.ccomvtas[i].nroliq,
+             categoria : this.ccomvtas[i].categoria,
+             cantidad  : this.ccomvtas[i].cantidad,
+             totalk    : this.ccomvtas[i].totalk,
+             promedio  : this.ccomvtas[i].promedio,
+             preunit   : this.ccomvtas[i].preunit,
+             importe   : this.ccomvtas[i].importe,
+             proced    : this.ccomvtas[i].proced,
+             observ    : this.ccomvtas[i].observ,
+           };
+           this.ccyvagrup.push(item);
+           i++;
+          }
+          // Corte por procedencia
+          total    += totproc;
+          totvtas  += cantventas;
+          totcomp  += cantcompras;
+          var subtcp : compVtaDTO = {
+             idcomvta  : 0,
+             compvta   : " ",
+             fecha     : null,
+             idprocli  : 0,
+             nprovcli  : "TOT: "+this.ccomvtas[i-1].proced,
+             nroliq    : " ",
+             categoria : " ",
+             cantidad  : 0,
+             totalk    : 0,
+             promedio  : 0,
+             preunit   : 0,
+             importe   : totproc,
+             proced    : " ",
+             observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
+           };
+           this.ccyvagrup.push(subtcp);
+           totproc     = 0;
+           cantventas  = 0;
+           cantcompras = 0;
+       } // while externo
+       var totales : compVtaDTO = {
+             idcomvta  : 0,
+             compvta   : " ",
+             fecha     : null,
+             idprocli  : 0,
+             nprovcli  : "** TOTALES: ",
+             nroliq    : " ",
+             categoria : " ",
+             cantidad  : 0,
+             totalk    : 0,
+             promedio  : 0,
+             preunit   : 0,
+             importe   : total,
+             proced    : " ",
+             observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
+           };
+        this.ccyvagrup.push(totales);
 }
+
+desplegarInforme(){
+  switch (this.tipoinf) {
+   case 0 : { if (this.ccomvtas==null || this.ccomvtas.length==0){
+                 this.armarYTotalizarDetallado();
+              };
+              this.mostrardetalle = true;
+              this.mostrarresumen = false;
+                this.mostraragrup = false;
+              break;          
+          }
+   case 1 : {
+      if (this.ccomvtas==null || this.ccomvtas.length==0){
+             this.armarYTotalizarDetallado();
+          };
+          this.mostrardetalle = false;
+          this.mostrarresumen = true;
+            this.mostraragrup = false;
+          break;
+   } 
+    case 2 : {
+      if (this.ccomvtas==null || this.ccomvtas.length==0){
+             this.armarYTotalizarXCliProv()
+          };
+          this.mostrardetalle = false;
+          this.mostrarresumen = false;
+          this.mostraragrup   = true;
+          break;
+    } 
+    case 3 : {
+      if (this.ccomvtas==null || this.ccomvtas.length==0){
+             this.armarYTotalizarXCategoria()
+          };
+          this.mostrardetalle = false;
+          this.mostrarresumen = false;
+          this.mostraragrup   = true;
+          break;
+    } 
+       case 4 : {
+      if (this.ccomvtas==null || this.ccomvtas.length==0){
+             this.armarYTotalizarXProcedencia()
+          };
+          this.mostrardetalle = false;
+          this.mostrarresumen = false;
+          this.mostraragrup   = true;
+          break;
+    } 
+    default : {}
+  }
+}
+
 }

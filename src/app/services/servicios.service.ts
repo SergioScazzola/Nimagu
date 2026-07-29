@@ -375,6 +375,18 @@ public getTiposMovimiento() {
     return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetCyVxFecha?feci=`+feci+`&fecf=`+fecf);
   }
 
+  public getCompVtasCliPxFecha(feci : String,fecf : String) {
+    return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetCliProvF?feci=`+feci+`&fecf=`+fecf);
+  }
+
+  public getCompVtasCatyF(feci : String,fecf : String) {
+    return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetCatyF?feci=`+feci+`&fecf=`+fecf);
+  }
+
+  public getCompVtasProcyF(feci : String,fecf : String) {
+    return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetProcyF?feci=`+feci+`&fecf=`+fecf);
+  }
+
   public getMaxCompVtas() {
     return this.http.get<number>(this.apiUrl + `compvta/max` );
   }

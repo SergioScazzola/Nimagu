@@ -57,7 +57,7 @@ export class DetcuentaComponent {
   
  
   colMovsCta : string[] = ["fecha","tipomov","nrocheque","descrip","nroliq","impingre","impegre","saldo","coment","M","B"];
-                           
+             
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -81,7 +81,7 @@ export class DetcuentaComponent {
      // Extraer parámetros de la ruta
      this.rutaActiva.paramMap.subscribe((params) => {
      this.nrocuenta      = Number(params.get('idcuenta'));      
-     this.periodo        = params.get('periodo')||'';
+     this.periodo        = params.get('periodo')||''; // se usa para generar rango de fechas, siempre es el ultimo periodo
       var fil              = params.get('filtro')||'';
       this.filtro          = fil;
       this.filtrorec       = fil; 
@@ -153,14 +153,24 @@ export class DetcuentaComponent {
     // y actualiza el saldo final y cant.de movimientos en cabecera de cuenta
      this.dispcta     = []; // se borra para que el html tome los cambios
      this.banco       = this.cuentab.banco;   
-     var saldocte     = this.csaldos[0].saldo;
+     var saldocte     = this.csaldos[0].saldo; // tomo el ultimo saldo 
+     var mesAct     = new Date(this.cmovscta[0].fechamov).getMonth();
+     
      for (let i=0;i<this.cmovscta.length;i++){
         if (this.cmovscta[i].ingegre=="IN"){
            saldocte += this.cmovscta[i].importe;         
         } else{ // EG
            saldocte -= this.cmovscta[i].importe;         
-        };         
-
+        }; 
+        var finmess = 0;
+        if (i+1<this.cmovscta.length){  // existe el siguiente
+          var mesSig = new Date(this.cmovscta[i+1].fechamov).getMonth();       
+        
+          if (mesAct !== mesSig){// va a cambiar el mes
+             mesAct = mesSig;
+             finmess = 1; 
+          }
+        }                   
         var rendisp : dispmovcta = {
            nromov    : this.cmovscta[i].nromov,
            fecha     : this.cmovscta[i].fechamov,
@@ -176,7 +186,9 @@ export class DetcuentaComponent {
            coment    : this.cmovscta[i].coment,
            marca1    : this.cmovscta[i].marca1,
            marca2    : this.cmovscta[i].marca2,
+           finmes    : finmess
         };
+
         if (this.cmovscta[i].movvinc!==0){  // hay cheque endosado? -> modificar rendisp con endoso
            const indend = this.cendosos.findIndex(p=>p.idendoso==this.cmovscta[i].movvinc);
            rendisp.impegre = this.cendosos[indend].importe;
@@ -184,7 +196,8 @@ export class DetcuentaComponent {
            rendisp.saldo   = saldocte;
            rendisp.coment  = this.cendosos[indend].descrip
         }
-        this.dispcta.push(rendisp);          
+        this.dispcta.push(rendisp);     
+     
       }; 
     
       if (actualizaSaldo==1){
@@ -487,7 +500,22 @@ export class DetcuentaComponent {
       .subscribe((datas : any): void => {
                 Oendoso = datas });      
   }
-                 
+           
+ /* esFindeMes(fec : Date):boolean{
+    // informa si la fecha corresponde al fin del mes
+    const dia  = fec.getDate();
+    const mes  = fec.getMonth();
+    const anio = fec.getFullYear();
+    var bisiesto = 0;
+    if (mes==1 && anio%4==0){
+        bisiesto = 1
+    }
+    if (this.diasMes[mes]=(dia+bisiesto)){
+      return true
+    } else {
+      return false
+    }
+  }*/
   leerEndosos(){
     // Relee los endosos en "cendosos" y movimientos y vuelve a armar la cuenta bancaria
     this.cendosos = [];

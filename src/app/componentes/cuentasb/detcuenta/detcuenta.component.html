@@ -32,11 +32,12 @@
          </button>
       
       </div>
+    </div>
       <!-- Información de la Cuenta -->
-      <div class="cta-info">
+    <div class="cta-info">
         <div class="cta-details">
           <div class="row">
-            <div class="col-10">
+            <div class="col-6 col-md-10">
               <div class="field">
                 <div class="field-banco">Titular :   </div>
                 <div class="field-banco">{{ this.titular+" - Banco : "+this.banco }}</div>           
@@ -47,17 +48,18 @@
             </div>              
          </div>              
          <div class="row">
-            <div class="col-10">
+            <div class="col-6 col-md-10">
               <div class="field">
                 <div>Saldo Inicial al {{ cuentab.fecsaldo | date : "dd/MM/yyyy"  }} : </div>
                 <div class="field-label"> $ {{ cuentab.saldoini | number : "1.2-2" }}</div>                        
                 <div style="padding-left: 90px;">Período : </div>
                 <div class="field-label">{{ cuentab.periodo }}</div>
-                  <div style="padding-left: 90px;">Cant.Movs. : </div>
+                <div style="padding-left: 90px;">Cant.Movs. : </div>
                 <div class="field-label">{{ cmovscta.length }}</div>
               </div>
             </div>
           </div>
+        </div>
         </div>
         <!-- Mostrar spinner mientras carga o mostrar mensaje si no hay datos -->
         @if (cargandoCta){
@@ -68,8 +70,8 @@
           <span class="ms-2">Cargando Detalle de cuenta ...</span>
         </div>
         }
-     </div>
-     </div>
+    
+
      <!-- Sección de tabla con scroll -->
      @if (dispcta!==null && dispcta.length>0) {
      <div class="table-container" style="overflow-x: auto">
@@ -82,7 +84,8 @@
       <!-- Columna Fecha -->
       <ng-container matColumnDef="fecha">
         <th mat-header-cell *matHeaderCellDef >Fecha</th>
-        <td mat-cell *matCellDef="let renCta">{{ renCta.fecha | date : "dd/MM/yyyy"}}</td>
+        <td mat-cell *matCellDef="let renCta" >
+       {{ renCta.fecha | date : "dd/MM/yyyy"}}</td>
       </ng-container>
 
       <!-- Columna Tipo de Comprobante -->
@@ -136,7 +139,7 @@
       <ng-container matColumnDef="saldo">
         <th mat-header-cell *matHeaderCellDef class="center-col">Saldo</th>
         <td mat-cell *matCellDef="let renCta" 
-             [ngClass]="{'saldo-negativo': renCta.saldo < 0}">
+          [ngClass]="{'saldo-negativo': renCta.saldo < 0}">
           {{ renCta.saldo | number:'1.2-2' }}
         </td>
       </ng-container>
@@ -193,14 +196,16 @@
       </ng-container>
       <!-- Definición de filas -->
       <tr mat-header-row *matHeaderRowDef="colMovsCta; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; let index; columns: colMovsCta"></tr>
+      <tr mat-row *matRowDef="let row; columns: colMovsCta"
+          [ngClass]="{'marca-finmes': row.finmes > 0}">
+      </tr>    
     </table>
   </div>
   }
   <!-- Sección inferior fija -->
   <div class="fixed-section footer-container">
      <div class="footer">         
-     </div>      
+  </div>      
   </div>      
 </div> 
 }

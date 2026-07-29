@@ -318,7 +318,32 @@ importeformat   : string = "";
     this.formVta.controls['fecha'].setValue(nuevaFecha);
   }
 
+modCantidad(){  // recalcula promedio
+  const canti   = this.formVta.controls['cantidad'].value;
+  const totalk  = this.formVta.controls['totalk'].value;
 
+  const prome   = this.redondearAdos(totalk/canti);
+   this.formVta.controls['promedio'].setValue(prome);
+}
+
+modTotalK(){   // recalcula promedio y importe
+  const canti   = this.formVta.controls['cantidad'].value;
+  const totalk  = this.formVta.controls['totalk'].value;
+
+  const prome   = this.redondearAdos(totalk/canti);
+  this.formVta.controls['promedio'].setValue(prome);  
+  const preun     = this.formVta.controls['preunit'].value;
+  const impo    = this.redondearAdos(preun * totalk);
+  this.formVta.controls['importe'].setValue(impo);
+
+}
+
+modPrecioUn(){ // recalcula importe
+  const totalk  = this.formVta.controls['totalk'].value;
+  const preun   = this.formVta.controls['preunit'].value;
+  const impo    = this.redondearAdos(preun * totalk);
+  this.formVta.controls['importe'].setValue(impo);
+}
   
 }
 

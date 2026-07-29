@@ -60,6 +60,7 @@
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Cantidad</mat-label>
                 <input matInput appImporte formControlName="cantidad"
+                   (blur)="modCantidad()"
                    style="text-align: right;">	
             </mat-form-field>                   
           </div> 
@@ -67,6 +68,7 @@
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Total Kilos</mat-label>
                 <input matInput appImporte formControlName="totalk"
+                  (blur)="modTotalK()"      
                   style="text-align: right;">	
               </mat-form-field>                   
             </div> 
@@ -86,6 +88,7 @@
              <mat-form-field class="w-100" appearance="fill">
               <mat-label>Precio Unit.</mat-label>
                 <input matInput appImporte formControlName="preunit"
+                   (blur)="modPrecioUn()"
                    style="text-align: right;">	
              </mat-form-field>                   
             </div> 

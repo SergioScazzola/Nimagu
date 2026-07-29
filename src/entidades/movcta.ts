@@ -38,7 +38,8 @@ export interface dispmovcta {
   saldo         : number,
   coment        : string,
   marca1        : number,
-  marca2        : number
+  marca2        : number,
+  finmes        : number
 
 
 }

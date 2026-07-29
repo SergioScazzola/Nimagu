@@ -306,3 +306,19 @@
   font-weight: 400;
 }
 
+.marca-finmes {
+  background-color :pink!important;
+}
+
+@media (max-width:768px){
+    .header,
+    .mat-column-B,
+    .mat-column-M,
+    .mat-column-tipomov,
+    .mat-column-nrocheque,
+    .mat-column-nroliq,
+    .mat-column-coment{
+        display:none;
+    }
+  }
+

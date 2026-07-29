@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MAT_DATE_FORMATS, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { AppDateAdapter } from '../../../adapters/app-date-adapter';
@@ -19,6 +19,7 @@ import { cuentaB } from '../../../../entidades/cuentaB';
 import { dispmovcta, movcta } from '../../../../entidades/movcta';
 import { endoso } from '../../../../entidades/endoso';
 import { saldoMov } from '../../../../entidades/saldoMov';
+import { saldoCta } from '../../../../entidades/saldoCta';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -60,10 +61,11 @@ export class RepocuentasComponent {
   public   dfecha      : Date;
   public   hfecha      : Date;
   public   ccuentas    : cuentaB[]=[];
+  public   csaldos     : saldoCta[]=[];
   public   cmovscuenta : movcta[]=[];
   public   dispcta     : dispmovcta[]=[];
   public   endosos     : endoso[]=[];
- 
+  public   isloading   : boolean = true;
   public   resumen   : number = 0;
  
   public   eligiocli : boolean = false;
@@ -74,8 +76,8 @@ export class RepocuentasComponent {
   private  hoy        : Date;
   private  idcuenta   : number;
   public   saldoinic  : number; 
-  public   periodo    : string;
-
+  public   nperiodo   : number = 0;
+  private  periodo    : string;
   public   cuentaB    : cuentaB;
   public   qsaldo     : saldoMov;
   private  fecprmmov  : string = "";
@@ -90,6 +92,7 @@ export class RepocuentasComponent {
                private rutaActiva  : ActivatedRoute,
                private router      : Router,
                public  fb          : FormBuilder,
+               private cdr         : ChangeDetectorRef,
                public datepipe     : DatePipe,
                private currencyPipe: CurrencyPipe ){
                                     
@@ -98,56 +101,94 @@ export class RepocuentasComponent {
 
    ngOnInit(){
      //this.rutaActiva.paramMap.subscribe((params) => {
-     const opt = Intl.DateTimeFormat().resolvedOptions();
-
-     console.log("yyyyyyyyy : "+opt.locale);
-     console.log("xxxxxxxxx : "+opt.timeZone);
+    
       this.filter     = this.rutaActiva.snapshot.params['filtro'];
       this.periodo    = this.rutaActiva.snapshot.params['periodo'];
       console.log("filtro a devolver : "+this.filter);
       this.idcuenta   = this.rutaActiva.snapshot.params['idcuenta']; // parametro de ruta    
-      this.initFormulario(); 
-      this.generarRangoFechas();
-              
+      var subs : Subscription;
+      subs = this.servicio.getSaldosCuentasB(this.idcuenta)
+         .pipe(finalize(() => { 
+            subs.unsubscribe(); 
+            var subs1 : Subscription;
+            subs1 = this.servicio.leerCuentaB(this.idcuenta)
+                .pipe(finalize(() => { 
+                    subs1.unsubscribe();                   
+                    this.initFormulario();                             
+                    this.generarRangoFechas();
+                    this.isloading = false;
+                    this.cdr.detectChanges();
+                    }))
+                .subscribe((datas:any):void =>{ 
+                    this.cuentaB = datas })   
+          }))
+        .subscribe((datas:any):void =>{ 
+              this.csaldos = datas })                                                    
     }
-
+    onSelectionPeriodo(event : any){
+       this.nperiodo = event.value;
+    }
     initFormulario(){
      this.formInfoMov = this.fb.group({        
         dfecha     : [''], 
         hfecha     : [''], 
-        clte       : [0],
-        tipoinfo   : [0]})
+        periodo    : [0],
+        tipoinfo   : [0]
+      })
     }
     ondFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
-       this.formInfoMov.controls['dfecha'].setValue(nuevaFecha);             
+       this.formInfoMov.controls['dfecha'].setValue(nuevaFecha);      
+       this.dfecha = new Date(nuevaFecha.getTime());       
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd");    
        this.dfec = cad!=null?cad:" ";
-       const fechaAnterior = new Date(this.formInfoMov.controls['dfecha'].value);
-       fechaAnterior.setDate(fechaAnterior.getDate() - 1);
-       this.fecpr = fechaAnterior;
-       cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59";     
-       this.fecprmmov = cad!=null?cad:" ";
-         console.log("fd : "+this.dfec+" fh : "+this.hfec+" fprm : "+this.fecprmmov);
 
+       const fechaAnterior = new Date(nuevaFecha.getTime());
+       fechaAnterior.setDate(fechaAnterior.getDate() - 1);
+       this.fecpr = new Date(fechaAnterior.getTime());
+       cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59";     
+       this.fecprmmov = cad!=null?cad:" ";       
        this.borrarArreglos();
     }
     onhFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
        this.formInfoMov.controls['hfecha'].setValue(nuevaFecha);  
+       this.hfecha = new Date(nuevaFecha.getTime());
        var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd")+"T23:59";     
        this.hfec = cad!=null?cad:" ";
        this.borrarArreglos();
     }
 
     desplegarInforme(){    
-      this.borrarArreglos();
-      forkJoin({
+     
+      if (this.dfecha.getMonth()==6 && this.dfecha.getDate()==1){
+        
+        // fecha de inicio 1 de julio -> no calculo saldo
+        this.saldoinic = this.csaldos[this.nperiodo].saldo;
+        this.borrarArreglos();
+        forkJoin({
            
             detalle  : this.servicio.getDetalleCuentaB(this.idcuenta,this.dfec,this.hfec),
             endosoo  : this.servicio.getEndososXCuenta(this.idcuenta),
-            cuentaa  : this.servicio.leerCuentaB(this.idcuenta),
-            saldoo   : this.servicio.getSaldoEntreFechas(this.idcuenta,"2026-07-01",this.fecprmmov)
+            cuentaa  : this.servicio.leerCuentaB(this.idcuenta),                            
+           }).subscribe(res => {   
+            this.cmovscuenta   = res.detalle;
+            this.endosos       = res.endosoo;
+            this.cuentaB       = res.cuentaa;
+                                    
+            this.generarMovimientosSolic();
+            this.dataSource.data = this.dispcta;       
+           })   
+
+      } else {
+        
+        var fechaSaldo = this.datepipe.transform(this.csaldos[this.nperiodo].fechasaldo,"yyyy-MM-dd")||'';    
+        console.log("FFFFFfechas : "+fechaSaldo+" ** "+this.fecprmmov);
+        forkJoin({           
+            detalle  : this.servicio.getDetalleCuentaB(this.idcuenta,this.dfec,this.hfec),
+            endosoo  : this.servicio.getEndososXCuenta(this.idcuenta),
+            cuentaa  : this.servicio.leerCuentaB(this.idcuenta),            
+            saldoo   : this.servicio.getSaldoEntreFechas(this.idcuenta,fechaSaldo,this.fecprmmov)
     
 
            }).subscribe(res => {   
@@ -157,10 +198,12 @@ export class RepocuentasComponent {
             this.qsaldo        = res.saldoo;
             
             //this.calcularSaldoInicial(); 
-            this.saldoinic = this.qsaldo.totsaldo;
+            this.saldoinic = this.csaldos[this.nperiodo].saldo + this.qsaldo.totsaldo;
             this.generarMovimientosSolic();
             this.dataSource.data = this.dispcta;       
            })   
+      }
+      
          
     }
 
@@ -198,7 +241,7 @@ export class RepocuentasComponent {
     // a partir de la fecha inicial y tomando el saldo inicial "saldoinic"
      this.dispcta     = []; // se borra para que el html tome los cambios
     
-     var saldocte     = this.qsaldo.totsaldo;
+     var saldocte     = this.saldoinic;
      
      var i            = 0;  
      const fechafin : Date  = this.formInfoMov.controls['hfecha'].value;
@@ -228,6 +271,7 @@ export class RepocuentasComponent {
            coment    : this.cmovscuenta[i].coment,
            marca1    : this.cmovscuenta[i].marca1,
            marca2    : this.cmovscuenta[i].marca2,
+           finmes    : 0
         };
         if (this.cmovscuenta[i].movvinc > 0){  // hay cheque endosado? -> modificar rendisp con endoso
            const indend = this.endosos.findIndex(p=>p.idendoso==this.cmovscuenta[i].movvinc);
@@ -252,7 +296,7 @@ generarPDF():void{
   const colspdf = [    
     { header: 'Fecha', dataKey: 'fecha' },
     { header: 'Tipo.Mov', dataKey: 'tipomov' },
-    { header: 'Nro.Cheque', dataKey: 'nrocheque' },
+    { header: 'Nro.Ch', dataKey: 'nrocheque' },
     { header: 'Descripción', dataKey: 'descrip' },
     { header: 'Nro.Liq.', dataKey: 'nroliq' },
     { header: 'Ingreso', dataKey: 'impingre' },
@@ -274,12 +318,12 @@ generarPDF():void{
   ];
 
 
-  const doc = new jsPDF('l','mm','A4');
+  const doc = new jsPDF('p','mm','A4');
    var fd = this.datepipe.transform(this.formInfoMov.controls['dfecha'].value,"dd/MM/yyyy");
    var fh = this.datepipe.transform(this.formInfoMov.controls['hfecha'].value,"dd/MM/yyyy");
    var title = "";
    
-   title = "Informe de Movimientos Bancarios del Banco "+this.cuentaB.banco+" desde el "+fd+" al "+fh;
+   title = "Informe de Movimientos del Banco "+this.cuentaB.banco+" desde el "+fd+" al "+fh;
    
    
 
@@ -333,22 +377,23 @@ generarPDF():void{
     doc.setPage(i);
     const pageSize = doc.internal.pageSize;
     const text = `Página ${i} de ${totalPages}`;
-    doc.setFontSize(10);
-    doc.text("Nimagu S.A.", 10, 15, { align: 'left' });
+    doc.setFontSize(8);
+    doc.text("Nimagu S.A.", 5, 5, { align: 'left' });
 
      // Título centrado
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     doc.text(title, doc.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
   
     // Fecha alineada a la derecha
-    doc.setFontSize(10);
-    doc.text(`Fecha: ${fechaStr}`, doc.internal.pageSize.getWidth() - 20, 10, { align: 'right' });
-    doc.setFontSize(10);
-    doc.text(text, pageSize.width - 20, 15, { align: 'right' });// nro. de pagina
+    const margen_der = 3; 
+    doc.setFontSize(8);
+    doc.text(`Fecha: ${fechaStr}`, doc.internal.pageSize.getWidth()-margen_der, 5, { align: 'right' });
+    doc.setFontSize(8);
+    doc.text(text, pageSize.getWidth()-margen_der, 10, { align: 'right' });// nro. de pagina
     if (i==1){ // saldo anterior
-       doc.setFontSize(10);       
-       doc.text(`Saldo : ${this.currencyPipe.transform(this.saldoinic, 'ARS','code','1.2-2')?.replace('ARS','')}`,
-                doc.internal.pageSize.getWidth() - 20, 23, { align: 'right' });
+       doc.setFontSize(8);       
+       doc.text(`Saldo al ${this.datepipe.transform(this.fecpr,'dd/MM/YYYY')} : $${this.currencyPipe.transform(this.saldoinic, 'ARS','code','1.2-2')?.replace('ARS','')}`,
+                doc.internal.pageSize.getWidth()-margen_der, 23, { align: 'right' });
     }
     
   }
@@ -356,31 +401,52 @@ generarPDF():void{
  
 }
 generarRangoFechas(){
-     // desde y hasta : dfec, hfec y actualiza formulario
-     this.hoy = new Date();
-    const primerDia = new Date(this.hoy);
-    primerDia.setDate(1);
-    primerDia.setHours(12, 0, 0, 0);
+    var cperiodo = this.csaldos[this.nperiodo].periodo;
+    const [ anioi,aniof ] = cperiodo.split('-').map(Number);
+    if (this.nperiodo==0){ // es el periodo corriente
+       // desde y hasta : dfec, hfec y actualiza formulario
+       
+       this.dfecha = new Date(anioi,6,1);              
+       this.formInfoMov.controls['dfecha'].setValue(this.dfecha); 
+       var cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd");
+       this.dfec = cad!=null?cad:" ";
+      
+       this.hfecha = new Date(anioi,6,31);
+       cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd")+"T23:59"; 
+       this.hfec = cad!=null?cad:" ";
+       this.formInfoMov.controls['hfecha'].setValue(this.hfecha);
 
-   
+      // un dia antes de dfec : fecprmov y fecpr : para calcular el saldo
+      const fechaAnterior = new Date(this.dfecha.getTime());    // un dia anterior a la fecha inicial
+      fechaAnterior.setDate(fechaAnterior.getDate()-1)      
+      this.fecpr = new Date(fechaAnterior.getTime()); // para mostrar en html
+      cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59"; ;    
+      this.fecprmmov = cad!=null?cad:" ";
+     
+    } else { // es un periodo anterior
+      
+      this.dfecha = new Date(anioi,6,1);
+      this.formInfoMov.controls['dfecha'].setValue(this.dfecha);
+       var cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd");
+       this.dfec = cad!=null?cad:" ";
+      
+      this.hfecha = new Date(aniof,5,30);
+      this.formInfoMov.controls['hfecha'].setValue(this.hfecha);
+      var cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd");
+      this.hfec = cad!=null?cad:" ";
 
-    this.formInfoMov.controls['dfecha'].setValue(primerDia);
-   
-     var cad = this.datepipe.transform(primerDia,"yyyy-MM-dd");
-     this.dfec = cad!=null?cad:" ";
-     //this.formInfoMov.controls['dfecha'].setValue(primerDia);
+      const fechaAnterior = new Date(this.dfecha.getTime());    // un dia anterior a la fecha inicial
+      fechaAnterior.setDate(fechaAnterior.getDate()-1);      
+      this.fecpr = new Date(fechaAnterior.getTime()); // para mostrar en html
+      cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59"; ;    
+      this.fecprmmov = cad!=null?cad:" ";
+
+    }
+     
+    
+    
 
     
-     cad = this.datepipe.transform(this.hoy,"yyyy-MM-dd")+"T23:59"; 
-     this.hfec = cad!=null?cad:" ";
-     this.formInfoMov.controls['hfecha'].setValue(this.hoy);
-
-     // un dia antes de dfec : fecprmov y fecpr
-     const fechaAnterior = new Date(primerDia.getTime());    // un dia anterior a la fecha inicial
-     fechaAnterior.setDate(fechaAnterior.getDate()-1)      
-     this.fecpr = new Date(fechaAnterior.getTime()); // para mostrar en html
-     cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59"; ;    
-     this.fecprmmov = cad!=null?cad:" ";
 }
 borrarArreglos(){
   //this.cmovscuenta = [];

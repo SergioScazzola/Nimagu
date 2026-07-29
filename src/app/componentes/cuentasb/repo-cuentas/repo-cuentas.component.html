@@ -1,23 +1,39 @@
- <div class="movimcta-container">
+@if (!isloading){
+<div class="movimcta-container">
     <form  [formGroup]="formInfoMov" class="row mt-1">        
         <div class="col-auto">
          <div class="header">
            <h4>INFORME DE CUENTA</h4>
          </div>        
-        </div>        
+        </div>  
+        <div class="col-3">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Elija un Periodo - cuenta Banco : {{cuentaB.banco}}</mat-label>
+          <mat-select  formControlName="periodo"
+             [disabled]="this.csaldos.length==null || this.csaldos.length==0"
+             (selectionChange)="onSelectionPeriodo($event)">
+               @for (per of this.csaldos; let i=$index; track per.periodo){
+                <mat-option [value]="i">                 
+                  {{ per.periodo+" - "+(per.saldo | number : '1.2-2')+" - "+
+                  (per.fechasaldo | date : "dd/MM/yyyy") }}                 
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div>        
         <div class="col-auto">        
-            <mat-form-field appearance="fill" > 
+            <mat-form-field class="w-100" appearance="fill" > 
               <input matInput [matDatepicker]="picker" 
-                  placeholder = "fecha inicial"                 
+                  placeholder = "fecha inicial"                      
                   (dateChange)="ondFechaChange($event)"                 
                   formControlName="dfecha">
             <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
             <mat-datepicker #picker> </mat-datepicker>  
-            <mat-hint>{{ formInfoMov.controls['dfecha'].value | date : "dd/MM/yyyy HH:mm:ss"}}</mat-hint> 
+            <!--mat-hint>{{ formInfoMov.controls['dfecha'].value | date : "dd/MM/yyyy HH:mm:ss"}}</mat-hint--> 
           </mat-form-field >
         </div>
         <div class="col-auto">
-          <mat-form-field style="width: 160px;font-size: 16px;" > 
+          <mat-form-field class="w-100" appearance="fill" > 
             <input #fechalab matInput #inputFocus [matDatepicker]="pickerh"  
                   placeholder = "fecha final" 
                   (dateChange)="onhFechaChange($event)"
@@ -68,8 +84,8 @@
               <div class="field">
                 <div>Saldo Inicial al {{ cuentaB.fecsaldo | date : "dd/MM/yyyy"  }} : </div>
                 <div class="field-label"> $ {{ cuentaB.saldoini | number : "1.2-2" }}</div>                        
-                <div style="padding-left: 90px;">Saldo anterior al {{ this.fecpr | date : "dd/MM/yyyy"  }} :   </div>
-                <div class="field-saldo"> $ {{ this.qsaldo.totsaldo| number : "1.2-2" }}</div>
+                <div style="padding-left: 90px;">Saldo al {{ this.fecpr | date : "dd/MM/yyyy"  }} :   </div>
+                <div class="field-saldo"> $ {{ this.saldoinic| number : "1.2-2" }}</div>
               </div>
             </div>
           </div>
@@ -165,7 +181,7 @@
   </div> 
   }
   </div>
-
+}
 
 
    

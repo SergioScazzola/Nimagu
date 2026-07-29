@@ -321,5 +321,30 @@ importeformat   : string = "";
     this.formCom.controls['fecha'].setValue(nuevaFecha);
   }
 
+modCantidad(){  // recalcula promedio
+  const canti   = this.formCom.controls['cantidad'].value;
+  const totalk  = this.formCom.controls['totalk'].value;
 
+  const prome   = this.redondearAdos(totalk/canti);
+   this.formCom.controls['promedio'].setValue(prome);
+}
+
+modTotalK(){   // recalcula promedio y importe
+  const canti   = this.formCom.controls['cantidad'].value;
+  const totalk  = this.formCom.controls['totalk'].value;
+
+  const prome   = this.redondearAdos(totalk/canti);
+  this.formCom.controls['promedio'].setValue(prome);  
+  const preun     = this.formCom.controls['preunit'].value;
+  const impo    = this.redondearAdos(preun * totalk);
+  this.formCom.controls['importe'].setValue(impo);
+
+}
+
+modPrecioUn(){ // recalcula importe
+  const totalk  = this.formCom.controls['totalk'].value;
+  const preun   = this.formCom.controls['preunit'].value;
+  const impo    = this.redondearAdos(preun * totalk);
+  this.formCom.controls['importe'].setValue(impo);
+}
 }

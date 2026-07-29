@@ -14,7 +14,7 @@ import { cuentaB, intCtab } from '../../../../entidades/cuentaB';
 import { PeriodoValidatorDirective } from '../../../Directivas/periodoValidatorDirective';
 import { ImporteDirective } from "../../../Directivas/importeDirective";
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
-import {  MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
+import { MatDateFormats } from '@angular/material/core';
 
 
 export const DATE_FORMATS : MatDateFormats = {

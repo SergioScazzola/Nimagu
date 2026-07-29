@@ -124,10 +124,12 @@ ngOnInit(){
                             }})  
   
   }
-  VerDetalledeCuenta(idcuenta : number,periodo : string){ 
+  VerDetalledeCuenta(idcuenta : number){ 
     var filter = this.inputRef.nativeElement.value;// se envia, para luego recibirlo y retomar filtro
     var subs1 : Subscription;
-    subs1 = this.ctaService.getSaldosCuentasB(idcuenta)  // leer saldos iniciales para enviar el periodo correcto
+    // leer saldos iniciales para enviar el periodo correcto
+    // mando el ultimo periodo agregado
+    subs1 = this.ctaService.getSaldosCuentasB(idcuenta)  
       .pipe(finalize(() => {                    
           subs1.unsubscribe();                    
           var periodo = this.csaldos[0].periodo;
