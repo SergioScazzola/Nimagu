@@ -1,0 +1,51 @@
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formCampo" class="p-3">        
+      <div class="row g-3 mb-3">
+        <div class="col-4">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Nro</mat-label>
+                 <input matInput [readonly]="true" formControlName="idcampo" style="text-align: center;">	
+            </mat-form-field>    
+        </div>
+
+        <div class="col-8">
+           <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Nombre del Campo</mat-label>
+                <input matInput formControlName="nombre" style="text-align: left;">	
+            </mat-form-field>    
+        </div>   
+      </div>   
+      <div class="row g-3 mb-3">
+        <div class="col-4">           
+            <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Nombre Abreviado</mat-label>
+                <input matInput formControlName="abrev" style="text-align: left;">	
+            </mat-form-field>    
+        </div>   
+        <div class="col-6 ms-auto">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Procedencia</mat-label>
+              <mat-select formControlName="proced">      
+                  <mat-option *ngFor="let pro of this.cprocedencias; let i = index"
+                    [value]="pro.procedencia">
+                    {{ pro.procedencia }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formCampo.invalid" 
+                       (click)="AgregarCampo()">Agregar
+              </button>                                              
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Anular()">Cancelar
+              </button>                       
+        </div>                      
+    </form>
+</div>
+}

@@ -26,6 +26,9 @@ import { endoso } from '../../entidades/endoso';
 import { compVtaDTO } from '../../entidades/compVta';
 import { saldoMov } from '../../entidades/saldoMov';
 import { saldoCta } from '../../entidades/saldoCta';
+import { movHac } from '../../entidades/movHac';
+import { hacienda } from '../../entidades/hacienda';
+import { campo } from '../../entidades/campo';
 
 @Injectable({
   providedIn: 'root',
@@ -387,6 +390,10 @@ public getTiposMovimiento() {
     return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetProcyF?feci=`+feci+`&fecf=`+fecf);
   }
 
+   public getCompVtasCYV(feci : String,fecf : String) {
+    return this.http.get<compVtaDTO[]>(this.apiUrl + `compvta/DetCYV?feci=`+feci+`&fecf=`+fecf);
+  }
+
   public getMaxCompVtas() {
     return this.http.get<number>(this.apiUrl + `compvta/max` );
   }
@@ -406,6 +413,30 @@ public getTiposMovimiento() {
   public borrarCompVta(idcompv: number) {
     return this.http.delete(environment.apiUrl + `compvta/compvta/borrar?id=`+idcompv);
 }
+
+// HACIENDA 
+
+   public getMovsHacienda() {
+    return this.http.get<movHac[]>(this.apiUrl + `hacienda/movhs`);
+  }
+
+    public getMaxMovsH() {
+    return this.http.get<number>(this.apiUrl + `hacienda/movh/maxid` );
+  }
+
+  public getMaxTipoH() {
+    return this.http.get<number>(this.apiUrl + `hacienda/hac/maxid` );
+  }
+
+  public agregarTipoHacienda( hac : hacienda) {
+    return this.http.post<hacienda>(this.apiUrl + `hacienda/hac/nuevo`, hac);
+  }
+   public agregarCampo( campoo : campo) {
+    return this.http.post<campo>(this.apiUrl + `hacienda/campo/nuevo`, campoo);
+  }
+  public getMaxCampo() {
+    return this.http.get<number>(this.apiUrl + `hacienda/campo/maxid` );
+  }
 }
 
 

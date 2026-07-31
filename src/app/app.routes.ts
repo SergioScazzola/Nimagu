@@ -14,6 +14,7 @@ import { ProveedoresComponent } from './componentes/proveedores/proveedores';
 import { CompvtasComponent } from './componentes/clientes/compvtas/compvtas.component';
 import { RepoCompyvtasComponent } from './componentes/clientes/repo-compyvtas/repo-compyvtas.component';
 import { RepocuentasComponent } from './componentes/cuentasb/repo-cuentas/repo-cuentas.component';
+import { HaciendaComponent } from './componentes/hacienda/hacienda.component';
 
 
 export const routes: Routes = [
@@ -44,7 +45,8 @@ export const routes: Routes = [
       { path: 'bancos',component: CuentasbComponent},     
       { path: 'proveedores/:filtro', component: ProveedoresComponent },      
       { path: 'comprasvtas/:filtro', component: CompvtasComponent },     
-      { path: 'comprasvtas/:filtro/infovyc', component: RepoCompyvtasComponent },     
+      { path: 'comprasvtas/:filtro/infovyc', component: RepoCompyvtasComponent },  
+      { path: 'hacienda/:filtro', component: HaciendaComponent },     
           
     ],
   },
