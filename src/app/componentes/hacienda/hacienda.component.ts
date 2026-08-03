@@ -18,6 +18,7 @@ import { movHac } from '../../../entidades/movHac';
 import { intCampo, intMhac, intThac } from '../../../entidades/hacienda';
 import { TipohacComponent } from './tipohac/tipohac.component';
 import { CampoComponent } from './campo/campo.component';
+import { MovhaciendaComponent } from './movhacienda/movhacienda.component';
 
 @Component({
   selector: 'app-hacienda',
@@ -40,7 +41,7 @@ export class HaciendaComponent {
   formMovH           : boolean;
   hacmod             : number;
 
-  colMovHac: string[] = ["idmovh","fecha","nhacienda", "cantidad", "ncampo","observ","M","B"];
+  colMovHac: string[] = ["idmovh","fecha","cantidad","nhacienda", "ncampo","observ","M","B"];
   
   dataSource = new MatTableDataSource<any>();
 
@@ -71,12 +72,12 @@ export class HaciendaComponent {
                     maxidcampo : this.servicio.getMaxCampo(),
         
                 }).subscribe(res => {   
-                    this.cmovhac    = res.movsh;
-                    this.maxMovh    = res.maxmov;
-                    this.maxHac     = res.maxthac;
-                    this.maxCampo   = res.maxidcampo;
+                    this.cmovhac    = res.movsh,
+                    this.maxMovh    = res.maxmov,
+                    this.maxHac     = res.maxthac,
+                    this.maxCampo   = res.maxidcampo
           
-                if (this.cmovhac!==null && this.cmovhac.length>0){                 
+                   if (this.cmovhac!==null && this.cmovhac.length>0){                 
                        this.dataSource.data = this.cmovhac;         
                        this.dataSource.filterPredicate = (dato : movHac, fil : string) => {
                             return dato.ncampo.toLowerCase().startsWith(fil);
@@ -98,6 +99,7 @@ export class HaciendaComponent {
  }
 
  informeMovHacienda(){
+    this.router.navigate(['/hacienda',this.filtro,'infohacienda']);
 
  }
 
@@ -110,15 +112,37 @@ export class HaciendaComponent {
     const dialogConfig = new MatDialogConfig();   
     dialogConfig.autoFocus = false;
     dialogConfig.data = data;
-    dialogConfig.width =  '900';         // ancho máximo de la ventana
-    dialogConfig.maxWidth = '50vw';      
+    dialogConfig.width =  '750px';         // ancho máximo de la ventana
+    dialogConfig.maxWidth = '90vw';      
     dialogConfig.height   = 'auto';        // altura se ajusta al contenido
     dialogConfig.panelClass = 'custom-dialog-container';
     dialogConfig.disableClose =  false; // opcional según necesidad
 
-    const dialogRef =  this.dialog.open(TipohacComponent, dialogConfig);
+    const dialogRef =  this.dialog.open(MovhaciendaComponent, dialogConfig);
           dialogRef.afterClosed().subscribe( // 
           (data:any) => { if (data.clicked === 'Alta'){                   
+                this.leerMovsHacienda()   // refrescar lista                       
+                       }})
+ }
+
+  UpdateMovimientoH(movh : number){
+  // Modifica un movimiento de hacienda
+    const data  : intMhac= {
+      idmovh   : movh,      
+      accion     : "M"
+    }       
+    const dialogConfig = new MatDialogConfig();   
+    dialogConfig.autoFocus = false;
+    dialogConfig.data = data;
+    dialogConfig.width =  '750px';         // ancho máximo de la ventana
+    dialogConfig.maxWidth = '90vw';      
+    dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+    dialogConfig.panelClass = 'custom-dialog-container';
+    dialogConfig.disableClose =  false; // opcional según necesidad
+
+    const dialogRef =  this.dialog.open(MovhaciendaComponent, dialogConfig);
+          dialogRef.afterClosed().subscribe( // 
+          (data:any) => { if (data.clicked === 'Modi'){                   
                 this.leerMovsHacienda()   // refrescar lista                       
                        }})
  }
@@ -171,12 +195,27 @@ export class HaciendaComponent {
 
  }
 
- modificarMovH(idmov : number){
-
- }
+ 
 
  eliminarMovH(idmov : number){
-
+ var resu : string;
+     this.sinoServicio.abrirSiNoDialogo("Confirmación",
+                              "¿ Está seguro de quiere borrar el movimiento Nro."+idmov+" ?")
+       .then(result => {
+          if (result) {
+              var subscri : Subscription;
+              subscri = this.servicio.borrarMovH(idmov)
+                 .pipe(finalize(() => {
+                    this.leerMovsHacienda(); // refrescar                               
+                    this.notiServicio.showNotification("Movimiento nro. "+idmov+" eliminado con éxito "+resu,'Aceptar','mensaje',500); 
+                    subscri.unsubscribe();                    
+                  }))
+                  .subscribe((data : any): void => {
+                       resu = data});       
+          } else {
+            console.log('El usuario seleccionó "No"');
+          }
+    })
  }
  volver(){
     this.router.navigate(['/ppal']);

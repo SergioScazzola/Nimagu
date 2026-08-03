@@ -109,7 +109,7 @@
 .mat-column-idmovh {
   padding-left: 0;
   width: 40px;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -118,7 +118,7 @@
 .mat-column-fecha {
   /*padding-left: 10px !important;*/
   width: 50px;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   overflow: visible;
 }
@@ -148,7 +148,7 @@
 .mat-column-cantidad{
   padding-left: 0;
   width: 50px;
-  text-align: right;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

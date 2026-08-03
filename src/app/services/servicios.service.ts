@@ -420,6 +420,26 @@ public getTiposMovimiento() {
     return this.http.get<movHac[]>(this.apiUrl + `hacienda/movhs`);
   }
 
+  public getMovsHaciendaxFecha(feci : String,fecf : String) {
+    return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovh?feci=`+feci+`&fecf=`+fecf);
+  }
+  
+   public agregarMovHacienda( mhac : movHac) {
+    return this.http.post<movHac>(this.apiUrl + `hacienda/movh/nuevo`, mhac);
+  }
+
+   public updateMovHacienda(mhac : movHac) {
+    return this.http.put<movHac>(environment.apiUrl + `hacienda/movh/actualizar`, mhac);
+  }
+   public leerMovHacienda(idmovh : number) {
+    return this.http.get<movHac>(this.apiUrl + `hacienda/movh?id=` + idmovh);
+  }
+
+  
+  public borrarMovH(idmovh: number) {
+    return this.http.delete(environment.apiUrl + `hacienda/movh/delete?id=`+idmovh);
+  }
+ 
     public getMaxMovsH() {
     return this.http.get<number>(this.apiUrl + `hacienda/movh/maxid` );
   }
@@ -428,6 +448,13 @@ public getTiposMovimiento() {
     return this.http.get<number>(this.apiUrl + `hacienda/hac/maxid` );
   }
 
+    public getTipoHById(idhac : number) {
+    return this.http.get<hacienda>(this.apiUrl + `hacienda/hac?id=` + idhac);
+  }
+
+  public getTiposHacienda() {
+    return this.http.get<hacienda[]>(this.apiUrl + `hacienda/hacs`);
+  }
   public agregarTipoHacienda( hac : hacienda) {
     return this.http.post<hacienda>(this.apiUrl + `hacienda/hac/nuevo`, hac);
   }
@@ -436,6 +463,18 @@ public getTiposMovimiento() {
   }
   public getMaxCampo() {
     return this.http.get<number>(this.apiUrl + `hacienda/campo/maxid` );
+  }
+   public getCampos() {
+    return this.http.get<campo[]>(this.apiUrl + `hacienda/campos`);
+  }
+   public getCampoById(idcampo : number) {
+    return this.http.get<campo>(this.apiUrl + `hacienda/campo?idcampo=` + idcampo);
+  }
+   public borrarCampo(idcampo: number) {
+    return this.http.delete(environment.apiUrl + `hacienda/campo/delete?id=`+idcampo);
+}
+  public updateCampo(campo : campo) {
+    return this.http.put<campo>(environment.apiUrl + `hacienda/campo/actualizar`, campo);
   }
 }
 

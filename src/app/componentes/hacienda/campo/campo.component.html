@@ -19,7 +19,7 @@
         </div>   
       </div>   
       <div class="row g-3 mb-3">
-        <div class="col-4">           
+        <div class="col-6">           
             <mat-form-field class="w-100" appearance="fill">
                 <mat-label>Nombre Abreviado</mat-label>
                 <input matInput formControlName="abrev" style="text-align: left;">	
@@ -36,12 +36,32 @@
               </mat-select>
             </mat-form-field>
           </div>
+          <div class="col-6">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Campos existentes</mat-label>
+              <mat-select>      
+                  <mat-option *ngFor="let campo of this.ccampos let i = index"
+                    (click)="seleccionoCampo(campo.idcampo)"
+                    [value]="campo.nombre">
+                    {{ campo.nombre+' ('+campo.abrev+')'}}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>   
         </div>
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 
-                       [disabled]="formCampo.invalid" 
+                       [disabled]="formCampo.invalid || accion!=='A'" 
                        (click)="AgregarCampo()">Agregar
               </button>                                              
+               <button class="btn btn-sm btn-outline-success me-5" 
+                       [disabled]="formCampo.invalid || accion!=='M'" 
+                       (click)="ModificarCampo()">Modificar
+              </button>
+               <button class="btn btn-sm btn-outline-danger me-5" 
+                       [disabled]="formCampo.invalid || accion!=='M'" 
+                       (click)="BorrarCampo()">Borrar
+              </button>
               <button class="btn btn-sm btn-outline-secondary"                
                        (click)="Anular()">Cancelar
               </button>                       

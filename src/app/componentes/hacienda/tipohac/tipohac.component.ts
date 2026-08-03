@@ -26,7 +26,7 @@ import { hacienda, intThac } from '../../../../entidades/hacienda';
 })
 export class TipohacComponent {
 
- 
+   ctipoHac     : hacienda[]=[];
   formTHac      : FormGroup; 
   operacion     : string ;  
   isloading     : boolean = true;
@@ -41,10 +41,15 @@ export class TipohacComponent {
 
   ngOnInit(){
      this.initFormulario();    
-     this.formTHac.controls['idhacienda'].setValue(this.data.idthac);
-     this.operacion = "Agregar T.Hacienda nro.: "+this.data.idthac;       
-     this.isloading = false;
-     this.cdr.detectChanges()
+     forkJoin({       
+         tiposh : this.servicio.getTiposHacienda(),
+          }).subscribe(res => {   
+            this.ctipoHac = res.tiposh;
+            this.formTHac.controls['idhacienda'].setValue(this.data.idthac);
+            this.operacion = "Agregar Tipo de Hacienda nro.: "+this.data.idthac;       
+            this.isloading = false;
+            this.cdr.detectChanges()
+          })
           
   }
 

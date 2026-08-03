@@ -18,7 +18,19 @@
             </mat-form-field>    
         </div>   
       </div>   
-           
+      <div class="row g-3 mb-3">
+        <div class="col-10">              
+          <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Tipo de Hacienda existentes</mat-label>
+              <mat-select  >      
+                  <mat-option *ngFor="let th of this.ctipoHac; let i = index"
+                    [value]="th.nombre">
+                    {{ th.nombre }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>  
+        </div>
+      </div>
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 
                        [disabled]="formTHac.invalid" 

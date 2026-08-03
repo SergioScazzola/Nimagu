@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SinoService } from '../../../services/sino.service';
 import { NotiserviceService } from '../../../services/notiservice.service';
+
 import { finalize, forkJoin, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatTableModule,MatTableDataSource } from '@angular/material/table';
@@ -39,32 +40,37 @@ import { campo } from '../../../../entidades/campo';
 })
 export class CampoComponent {
   cprocedencias : procedencia[]=[];
+  ccampos      : campo[]=[];
   public formCampo     : FormGroup; 
   operacion     : string ;  
   isloading     : boolean = true;
+  accion        : string;
+  selCampo      : number
 
   constructor(public fb           : FormBuilder,
               public servicio     : ServiciosService,
               public dialogRef    : MatDialogRef<CampoComponent>, 
+              private sinoServicio : SinoService,
               private cdr         : ChangeDetectorRef,       
                @Inject(MAT_DIALOG_DATA) public data : intCampo,       
               private notiService : NotiserviceService )
    { }
 
   ngOnInit(){
-     var subs : Subscription;
-     var resu = "";
-       subs = this.servicio.getProcedencias()
-          .pipe(finalize(() => {                                  
-             subs.unsubscribe();
+      forkJoin({
+         procedencias : this.servicio.getProcedencias(),
+         camposs  : this.servicio.getCampos(),
+          }).subscribe(res => {   
+            this.cprocedencias = res.procedencias;
+            this.ccampos    = res.camposs;// campos     
+             this.accion = "A";
              this.initFormulario();    
              this.formCampo.controls['idcampo'].setValue(this.data.idcampo);
              this.formCampo.controls['proced'].setValue(this.cprocedencias[0].procedencia);
              this.operacion = "Agregar Campo nro.: "+this.data.idcampo;       
              this.isloading = false;
              this.cdr.detectChanges()              
-                   }))                  
-              .subscribe((data : any): void => {this.cprocedencias=data});   
+          })
      
           
   }
@@ -96,9 +102,61 @@ export class CampoComponent {
                    }))                  
               .subscribe((data : any): void => {resu=data});   
   }
-/*onSelectionChangeProc(event : any){
- this.formCampo.controls['proced'].value  
-}*/
+
+   ModificarCampo(){
+     var camp : campo = {
+        idcampo  : this.formCampo.controls['idcampo'].value,
+        nombre   : this.formCampo.controls['nombre'].value,
+        abrev    : this.formCampo.controls['abrev'].value,
+        proced   : this.formCampo.controls['proced'].value,
+     }
+
+     var subscri : Subscription;
+     var resu = "";
+       subscri = this.servicio.updateCampo(camp)
+               .pipe(finalize(() => {                  
+                this.notiService.showNotification("El Campo : "+camp.nombre+" se ha modificado con éxito ("+resu+")",'Aceptar','mensaje',500); 
+                subscri.unsubscribe();
+                this.ngOnInit(); // refrescar
+                 
+                   }))                  
+              .subscribe((data : any): void => {resu=data});   
+  }
+
+   BorrarCampo(){
+     var resu : string;
+     this.sinoServicio.abrirSiNoDialogo("Confirmación",
+                              "¿ Está seguro de quiere borrar la Campo Nro."+this.selCampo+" ?")
+       .then(result => {
+          if (result) { 
+            var subscri : Subscription;     
+            subscri = this.servicio.borrarCampo(this.selCampo)
+               .pipe(finalize(() => {                  
+                this.notiService.showNotification("El Campo : "+this.selCampo+" se ha borrado con éxito ("+resu+")",'Aceptar','mensaje',500); 
+                subscri.unsubscribe();
+                this.ngOnInit(); // refrescar
+                  
+                   }))                  
+              .subscribe((data : any): void => {resu=data});   
+          }} )
+  }
+seleccionoCampo(idcampo: number){  
+    this.selCampo = idcampo;
+    var campo : campo;
+    this.accion = "M";
+    var subs : Subscription;
+    var resu = "";
+       subs = this.servicio.getCampoById(idcampo)
+               .pipe(finalize(() => {         
+                  this.formCampo.controls['idcampo'].setValue(campo.idcampo);
+                  this.formCampo.controls['nombre'].setValue(campo.nombre);
+                  this.formCampo.controls['abrev'].setValue(campo.abrev);
+                  this.formCampo.controls['proced'].setValue(campo.proced);
+                  this.operacion = "Modificar Campo nro.: "+campo.idcampo;
+                        }))                  
+              .subscribe((data : any): void => {campo=data});   
+              
+}
   Anular(){
     this.dialogRef.close({ clicked : "Cancelar"})
   }

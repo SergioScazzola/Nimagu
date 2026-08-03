@@ -1,0 +1,69 @@
+.movimcta-container {
+  width: 100%;
+  height: calc(100vh - 70px); /* Restar altura de navbar */
+  display: flex;
+  flex-direction: column;
+  padding: 1px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+/* Cabecera con título y botón */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+.header h4 {
+  background-color: #b6c1dd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.fila-totales {  
+  background-color: yellow;
+  color: blue;
+  font-weight: bold;
+}
+
+.tabla-matriz {
+  width: auto;           /* no ocupar todo el ancho */
+  min-width: 400px;     /* opcional */
+  max-width: 80vw;      /* opcional */
+}
+
+.tabla-matriz th,
+.tabla-matriz td {
+  padding: 4px 8px;     /* reduce el tamaño visual */
+  font-size: 16px;      /* texto más chico */
+}
+/* Contenedor de la tabla */
+.table-container {
+  flex: 1;
+  overflow: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos de la tabla */
+.mat-mdc-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.mat-mdc-header-row {
+  background-color: #b6c1dd;
+  height: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.centrado {
+  text-align: center;
+}

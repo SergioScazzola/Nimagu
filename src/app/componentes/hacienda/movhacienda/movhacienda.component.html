@@ -1,1 +1,100 @@
-<p>movhacienda works!</p>
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formMovH" class="p-3">        
+      <div class="row g-1 mb-1">
+        <div class="col-4">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Nro</mat-label>
+                 <input matInput [readonly]="true" formControlName="idmovh" style="text-align: center;">	
+            </mat-form-field>    
+        </div>
+        <div class="col-6 ms-auto">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input matInput [matDatepicker]="picker" 
+                (dateChange)="onFechaChange($event)"
+                 placeholder = "Elija una fecha" formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>  
+                <mat-hint>{{ formMovH.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+
+            </mat-form-field >
+        </div>
+        </div>
+        <div class="row g-1 mb-1">
+         <div class="col-4">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Cantidad</mat-label>
+                 <input matInput selecText formControlName="cantidad" style="text-align: right;">	
+            </mat-form-field>    
+        </div>
+        <div class="col-6 ms-auto">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Tipo de Hacienda</mat-label>
+              <mat-select formControlName="nhacienda"    
+                  (selectionChange)="onSelectionChangeHacienda($event)">      
+                  <mat-option *ngFor="let th of this.ctiposh; let i = index"
+                    [value]="th.nombre">
+                    {{ th.nombre }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>
+      </div>   
+       <div class="row g-1 mb-1">
+        <div class="col-5 ms-auto">
+          <mat-checkbox 
+            [checked]="formMovH.controls['marca1'].value!==0"
+            (change)="marcaFila1($event.checked)">
+              Marca1
+          </mat-checkbox>
+         <mat-checkbox 
+           [checked]="formMovH.controls['marca2'].value!==0"
+           (change)="marcaFila2($event.checked)">
+              Marca2
+            </mat-checkbox>
+         <mat-checkbox 
+           [checked]="formMovH.controls['marca3'].value!==0"
+           (change)="marcaFila3($event.checked)">
+              Marca3
+            </mat-checkbox>
+        </div>
+      </div>  
+       <div class="row g-1 mb-1">
+       <div class="col-5">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Campo</mat-label>
+              <mat-select formControlName="ncampo"    
+                  (selectionChange)="onSelectionChangeCampo($event)">      
+                  <mat-option *ngFor="let campo of this.ccampos let i = index"
+                    [value]="campo.nombre">
+                    {{ campo.nombre+' ('+campo.abrev+')'}}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>   
+           <div class="col-7">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Observaciones</mat-label>
+                 <input matInput formControlName="observ" style="text-align: left;">	
+            </mat-form-field>    
+        </div>  
+        </div>
+       
+        <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formMovH.invalid || data.accion != 'A'" 
+                       (click)="AgregarMovHacienda()">Agregar
+              </button>                                              
+              <button class="btn btn-outline-success"
+                       [disabled]="formMovH.invalid || data.accion != 'M'" 
+                       (click)="ModificarMovHacienda()">Modificar
+              </button> 
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Anular()">Cancelar
+              </button>                       
+        </div>                      
+    </form>
+</div>
+}

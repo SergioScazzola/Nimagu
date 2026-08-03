@@ -7,9 +7,15 @@ export interface movHac {
    cantidad    : number;
    idcampo     : number;
    ncampo      : string;
+   abrev       : string;
    observ      : string;
    marca1      : number;
    marca2      : number;
    marca3      : number;
   
+}
+
+export interface intMhac {
+    idmovh        : number;
+    accion        : string;
 }
