@@ -1,0 +1,21 @@
+export interface gasto {
+     idgasto        : number;
+     fecha          : Date;
+     idproducto     : number;
+     nprod          : string;
+     idtipo         : number;
+     ntipo          : string;
+     idprov         : number;
+     nprov          : string;
+     ncomp          : string;
+     cantidad       : number;
+     precioun       : number;
+     tiva           : number;
+     importe        : number;
+     observ         : string;
+}
+
+export interface intGasto {
+    idgasto        : number;
+    accion         : string;
+}

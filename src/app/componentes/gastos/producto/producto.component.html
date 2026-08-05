@@ -1,0 +1,68 @@
+@if (!isloading){
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formProd" class="p-3">        
+      <div class="row g-3 mb-3">
+        <div class="col-4">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Nro</mat-label>
+                 <input matInput [readonly]="true" formControlName="idproducto" style="text-align: center;">	
+            </mat-form-field>    
+        </div>
+
+        <div class="col-8">
+           <mat-form-field class="w-100" appearance="fill">
+                <mat-label>Nombre del Producto</mat-label>
+                <input matInput formControlName="nombre" style="text-align: left;">	
+            </mat-form-field>    
+        </div>   
+      </div>   
+      <div class="row g-3 mb-3">      
+        <div class="col-10">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Elija Tipo de Producto</mat-label>
+              <mat-select formControlName="tipoprod">      
+                  <mat-option *ngFor="let tpro of this.ctiposprod; let i = index"
+                    (click)="seleccionoTipoP(tpro.idtipo)"
+                    [value]="tpro.nombre">
+                    {{ tpro.nombre }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+        </div>        
+        </div>
+        <div class="row g-3 mb-3">      
+        <div class="col-10">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Productos existentes</mat-label>
+              <mat-select>      
+                  <mat-option *ngFor="let prod of this.cproductos let i = index"
+                    (click)="seleccionoProducto(prod.idproducto)"
+                    [value]="prod.nombre">
+                    {{ prod.nombre }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>   
+        </div>   
+        <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formProd.invalid || accion!=='A'" 
+                       (click)="AgregarProducto()">Agregar
+              </button>                                              
+               <button class="btn btn-sm btn-outline-success me-5" 
+                       [disabled]="formProd.invalid || accion!=='M'" 
+                       (click)="ModificarProducto()">Modificar
+              </button>
+               <button class="btn btn-sm btn-outline-danger me-5" 
+                       [disabled]="formProd.invalid || accion!=='M'" 
+                       (click)="BorrarProducto()">Borrar
+              </button>
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Anular()">Cancelar
+              </button>                       
+        </div>                      
+    </form>
+</div>
+}

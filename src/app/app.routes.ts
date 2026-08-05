@@ -16,6 +16,7 @@ import { RepoCompyvtasComponent } from './componentes/clientes/repo-compyvtas/re
 import { RepocuentasComponent } from './componentes/cuentasb/repo-cuentas/repo-cuentas.component';
 import { HaciendaComponent } from './componentes/hacienda/hacienda.component';
 import { RepoHaciendaComponent } from './componentes/hacienda/repo-hacienda/repo-hacienda.component';
+import { GastosComponent } from './componentes/gastos/gastos.component';
 
 
 export const routes: Routes = [
@@ -49,6 +50,7 @@ export const routes: Routes = [
       { path: 'comprasvtas/:filtro/infovyc', component: RepoCompyvtasComponent },  
       { path: 'hacienda/:filtro', component: HaciendaComponent },  
       { path: 'hacienda/:filtro/infohacienda',component: RepoHaciendaComponent},
+      { path: 'gastos/:filtro', component: GastosComponent },
           
     ],
   },

@@ -1,0 +1,129 @@
+<div class="custom-dialog-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <h4 mat-dialog-title>{{operacion}}</h4>  
+    <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
+     <form [formGroup]="formGas" class="p-3">        
+       <div class="row g-3 mb-1">
+         <div class="col-2">
+          <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Nro</mat-label>
+                 <input matInput [readonly]="true" formControlName="idgasto" style="text-align: center;">	
+            </mat-form-field>    
+         </div>
+
+        <div class="col-5 ms-auto ">
+            <mat-form-field class="w-100" appearance="fill"> 
+                <input matInput [matDatepicker]="picker" 
+                (dateChange)="onFechaChange($event)"
+                 placeholder = "Elija una fecha" formControlName="fecha" > 
+                <mat-datepicker-toggle  matSuffix [for]="picker" > </mat-datepicker-toggle> 
+                <mat-datepicker #picker> </mat-datepicker>  
+                <mat-hint>{{ formGas.controls['fecha'].value | date : "dd/MM/yyyy HH:mm"}}</mat-hint> 
+
+            </mat-form-field >
+          </div>
+        </div>
+        <!-- Segunda Fila -->
+        <div class="row g-3 mb-1">
+           <div class="col-2">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Cantidad</mat-label>              
+                <input matInput appImporte formControlName="cantidad"
+                  (blur)="modCantidad()"
+                style="text-align: right;">	
+            </mat-form-field>
+          </div>
+         <div class="col-6">
+           <mat-form-field class="w-100" appearance="fill">
+            <mat-label>Elija un Producto</mat-label>
+              <mat-select  formControlName="nprod"
+                [disabled]="this.cproductos.length==null || this.cproductos.length==0"
+                (selectionChange)="onSelectionChangeProducto($event)">
+                @for (pr of this.cproductos; track pr.nombre){
+                <mat-option [value]="pr.nombre">                 
+                  {{ pr.nombre }}                 
+                </mat-option>
+                }
+              </mat-select>
+           </mat-form-field>
+          </div>       
+          
+          <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Tipo de Producto</mat-label>
+                <input matInput formControlName="ntipo" [readonly]="true">	
+            </mat-form-field>
+          </div>         
+        </div>
+        <!-- Tercera Fila -->
+       <div class="row g-3 mb-1">
+          <div class="col-8">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Proveedor</mat-label>
+              <mat-select formControlName="nprov"    
+                  (selectionChange)="onSelectionChangeProveedor($event)">      
+                  <mat-option *ngFor="let pro of this.cproveedores; let i = index"
+                    [value]="pro.nombre">
+                    {{ pro.nombre }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>           
+          <div class="col-4 ms-auto">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Nro.Comprobante</mat-label>
+                <input matInput formControlName="ncomp">	
+            </mat-form-field>                   
+          </div> 
+          </div> 
+          <!-- Cuarta Fila -->
+          <div class="row g-3 mb-1">
+           <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Precio Unitario</mat-label>
+                <input matInput appImporte formControlName="precioun"
+                  (blur)="modPrecioUn()"      
+                  style="text-align: right;">	
+            </mat-form-field>                   
+           </div> 
+            <div class="col-4">
+             <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Tasa Iva</mat-label>
+                <input matInput appImporte formControlName="tiva"
+                  (blur)="modTasaIva()"
+                  style="text-align: right;">	
+             </mat-form-field>                   
+            </div> 
+            <div class="col-4">
+             <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Importe gasto</mat-label>                         
+              <input matInput
+                     [readonly]="true"
+                     formControlName='importe'
+                     style="text-align: right;"
+                    [value]="formGas.get('importe')?.value | currency:'$':true">
+             </mat-form-field>                             
+            </div> 
+          </div>    
+      
+          <!-- Quinta Fila -->
+          <div class="row g-3 mb-1">                       
+            <div class="col-8">
+                <mat-form-field class="w-100" appearance="fill">
+                  <mat-label>Observaciones</mat-label>
+                  <input matInput formControlName="observ">	
+                 </mat-form-field>                   
+            </div> 
+           </div>
+        
+           <div class="botonera">            
+              <button class="btn btn-sm btn-outline-primary me-5" 
+                       [disabled]="formGas.invalid || data.accion!='A'" 
+                       (click)="AgregarGasto()">Agregar</button>                                
+              <button class="btn btn-sm btn-outline-success me-5" 
+                       [disabled]="formGas.invalid || data.accion!='M'" 
+                       (click)="ModificarGasto()">Modificar</button>  
+              <button class="btn btn-sm btn-outline-secondary"                
+                       (click)="Cancelar()">Cancelar</button>                       
+        </div>          
+    </form>
+</div>

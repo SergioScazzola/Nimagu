@@ -138,24 +138,30 @@ export class RepocuentasComponent {
     }
     ondFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
-       this.formInfoMov.controls['dfecha'].setValue(nuevaFecha);      
+       
        this.dfecha = new Date(nuevaFecha.getTime());       
-       var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd");    
+       this.dfecha.setHours(0,5,0,0); // Establecer la hora a 00:05
+       this.formInfoMov.controls['dfecha'].setValue(this.dfecha);      
+       var cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd");    
        this.dfec = cad!=null?cad:" ";
 
        const fechaAnterior = new Date(nuevaFecha.getTime());
        fechaAnterior.setDate(fechaAnterior.getDate() - 1);
+       fechaAnterior.setHours(23,59,0,0);
        this.fecpr = new Date(fechaAnterior.getTime());
-       cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59";     
+       cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd:HH:mm");     
        this.fecprmmov = cad!=null?cad:" ";       
        this.borrarArreglos();
     }
     onhFechaChange(event : any){
        const nuevaFecha: Date = event.value; // Fecha seleccionada en el datepicker
+       nuevaFecha.setHours(23,59,0,0); // Establecer la hora a 23:59
        this.formInfoMov.controls['hfecha'].setValue(nuevaFecha);  
        this.hfecha = new Date(nuevaFecha.getTime());
-       var cad = this.datepipe.transform(nuevaFecha,"yyyy-MM-dd")+"T23:59";     
-       this.hfec = cad!=null?cad:" ";
+       
+       var cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd:HH:mm");     
+       console.log("Cadena fecha final : "+cad);
+       this.hfec = cad!=null?cad:" ";      
        this.borrarArreglos();
     }
 
@@ -164,7 +170,7 @@ export class RepocuentasComponent {
       if (this.dfecha.getMonth()==6 && this.dfecha.getDate()==1){
         
         // fecha de inicio 1 de julio -> no calculo saldo
-        this.saldoinic = this.csaldos[this.nperiodo].saldo;
+        this.saldoinic = this.csaldos[this.nperiodo].saldo;        
         this.borrarArreglos();
         forkJoin({
            
@@ -175,7 +181,7 @@ export class RepocuentasComponent {
             this.cmovscuenta   = res.detalle;
             this.endosos       = res.endosoo;
             this.cuentaB       = res.cuentaa;
-                                    
+                                
             this.generarMovimientosSolic();
             this.dataSource.data = this.dispcta;       
            })   
@@ -183,7 +189,7 @@ export class RepocuentasComponent {
       } else {
         
         var fechaSaldo = this.datepipe.transform(this.csaldos[this.nperiodo].fechasaldo,"yyyy-MM-dd")||'';    
-        console.log("FFFFFfechas : "+fechaSaldo+" ** "+this.fecprmmov);
+        
         forkJoin({           
             detalle  : this.servicio.getDetalleCuentaB(this.idcuenta,this.dfec,this.hfec),
             endosoo  : this.servicio.getEndososXCuenta(this.idcuenta),
@@ -407,38 +413,44 @@ generarRangoFechas(){
        // desde y hasta : dfec, hfec y actualiza formulario
        
        this.dfecha = new Date(anioi,6,1);              
+       this.dfecha.setHours(0,5,0,0); // Establecer la hora a 00:05
        this.formInfoMov.controls['dfecha'].setValue(this.dfecha); 
-       var cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd");
+       var cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd:HH:mm");
        this.dfec = cad!=null?cad:" ";
       
-       this.hfecha = new Date(anioi,6,31);
-       cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd")+"T23:59"; 
+       this.hfecha = new Date();
+       this.hfecha.setHours(23,59,0,0); // Establecer la hora a 23:59
+       cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd:HH:mm"); 
        this.hfec = cad!=null?cad:" ";
        this.formInfoMov.controls['hfecha'].setValue(this.hfecha);
 
       // un dia antes de dfec : fecprmov y fecpr : para calcular el saldo
       const fechaAnterior = new Date(this.dfecha.getTime());    // un dia anterior a la fecha inicial
-      fechaAnterior.setDate(fechaAnterior.getDate()-1)      
+      fechaAnterior.setDate(fechaAnterior.getDate()-1);
+      fechaAnterior.setHours(23,59,0,0); // Establecer la hora a 23:59      
       this.fecpr = new Date(fechaAnterior.getTime()); // para mostrar en html
-      cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59"; ;    
+      cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd");    
       this.fecprmmov = cad!=null?cad:" ";
      
     } else { // es un periodo anterior
       
       this.dfecha = new Date(anioi,6,1);
+       this.dfecha.setHours(0,5,0,0); // Establecer la hora a 00:05
       this.formInfoMov.controls['dfecha'].setValue(this.dfecha);
-       var cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd");
+      cad = this.datepipe.transform(this.dfecha,"yyyy-MM-dd:HH:mm");
        this.dfec = cad!=null?cad:" ";
       
-      this.hfecha = new Date(aniof,5,30);
+      this.hfecha = new Date(aniof,6,31);
+      this.hfecha.setHours(23,59,0,0); // Establecer la hora a 23:59
       this.formInfoMov.controls['hfecha'].setValue(this.hfecha);
-      var cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd");
+      cad = this.datepipe.transform(this.hfecha,"yyyy-MM-dd:HH:mm");
       this.hfec = cad!=null?cad:" ";
 
       const fechaAnterior = new Date(this.dfecha.getTime());    // un dia anterior a la fecha inicial
       fechaAnterior.setDate(fechaAnterior.getDate()-1);      
+      fechaAnterior.setHours(23,59,0,0); // Establecer la hora a 23:59
       this.fecpr = new Date(fechaAnterior.getTime()); // para mostrar en html
-      cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd")+"T23:59"; ;    
+      cad = this.datepipe.transform(fechaAnterior,"yyyy-MM-dd:HH:mm");    
       this.fecprmmov = cad!=null?cad:" ";
 
     }

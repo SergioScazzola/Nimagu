@@ -49,23 +49,6 @@ export class ClientesComponent {
                private notiServicio   : NotiserviceService
                               ) { 
    
-      /*effect(() => {  this.cantcli = this.cclientes.length;
-                      this.dataSource.data = this.cclientes();              
-                      this.dataSource.filterPredicate = (dato : clienteDTO, fil : string) => {
-                          return dato.nombre.toLowerCase().includes(fil);
-                      };    
-                      // Aplica filtro si hay uno
-                      
-                     
-                     console.log("Filtrooooo : "+this.filtro()); 
-                     if (this.filtro()) {
-                      
-                        this.dataSource.filter = this.filtro()||'';                                                                       
-                        this.inputRef().nativeElement.setAttribute('value', this.filtro());
-                     }
-                       
-                     }  
-      )*/
    }     
 ngOnInit(){    
    

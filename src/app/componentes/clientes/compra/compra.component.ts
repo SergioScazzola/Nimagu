@@ -18,7 +18,6 @@ import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
 import {registerLocaleData } from '@angular/common';
 
-
 import { clienteDTO } from '../../../../entidades/clienteDTO';
 import { categoria } from '../../../../entidades/categoria';
 import { procedencia } from '../../../../entidades/procedencia';

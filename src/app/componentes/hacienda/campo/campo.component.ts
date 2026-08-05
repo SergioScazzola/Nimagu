@@ -2,20 +2,20 @@ import { afterNextRender, ChangeDetectorRef, Component, effect, ElementRef, Inje
 
 
 import { ServiciosService } from '../../../services/servicios.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SinoService } from '../../../services/sino.service';
 import { NotiserviceService } from '../../../services/notiservice.service';
 
 import { finalize, forkJoin, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { MatTableModule,MatTableDataSource } from '@angular/material/table';
+
 import { MatFormField, MatLabel, MatOption,MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 
-import jsPDF from 'jspdf';
+
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { intCampo } from '../../../../entidades/hacienda';
@@ -61,6 +61,7 @@ export class CampoComponent {
          procedencias : this.servicio.getProcedencias(),
          camposs  : this.servicio.getCampos(),
           }).subscribe(res => {   
+             
             this.cprocedencias = res.procedencias;
             this.ccampos    = res.camposs;// campos     
              this.accion = "A";

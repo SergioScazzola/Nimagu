@@ -187,12 +187,7 @@ console.log('hacienda : '+this.hacienda);
       }
       
       this.datos[fila][j]    = totcampo;
-      //this.datosc[fila][j] = this.decimalPipe.transform(totsoc, '1.2-2')?.padStart(12,' ');
-      //this.datosc[fila][j] = this.formatCurrency(totsoc);
-      //const porc = (totsoc/totaportes)*100;
-      //this.datos[fila+1][j]  = porc;    
-      //this.datosc[fila+1][j] = this.decimalPipe.transform(porc, '1.2-2')?.padStart(12,' ');
-      //this.datosc[fila+1][j] = this.formatCurrency(porc);
+    
     }
 
     var tothacienda : number;
@@ -207,18 +202,12 @@ console.log('hacienda : '+this.hacienda);
       }    
       
       this.datos[j][col] = tothacienda;
-      // this.datosc[j][col] = this.decimalPipe.transform(totapo, '1.2-2')?.padStart(12,' ');      
-      //this.datos[j][col+1] = this.redondearAdos(totapo/canthectareas);
-      // this.datosc[j][col+1] = this.decimalPipe.transform(this.datos[j][col+1], '1.2-2')?.padStart(12,' ');
+  
     }
     this.datos[fila][col] = totcabezas;
 
     
-    /*this.datosc[fila][col] = this.decimalPipe.transform(totaportes, '1.2-2')?.padStart(12);
-    this.datos[fila][col+1] = this.redondearAdos(totaportes/canthectareas);
-    this.datosc[fila][col+1] = this.decimalPipe.transform(this.datos[fila][col+1], '1.2-2')?.padStart(12,' ');
-    this.datos[fila+1][col] = 100;
-    this.datosc[fila+1][col] = this.decimalPipe.transform(100, '1.2-2')?.padStart(12,' ');              */
+   
   }     
 
 generarPDF():void{

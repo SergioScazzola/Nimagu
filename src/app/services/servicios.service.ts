@@ -29,6 +29,8 @@ import { saldoCta } from '../../entidades/saldoCta';
 import { movHac } from '../../entidades/movHac';
 import { hacienda } from '../../entidades/hacienda';
 import { campo } from '../../entidades/campo';
+import { gasto } from '../../entidades/gasto';
+import { producto, tipoprod } from '../../entidades/producto';
 
 @Injectable({
   providedIn: 'root',
@@ -164,12 +166,12 @@ public getMaxMovCuenta(idcuenta: number) {
 }
 
 // Movimientos en Cuentas Bancarias
-public getDetalleCuentaB(idcuenta:Number,fechi : string,fechf : string) {
+public getDetalleCuentaB(idcuenta:number,fechi : string,fechf : string) {
     return this.http.get<movcta[]>(this.apiUrl + `cuentasb/detalle?idcuenta=`+idcuenta+`&feci=`+fechi+`&fecf=`+fechf);
 }
 
 // Detalle de movimientos bancarios por tipo : "tipomov"
-public getSaldoEntreFechas(idcuenta:Number,fechi : string,fechf : string){
+public getSaldoEntreFechas(idcuenta:number,fechi : string,fechf : string){
     return this.http.get<saldoMov>(this.apiUrl + `cuentasb/saldoentrefec?idcuenta=`+idcuenta+`&feci=`+fechi+`&fecf=`+fechf);
 }
 public getDetalleCuentaXTipo(idcuenta:Number, tip1 : string, tip2 : string) {
@@ -358,7 +360,7 @@ public getTiposMovimiento() {
   public updateEndoso(endoso: endoso) {
     return this.http.put<endoso>(environment.apiUrl + `endoso/actualizar`, endoso);
   }
-/*    @DeleteMapping(value="/endoso/borrar", params={"idendoso","idcuenta","nromov"})  */
+
   public elimEndoso(idendo : number,idc : number, nrom : number) {
      const params = new HttpParams()
     .set('idendoso', idendo.toString())
@@ -476,6 +478,48 @@ public getTiposMovimiento() {
   public updateCampo(campo : campo) {
     return this.http.put<campo>(environment.apiUrl + `hacienda/campo/actualizar`, campo);
   }
+
+  // GASTOS,PRODUCTOS Y TIPOS PRODUCTOS
+  public getGastos() {
+    return this.http.get<gasto[]>(this.apiUrl + `gasto/gastos`);
+  }  
+    public getMaxGasto() {
+    return this.http.get<number>(this.apiUrl + `gasto/maxid` );
+  }
+   public agregarGasto( gastoo : gasto) {
+    return this.http.post<gasto>(this.apiUrl + `gasto/gasto/nuevo`, gastoo);
+  }
+   public updateGasto(gastoo : gasto) {
+    return this.http.put<gasto>(environment.apiUrl + `gasto/gasto/actualizar`, gastoo);
+  }
+   public leerGasto(idgasto : number) {
+    return this.http.get<gasto>(this.apiUrl + `gasto/gasto?id=` + idgasto);
+  }
+    public borrarGasto(idgasto: number) {
+    return this.http.delete(environment.apiUrl + `gasto/gasto/delete?id=`+idgasto);
+  }
+
+   public getProductos() {
+    return this.http.get<producto[]>(this.apiUrl + `prods/prods`);
+  }  
+    public getMaxProductos() {
+    return this.http.get<number>(this.apiUrl + `prods/maxid` );
+  }
+   public agregarProducto( prod : producto) {
+    return this.http.post<producto>(this.apiUrl + `prods/prod/nuevo`, prod);
+  }
+   public updateProducto(prod : producto) {
+    return this.http.put<producto>(environment.apiUrl + `prods/prod/actualizar`, prod);
+  }
+   public leerProducto(idprod : number) {
+    return this.http.get<producto>(this.apiUrl + `prods/prod?id=` + idprod);
+  }
+  public borrarProducto(idprod: number) {
+    return this.http.delete(environment.apiUrl + `prods/prod/delete?id=`+idprod);
+  }
+  public getTiposProducto() {
+    return this.http.get<tipoprod[]>(this.apiUrl + `prods/tiposprod`);
+  }  
 }
 
 
