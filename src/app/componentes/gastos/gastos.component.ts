@@ -141,6 +141,23 @@ ngOnInit(){
  }
 
  borrarGasto(idgasto : number){
+
+   var subs : Subscription;
+    var resu : number;
+     this.sinoServicio.abrirSiNoDialogo("Confirmación",
+                              "¿ Está seguro de quiere borrar el Gasto Nro.: "+idgasto+" ?")
+      .then(result => {
+       if (result) {                              
+         subs = this.servicio.borrarGasto(idgasto)
+          .pipe(finalize(()=> {         
+            subs.unsubscribe(); 
+            this.notiServicio.showNotification("Se ha borrado el Gasto Nro.: "+idgasto+" ("+resu+") ",
+                                            "Aceptar","mensaje",3000);
+                this.leerGastos()
+          }))
+          .subscribe((datas : any): void => {
+                resu = datas });
+      }})              
  }
 
  modificarGasto(idgasto : number){
@@ -164,7 +181,9 @@ ngOnInit(){
                 
                          }})
  }
- 
+ informeGastos(){
+    this.router.navigate(['/gastos',this.filtro,'infogastos']);
+ }
   volver(){
     this.router.navigate(['/ppal']);
  }

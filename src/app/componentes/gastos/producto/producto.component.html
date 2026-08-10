@@ -24,9 +24,9 @@
               <mat-label>Elija Tipo de Producto</mat-label>
               <mat-select formControlName="tipoprod">      
                   <mat-option *ngFor="let tpro of this.ctiposprod; let i = index"
-                    (click)="seleccionoTipoP(tpro.idtipo)"
+                    (click)="seleccionoTipoP(tpro.idtipoprod)"
                     [value]="tpro.nombre">
-                    {{ tpro.nombre }}
+                    {{ tpro.nombre+" - "+tpro.idtipoprod }}
                   </mat-option>            
               </mat-select>
             </mat-form-field>

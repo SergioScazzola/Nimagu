@@ -63,10 +63,9 @@ export class ProductoComponent {
 
              this.accion = "A";
              this.initFormulario();    
-             this.formProd.controls['idproducto'].setValue(this.data.idproducto);
-            
+             this.formProd.controls['idproducto'].setValue(this.data.idproducto);            
              this.formProd.controls['tipoprod'].setValue(this.ctiposprod[0].nombre);
-             this.seltprod  = this.ctiposprod[0].idtipo; 
+             this.seltprod  = this.ctiposprod[0].idtipoprod; 
              this.operacion = "Agregar Producto nro.: "+this.data.idproducto;      
             
              this.isloading = false;
@@ -85,6 +84,7 @@ export class ProductoComponent {
         })
   }
 seleccionoTipoP(tipopro : number){
+  
    this.seltprod = tipopro;
 }
   AgregarProducto(){

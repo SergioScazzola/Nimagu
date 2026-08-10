@@ -9,8 +9,14 @@
        <input #filtroInput (keyup)="aplicarFiltro(filtroInput.value)" placeholder="Filtrar por producto">
       </div>          
    
-      <div class="col-3">        
+      <div class="col">        
       </div>
+      <div class="col">
+        <button class="btn btn-secondary btn-sm" (click)="informeGastos()">
+          <i class="bi bi-plus-circle me-1"></i>Informes
+        </button>
+      </div>
+
       <div class="col">
         <button class="btn btn-primary btn-sm add-button" (click)="agregarGasto()">
           <i class="bi bi-plus-circle me-1"></i>Agregar
@@ -114,7 +120,7 @@
               mat-icon-button
               class="action-btn"
               title="borrar gasto"
-              (click)="borrarGasto(renGas.idGasto)"
+              (click)="borrarGasto(renGas.idgasto)"
             >
               <i class="bi bi-trash-fill"></i>
             </button>

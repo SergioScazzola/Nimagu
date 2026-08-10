@@ -12,6 +12,6 @@ export interface intProducto {
 }
 
 export interface tipoprod {
-    idtipo    : number;
-    nombre    : string;
+    idtipoprod    : number;
+    nombre        : string;
 }

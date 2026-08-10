@@ -173,8 +173,8 @@ prepararAlta(){
   this.formGas.controls['importe'].setValue(0);
   this.formGas.controls['observ'].setValue("");
 
-  this.provSel = 0; // indice de proveedor
-  this.prodSel = 0; // indice de producto
+  this.provSel = this.cproveedores[0].idProv; // nro de proveedor
+  this.prodSel = this.cproductos[0].idproducto; // nro de producto
   
 }
 prepararModi(){
@@ -188,6 +188,8 @@ prepararModi(){
   this.formGas.controls['precioun'].setValue(this.gastoo.precioun);
   this.formGas.controls['importe'].setValue(this.gastoo.importe);
   this.formGas.controls['observ'].setValue(this.gastoo.observ);
+  this.prodSel = this.gastoo.idproducto;
+  this.provSel = this.gastoo.idprov;
   setTimeout(() => { // formatea importes en campos numericos
        this.importes.forEach(i => i.refrescar());
   })
@@ -199,7 +201,7 @@ AgregarGasto(){
         fecha           : this.formGas.controls['fecha'].value,
         idproducto      : this.prodSel,
         nprod           : this.formGas.controls['nprod'].value,
-        idtipo          : 0,
+        idtipo          : this.cproductos[this.cproductos.findIndex(p=>p.idproducto==this.prodSel)].idtipo,
         ntipo           : this.formGas.controls['ntipo'].value,
         idprov          : this.provSel,        
         nprov           : this.formGas.controls['nprov'].value,
@@ -230,7 +232,7 @@ ModificarGasto(){
         fecha           : this.formGas.controls['fecha'].value,
         idproducto      : this.prodSel,
         nprod           : this.formGas.controls['nprod'].value,
-        idtipo          : 0,
+        idtipo          : this.cproductos[this.cproductos.findIndex(p=>p.idproducto==this.prodSel)].idtipo,
         ntipo           : this.formGas.controls['ntipo'].value,
         idprov          : this.provSel,        
         nprov           : this.formGas.controls['nprov'].value,
@@ -290,10 +292,18 @@ modPrecioUn(){
 }
 
 onSelectionChangeProveedor(event : any){
-
+  // guarda en provSel el id proveedor seleccionado
+   const indp   = this.cproveedores.findIndex(p=>p.nombre==event.value);
+   this.provSel = this.cproveedores[indp].idProv;
 }
 
 onSelectionChangeProducto(event : any){
+    // cambia el tipo de producto y guarda el idproducto en prodSel
+    const nomprod = event.value;
+    const indp = this.cproductos.findIndex(p=>p.nombre==nomprod);
+    this.prodSel = this.cproductos[indp].idproducto;    
+    this.formGas.controls['ntipo'].setValue(this.cproductos[indp].tipoprod);
+
 
 }
  redondearAdos(nro : number): number{  

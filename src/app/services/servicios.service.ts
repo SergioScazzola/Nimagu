@@ -483,6 +483,23 @@ public getTiposMovimiento() {
   public getGastos() {
     return this.http.get<gasto[]>(this.apiUrl + `gasto/gastos`);
   }  
+
+   public getGastosxFecha(fechi : string, fechf : string) {
+    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxfecha?feci=`+fechi+`&fecf=`+fechf);    
+  }  
+
+  public getGastosxProd(fechi : string, fechf : string) {
+    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxprod?feci=`+fechi+`&fecf=`+fechf);    
+  }  
+
+  public getGastosxTProd(fechi : string, fechf : string) {
+    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxtprod?feci=`+fechi+`&fecf=`+fechf);
+  }  
+
+  public getGastosxProv(fechi : string, fechf : string) {
+    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxprov?feci=`+fechi+`&fecf=`+fechf);
+  }  
+
     public getMaxGasto() {
     return this.http.get<number>(this.apiUrl + `gasto/maxid` );
   }
@@ -520,6 +537,9 @@ public getTiposMovimiento() {
   public getTiposProducto() {
     return this.http.get<tipoprod[]>(this.apiUrl + `prods/tiposprod`);
   }  
+
+
+ 
 }
 
 

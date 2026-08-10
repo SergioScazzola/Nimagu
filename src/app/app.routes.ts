@@ -17,6 +17,7 @@ import { RepocuentasComponent } from './componentes/cuentasb/repo-cuentas/repo-c
 import { HaciendaComponent } from './componentes/hacienda/hacienda.component';
 import { RepoHaciendaComponent } from './componentes/hacienda/repo-hacienda/repo-hacienda.component';
 import { GastosComponent } from './componentes/gastos/gastos.component';
+import { RepoGastosComponent } from './componentes/gastos/repo-gastos/repo-gastos.component';
 
 
 export const routes: Routes = [
@@ -51,7 +52,7 @@ export const routes: Routes = [
       { path: 'hacienda/:filtro', component: HaciendaComponent },  
       { path: 'hacienda/:filtro/infohacienda',component: RepoHaciendaComponent},
       { path: 'gastos/:filtro', component: GastosComponent },
-          
+      { path: 'gastos/:filtro/infogastos', component: RepoGastosComponent },    
     ],
   },
 

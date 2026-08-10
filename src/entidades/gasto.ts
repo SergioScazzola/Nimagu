@@ -1,6 +1,6 @@
 export interface gasto {
      idgasto        : number;
-     fecha          : Date;
+     fecha          : Date|null;
      idproducto     : number;
      nprod          : string;
      idtipo         : number;
