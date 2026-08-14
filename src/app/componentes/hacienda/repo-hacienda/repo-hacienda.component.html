@@ -44,6 +44,26 @@
             <i class="bi bi-plus-circle me-1"></i>Informe Resumido
           </button>
         </div> 
+
+        <div class="col-auto">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Elija un tipo de informe</mat-label>
+          <mat-select  (selectionChange)="onSelectionTipoInf($event)">                         
+                 @for (tipoi of this.totalesPor; let i=$index; track tipoi){
+                <mat-option [value]="i">                 
+                  {{ tipoi }}                 
+                </mat-option>
+                }
+          </mat-select>
+        </mat-form-field>
+      </div> 
+       <div class="col">
+        <button class="btn btn-primary btn-sm add-button" 
+                      [disabled]="tipoinf===undefined"
+                      (click)="desplegarInforme()">
+            Desplegar 
+        </button>
+      </div>    
         <div class="col-auto ms-auto">
           <button class="btn btn-secondary btn-sm add-button ms-auto" (click)="volver()">
              <i class="bi bi-arrow-left me-1"></i>Volver

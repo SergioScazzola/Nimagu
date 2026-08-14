@@ -38,7 +38,7 @@ export class GastosComponent {
   gastomod         : number;
   maxGasto         : number;
   maxProd          : number;
-  colGastos: string[] = ["fecha", "cantidad","nprod","ntipo","ncomp","precioun","tiva","importe","observ","M","B"];
+  colGastos: string[] = ["fecha", "cantidad","nprod","ntipo","nprov","ncomp","precioun","tiva","importe","observ","M","B"];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -78,7 +78,7 @@ ngOnInit(){
                        this.cantgastos = this.cgastos.length;
                        this.dataSource.data = this.cgastos;         
                        this.dataSource.filterPredicate = (dato : gasto, fil : string) => {
-                           return dato.nprod.toLowerCase().startsWith(fil);
+                           return dato.nprov.toLowerCase().startsWith(fil);
                                    };    
                        // Aplica filtro si hay uno
                        if (this.filtro!=='') {                                 

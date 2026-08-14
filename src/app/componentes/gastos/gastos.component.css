@@ -60,6 +60,11 @@
   width: 100%;
 }*/
 
+.tabla-fija {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .mat-mdc-header-row {
   background-color: #b6c1dd;
   height: 24px;
@@ -110,104 +115,91 @@
 
 .mat-column-fecha {
   /*padding-left: 10px !important;*/
-  width: 80px;
-  text-align: center;
+  width: 40px;
+  min-width: 50px;
+  max-width: 50px;
   white-space: nowrap;
-  overflow: visible;
 }
 
 
 .mat-column-cantidad {
-  padding-left: 0;
-  width: 80px;
-  text-align: center;
+ width: 40px;
+  min-width: 50px;
+  max-width: 50px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .mat-column-nprod
  {
-  padding-left: 0;
-  width: 200px;
-  text-align: left;
+ width: 100px;
+  min-width: 100px;
+  max-width: 100px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .mat-column-observ {
-  padding-left: 0;
-  width: 200px;
-  text-align: center;
+ width: 100px;
+  min-width: 100px;
+  max-width: 100px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.mat-column-nprov {
+ width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  white-space: nowrap;
 }
 .mat-column-ncomp{
-  padding-left: 0;
-  width: 80px;
-  text-align: center;
+ width: 50px;
+  min-width: 50px;
+  max-width: 50px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .mat-column-ntipo{
-  padding-left: 0;
-  width: 100px;
-  text-align: left;
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .mat-column-tiva{
-  padding-left: 0;
-  width: 30px;
-  text-align: center;
+ width: 20px;
+  min-width: 20px;
+  max-width: 20px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .mat-column-precioun,
  .mat-column-importe {
-  padding-left: 0;
-  width: 100px;
-  text-align: right;
+ width: 50px;
+  min-width: 50px;
+  max-width: 50px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* Estilos para columnas de acción M, B */
 .mat-column-M,
- .mat-column-B
- {
-  width: 50px !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
-  padding: 0 !important;
-  flex: 0 0 50px !important;
-  text-align: center !important;
-  overflow: visible !important;
+.mat-column-B {  
+  width: 10px;
+  text-align: center;  
 }
 
-/* Añadimos el centrado de texto */
+/* Añadimos el centrado de texto 
 .text-center {
   text-align: center !important;
   width: 100% !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-}
+}*/
 
-/* Botones de acción */
+/* Estilos para botones de acción */
 .action-btn {
   background-color: rgb(130, 130, 141) !important;
-  width: 32px !important;
-  height: 32px !important;
+  width: 24px !important;
+  height: 24px !important;
   padding: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -215,7 +207,6 @@
   color: white !important;
   border: none !important;
   border-radius: 2px !important;
-  margin: 0 auto !important;
 }
 
 .action-btn:hover {
@@ -224,7 +215,7 @@
 }
 
 .action-btn i {
-  font-size: 10px;
+  font-size: 14px;
 }
 
  /* Secciones fijas (superior e inferior) */
@@ -257,6 +248,9 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.izq {  
+  text-align : left
+}
 
 .centrado {
   text-align : center

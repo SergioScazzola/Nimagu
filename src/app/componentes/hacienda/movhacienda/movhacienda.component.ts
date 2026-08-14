@@ -15,6 +15,7 @@ import { campo } from '../../../../entidades/campo';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { tipomovH } from '../../../../entidades/tipomovH';
 
 @Component({
   selector: 'app-movhacienda',
@@ -36,7 +37,9 @@ export class MovhaciendaComponent {
   formMovH      : FormGroup; 
   movHacienda   : movHac;
   ctiposh       : hacienda[]=[];
+  ctipmovh      : tipomovH[]=[];
   ccampos       : campo[]=[];
+  ingegr        : string[]=["IN","EG"];
   operacion     : string ;  
   isloading     : boolean = true;
   selHacienda   : number=0;
@@ -57,9 +60,11 @@ export class MovhaciendaComponent {
        this.mostrarHora(); 
        forkJoin({
          tiposh   : this.servicio.getTiposHacienda(),
+         tiposmh  : this.servicio.getTiposMovHacienda(),
          camposs  : this.servicio.getCampos(),
           }).subscribe(res => {   
-            this.ctiposh    = res.tiposh; // tipos de hacienda y
+            this.ctiposh    = res.tiposh; // tipos de hacienda 
+            this.ctipmovh   = res.tiposmh; // tipos mov. hacienda
             this.ccampos    = res.camposs;// campos                                              
 
             if (this.ctiposh!==null &&this.ctiposh.length > 0) {
@@ -67,8 +72,9 @@ export class MovhaciendaComponent {
                  this.formMovH.controls['idmovh'].setValue(this.data.idmovh);
                  this.formMovH.controls['nhacienda'].setValue(this.ctiposh[0].nombre);
                  this.formMovH.controls['ncampo'].setValue(this.ccampos[0].nombre);
+                 this.formMovH.controls['tipomov'].setValue(this.ctipmovh[0].tipomov);
                  this.formMovH.controls['abrev'].setValue(this.ccampos[0].abrev);
-                 this.operacion = "Agregar Stock de Hacienda nro.: "+this.data.idmovh;       
+                 this.operacion = "Agregar Movimiento de Hacienda nro.: "+this.data.idmovh;       
                  this.isloading = false;
                  this.cdr.detectChanges()
                 } else {
@@ -81,10 +87,12 @@ export class MovhaciendaComponent {
         } else {  // Modifica movimiento de hacienda
           forkJoin({
             tiposh   : this.servicio.getTiposHacienda(),
+            tiposmh  : this.servicio.getTiposMovHacienda(),
             camposs  : this.servicio.getCampos(),
             movh     : this.servicio.leerMovHacienda(this.data.idmovh)
              }).subscribe(res => {
                 this.ctiposh     = res.tiposh; // tipos de hacienda y
+                this.ctipmovh   = res.tiposmh; // tipos mov. hacienda
                 this.ccampos     = res.camposs;// campos   
                 this.movHacienda = res.movh;               
                 
@@ -92,13 +100,16 @@ export class MovhaciendaComponent {
                 this.formMovH.controls['fecha'].setValue(this.movHacienda.fecha);
                 this.formMovH.controls['nhacienda'].setValue(this.movHacienda.nhacienda);
                 this.formMovH.controls['cantidad'].setValue(this.movHacienda.cantidad);
+                this.formMovH.controls['tipomov'].setValue(this.movHacienda.tipomov);
+                this.formMovH.controls['ineg'].setValue(this.movHacienda.ineg);
                 this.formMovH.controls['ncampo'].setValue(this.movHacienda.ncampo);
+                this.formMovH.controls['potrero'].setValue(this.movHacienda.potrero);
                 this.formMovH.controls['abrev'].setValue(this.movHacienda.abrev);
                 this.formMovH.controls['observ'].setValue(this.movHacienda.observ);
                 this.formMovH.controls['marca1'].setValue(this.movHacienda.marca1);
                 this.formMovH.controls['marca2'].setValue(this.movHacienda.marca2);
                 this.formMovH.controls['marca3'].setValue(this.movHacienda.marca3);
-                this.operacion = "Modificar Stock de Hacienda nro.: "+this.data.idmovh;       
+                this.operacion = "Modificar Movimiento de Hacienda nro.: "+this.data.idmovh;       
                 this.isloading = false;
                 this.cdr.detectChanges()
           })
@@ -111,7 +122,10 @@ export class MovhaciendaComponent {
           fecha           : [new Date(),[Validators.required]],    
           nhacienda       : ['',[Validators.required]],
           cantidad        : [0,[Validators.required,Validators.min(1)]],
+          tipomov         : [''],
+          ineg            : ['IN'],
           ncampo          : ['',[Validators.required]],
+          potrero         : [''],
           abrev           : [''],
           observ          : [''],
           marca1          : [0],
@@ -129,8 +143,11 @@ export class MovhaciendaComponent {
         idhacienda  : this.ctiposh[this.selHacienda].idhacienda,
         nhacienda   : this.formMovH.controls['nhacienda'].value,
         cantidad    : this.formMovH.controls['cantidad'].value,
+        tipomov     : this.formMovH.controls['tipomov'].value,
+        ineg        : this.formMovH.controls['ineg'].value,
         idcampo     : this.ccampos[this.selCampo].idcampo,
         ncampo      : this.formMovH.controls['ncampo'].value,
+        potrero     : this.formMovH.controls['potrero'].value,
         abrev       : this.ccampos[this.selCampo].abrev,
         observ      : this.formMovH.controls['observ'].value,
         marca1      : this.formMovH.controls['marca1'].value,
@@ -156,8 +173,11 @@ export class MovhaciendaComponent {
         idhacienda  : this.ctiposh[this.selHacienda].idhacienda,
         nhacienda   : this.formMovH.controls['nhacienda'].value,
         cantidad    : this.formMovH.controls['cantidad'].value,
+        tipomov     : this.formMovH.controls['tipomov'].value,
+        ineg        : this.formMovH.controls['ineg'].value,
         idcampo     : this.ccampos[this.selCampo].idcampo,
         ncampo      : this.formMovH.controls['ncampo'].value,
+        potrero     : this.formMovH.controls['potrero'].value,
         abrev       : this.ccampos[this.selCampo].abrev,
         observ      : this.formMovH.controls['observ'].value,
         marca1      : this.formMovH.controls['marca1'].value,

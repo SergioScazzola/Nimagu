@@ -4,13 +4,13 @@
     <!--form [formGroup]="formCli" class="row ml-3 mt-3 mr-10"-->     
      <form [formGroup]="formMovH" class="p-3">        
       <div class="row g-1 mb-1">
-        <div class="col-4">           
+        <div class="col-2">           
            <mat-form-field class="w-100" appearance="fill">
                  <mat-label>Nro</mat-label>
                  <input matInput [readonly]="true" formControlName="idmovh" style="text-align: center;">	
             </mat-form-field>    
         </div>
-        <div class="col-6 ms-auto">
+        <div class="col-4 ms-auto">
             <mat-form-field class="w-100" appearance="fill"> 
                 <input matInput [matDatepicker]="picker" 
                 (dateChange)="onFechaChange($event)"
@@ -22,14 +22,14 @@
             </mat-form-field >
         </div>
         </div>
-        <div class="row g-1 mb-1">
-         <div class="col-4">           
+        <div class="row justify-content-between g-1 mb-1">
+         <div class="col-2">           
            <mat-form-field class="w-100" appearance="fill">
                  <mat-label>Cantidad</mat-label>
                  <input matInput selecText formControlName="cantidad" style="text-align: right;">	
             </mat-form-field>    
         </div>
-        <div class="col-6 ms-auto">
+        <div class="col-4">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Tipo de Hacienda</mat-label>
               <mat-select formControlName="nhacienda"    
@@ -41,8 +41,21 @@
               </mat-select>
             </mat-form-field>
           </div>
+           <div class="col-4">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>Tipo de Movimiento</mat-label>
+              <mat-select formControlName="tipomov">      
+                  <mat-option *ngFor="let tmh of this.ctipmovh; let i = index"
+                    [value]="tmh.tipomov">
+                    {{ tmh.tipomov }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>
+           
       </div>   
        <div class="row g-1 mb-1">
+       
         <div class="col-5 ms-auto">
           <mat-checkbox 
             [checked]="formMovH.controls['marca1'].value!==0"
@@ -61,8 +74,19 @@
             </mat-checkbox>
         </div>
       </div>  
-       <div class="row g-1 mb-1">
-       <div class="col-5">
+      <div class="row justify-content-between g-1 mb-1"> 
+         <div class="col-2">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>In/Eg</mat-label>
+              <mat-select formControlName="ineg"    >      
+                  <mat-option *ngFor="let ie of this.ingegr; let i = index"
+                    [value]="ie">
+                    {{ ie }}
+                  </mat-option>            
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-5">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Campo</mat-label>
               <mat-select formControlName="ncampo"    
@@ -74,14 +98,21 @@
               </mat-select>
             </mat-form-field>
           </div>   
-           <div class="col-7">           
+           <div class="col-3">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Potrero</mat-label>
+                 <input matInput formControlName="potrero" style="text-align: left;">	
+            </mat-form-field>    
+           </div>             
+        </div>
+        <div class="row g-1 mb-1">
+          <div class="col-8">           
            <mat-form-field class="w-100" appearance="fill">
                  <mat-label>Observaciones</mat-label>
                  <input matInput formControlName="observ" style="text-align: left;">	
             </mat-form-field>    
-        </div>  
+          </div>  
         </div>
-       
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 
                        [disabled]="formMovH.invalid || data.accion != 'A'" 

@@ -47,6 +47,8 @@ export class RepoHaciendaComponent {
   public   hoy         : Date = new Date();
   public   cmovsHac    : movHac[]=[];
   public   mmatriz     : boolean = false;
+  public   totalesPor  : String[]=["Detallado x Fecha","Tipo de Hacienda","Campo"];
+  public   tipoinf     : number;
   campos               : string[]=[];
   hacienda             : string[]=[];
   datos                : any[][]=[];
@@ -56,6 +58,8 @@ export class RepoHaciendaComponent {
   Columnas             : string[] = [];
   filas                : any[];
   isloading            : boolean = true;
+  mostrardetalle       : boolean;
+  mostraragrup         : boolean;
 
   constructor(private servicio    : ServiciosService,
                private rutaActiva  : ActivatedRoute,
@@ -168,8 +172,14 @@ console.log('hacienda : '+this.hacienda);
        icampo     = this.campos.indexOf(this.cmovsHac[i].abrev);
        ihacienda  = this.hacienda.indexOf(this.cmovsHac[i].nhacienda);
        if (icampo!=-1 && ihacienda!=-1){
-          this.datos[ihacienda][icampo] += this.cmovsHac[i].cantidad;  
-          totcabezas += this.cmovsHac[i].cantidad;                      
+          if (this.cmovsHac[i].ineg=='IN'){
+             this.datos[ihacienda][icampo] += this.cmovsHac[i].cantidad;  
+             totcabezas += this.cmovsHac[i].cantidad;                      
+          } else {  // EG
+             this.datos[ihacienda][icampo] -= this.cmovsHac[i].cantidad;  
+             totcabezas -= this.cmovsHac[i].cantidad;                      
+          }
+          
        }
        i++      
  }
@@ -209,7 +219,12 @@ console.log('hacienda : '+this.hacienda);
     
    
   }     
+ onSelectionTipoInf(event : any){
+    this.tipoinf = event.value;
+    this.mmatriz  = false;
+    this.datos    =[];
 
+ }
 generarPDF():void{
   var  filas          : any[];
   const colspdf = [
@@ -320,8 +335,150 @@ generarPDF():void{
    doc.save('InformeMovHacienda'+this.datepipe.transform(fecha,'dd/MM/yyyy'));       
    
   }
+armarYTotalizarDetallado(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getMovsHaciendaxFecha(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.cmovsHac!=null && this.cmovsHac.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotales();
+            } else {
+                var dfec = this.datepipe.transform(this.formHac.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formHac.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServ.showNotification(
+                  'No existen registros de Mov.Hacienda desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.cmovsHac = data;
+               }); 
+}
+
+armarYTotalizarxThac(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getMovsHaciendaxFecha(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.cmovsHac!=null && this.cmovsHac.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotalesxThac();
+            } else {
+                var dfec = this.datepipe.transform(this.formHac.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formHac.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServ.showNotification(
+                  'No existen registros de Mov.Hacienda desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.cmovsHac = data;
+               }); 
+}
 
 
+armarYTotalizarxCampo(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getMovsHaciendaxCampo(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.cmovsHac!=null && this.cmovsHac.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotalesxCampo();
+            } else {
+                var dfec = this.datepipe.transform(this.formHac.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formHac.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServ.showNotification(
+                  'No existen registros de Mov.Hacienda desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.cmovsHac = data;
+               }); 
+}
+
+  // Calculo de totales cuando se elije informe detallado
+     calcTotales(){
+       var total    : number=0;
+       var totcant  : number=0;              
+       for (let i=0;i<this.cmovsHac.length;i++){         
+           total   += this.cmovsHac[i].cantidad;           
+           totcant ++;                              
+        }
+        var totales : movHac = {
+             idmovh      : 0,             
+             fecha       : null,
+             idhacienda  : 0,
+             nhacienda   : "** TOTAL ** ",
+             cantidad    : total,
+             tipomov     : " ",
+             ineg        : " ",
+             idcampo     : 0,
+             ncampo      : " ",
+             potrero     : " ",
+             abrev       : " ",
+             observ      : " ",
+             marca1      : 0,
+             marca2      : 0,
+             marca3      : 0
+          };
+          this.cmovsHac.push(totales);
+          
+     }
+desplegarInforme(){
+  switch (this.tipoinf) {
+   case 0 : { if (this.cmovsHac==null || this.cmovsHac.length==0){
+                 this.armarYTotalizarDetallado();
+              };
+              this.mostrardetalle = true;            
+              this.mostraragrup = false;
+              break;          
+          }
+  
+    case 1 : {
+      if (this.cmovsHac==null || this.cmovsHac.length==0){
+             this.armarYTotalizarXThac()
+          };
+          this.mostrardetalle = false;
+          this.mostraragrup   = true;
+          break;
+    } 
+    case 2 : {
+      if (this.cmovsHac==null || this.cmovsHac.length==0){
+             this.armarYTotalizarXCampo()
+          };
+          this.mostrardetalle = false;
+          this.mostraragrup   = true;
+          break;
+    } 
+  }
+}
    volver() {
   // Volver a la página de detalle de cuenta con filtro  
   this.router.navigate(['/hacienda',this.filter]);

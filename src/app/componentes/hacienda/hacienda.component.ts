@@ -41,7 +41,7 @@ export class HaciendaComponent {
   formMovH           : boolean;
   hacmod             : number;
 
-  colMovHac: string[] = ["idmovh","fecha","cantidad","nhacienda", "ncampo","observ","M","B"];
+  colMovHac: string[] = ["idmovh","fecha","cantidad","tipomov","ineg","nhacienda", "ncampo","potrero","observ","M","B"];
   
   dataSource = new MatTableDataSource<any>();
 

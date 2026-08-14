@@ -1,5 +1,5 @@
 
 // Archivo generado automáticamente, no editar manualmente
 export const environment = {
-  apiUrl: 'http://nimaguback-env.eba-rkrs3p7e.us-east-2.elasticbeanstalk.com/api/'
+  apiUrl: 'http://localhost:5000/api/'
 };

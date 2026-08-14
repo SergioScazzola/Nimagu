@@ -1,12 +1,15 @@
 export interface movHac {
    
    idmovh      : number;
-   fecha       : Date;
+   fecha       : Date|null;
    idhacienda  : number;
    nhacienda   : string;
    cantidad    : number;
+   tipomov     : string;
+   ineg        : string;
    idcampo     : number;
    ncampo      : string;
+   potrero     : string;
    abrev       : string;
    observ      : string;
    marca1      : number;

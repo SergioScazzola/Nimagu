@@ -31,6 +31,7 @@ import { hacienda } from '../../entidades/hacienda';
 import { campo } from '../../entidades/campo';
 import { gasto } from '../../entidades/gasto';
 import { producto, tipoprod } from '../../entidades/producto';
+import { tipomovH } from '../../entidades/tipomovH';
 
 @Injectable({
   providedIn: 'root',
@@ -421,10 +422,20 @@ public getTiposMovimiento() {
    public getMovsHacienda() {
     return this.http.get<movHac[]>(this.apiUrl + `hacienda/movhs`);
   }
+  
 
   public getMovsHaciendaxFecha(feci : String,fecf : String) {
     return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovh?feci=`+feci+`&fecf=`+fecf);
   }
+
+  public getMovsHaciendaxTipoHac(feci : String,fecf : String) {
+    return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovhxThac?feci=`+feci+`&fecf=`+fecf);
+  }
+
+  public getMovsHaciendaxCampo(feci : String,fecf : String) {
+    return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovhxCampo?feci=`+feci+`&fecf=`+fecf);
+  }
+
   
    public agregarMovHacienda( mhac : movHac) {
     return this.http.post<movHac>(this.apiUrl + `hacienda/movh/nuevo`, mhac);
@@ -436,12 +447,17 @@ public getTiposMovimiento() {
    public leerMovHacienda(idmovh : number) {
     return this.http.get<movHac>(this.apiUrl + `hacienda/movh?id=` + idmovh);
   }
-
   
   public borrarMovH(idmovh: number) {
     return this.http.delete(environment.apiUrl + `hacienda/movh/delete?id=`+idmovh);
   }
  
+  // Tipos de Mov. de Hacienda
+
+   public getTiposMovHacienda() {
+    return this.http.get<tipomovH[]>(this.apiUrl + `hacienda/tmovhs`);
+  }
+  
     public getMaxMovsH() {
     return this.http.get<number>(this.apiUrl + `hacienda/movh/maxid` );
   }
