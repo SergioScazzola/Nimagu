@@ -42,8 +42,9 @@ export class MovhaciendaComponent {
   ingegr        : string[]=["IN","EG"];
   operacion     : string ;  
   isloading     : boolean = true;
-  selHacienda   : number=0;
-  selCampo      : number=0;
+  selHacienda   : number=0;  // id tipo hacienda
+  selCampo      : number=0;  // id de campo
+  selAbrev      : string;    // abrev. segun campo
 
   constructor(public fb           : FormBuilder,
               public servicio     : ServiciosService,
@@ -74,7 +75,10 @@ export class MovhaciendaComponent {
                  this.formMovH.controls['ncampo'].setValue(this.ccampos[0].nombre);
                  this.formMovH.controls['tipomov'].setValue(this.ctipmovh[0].tipomov);
                  this.formMovH.controls['abrev'].setValue(this.ccampos[0].abrev);
-                 this.operacion = "Agregar Movimiento de Hacienda nro.: "+this.data.idmovh;       
+                 this.operacion = "Agregar Movimiento de Hacienda nro.: "+this.data.idmovh; 
+                 this.selHacienda = this.ctiposh[0].idhacienda;  
+                 this.selCampo    = this.ccampos[0].idcampo; 
+                 this.selAbrev    = this.ccampos[0].abrev;
                  this.isloading = false;
                  this.cdr.detectChanges()
                 } else {
@@ -109,6 +113,9 @@ export class MovhaciendaComponent {
                 this.formMovH.controls['marca1'].setValue(this.movHacienda.marca1);
                 this.formMovH.controls['marca2'].setValue(this.movHacienda.marca2);
                 this.formMovH.controls['marca3'].setValue(this.movHacienda.marca3);
+                this.selHacienda = this.movHacienda.idhacienda;
+                this.selCampo    = this.movHacienda.idcampo;
+                this.selAbrev    = this.movHacienda.abrev;
                 this.operacion = "Modificar Movimiento de Hacienda nro.: "+this.data.idmovh;       
                 this.isloading = false;
                 this.cdr.detectChanges()
@@ -140,15 +147,15 @@ export class MovhaciendaComponent {
      var mhac : movHac = {
         idmovh  : this.formMovH.controls['idmovh'].value,
         fecha   : this.formMovH.controls['fecha'].value,
-        idhacienda  : this.ctiposh[this.selHacienda].idhacienda,
+        idhacienda  : this.selHacienda,
         nhacienda   : this.formMovH.controls['nhacienda'].value,
         cantidad    : this.formMovH.controls['cantidad'].value,
         tipomov     : this.formMovH.controls['tipomov'].value,
         ineg        : this.formMovH.controls['ineg'].value,
-        idcampo     : this.ccampos[this.selCampo].idcampo,
+        idcampo     : this.selCampo,
         ncampo      : this.formMovH.controls['ncampo'].value,
         potrero     : this.formMovH.controls['potrero'].value,
-        abrev       : this.ccampos[this.selCampo].abrev,
+        abrev       : this.selAbrev,
         observ      : this.formMovH.controls['observ'].value,
         marca1      : this.formMovH.controls['marca1'].value,
         marca2      : this.formMovH.controls['marca2'].value,
@@ -170,15 +177,15 @@ export class MovhaciendaComponent {
      var mhac : movHac = {
         idmovh      : this.formMovH.controls['idmovh'].value,
         fecha       : this.formMovH.controls['fecha'].value,
-        idhacienda  : this.ctiposh[this.selHacienda].idhacienda,
+        idhacienda  : this.selHacienda,
         nhacienda   : this.formMovH.controls['nhacienda'].value,
         cantidad    : this.formMovH.controls['cantidad'].value,
         tipomov     : this.formMovH.controls['tipomov'].value,
         ineg        : this.formMovH.controls['ineg'].value,
-        idcampo     : this.ccampos[this.selCampo].idcampo,
+        idcampo     : this.selCampo,
         ncampo      : this.formMovH.controls['ncampo'].value,
         potrero     : this.formMovH.controls['potrero'].value,
-        abrev       : this.ccampos[this.selCampo].abrev,
+        abrev       : this.selAbrev,
         observ      : this.formMovH.controls['observ'].value,
         marca1      : this.formMovH.controls['marca1'].value,
         marca2      : this.formMovH.controls['marca2'].value,
@@ -228,7 +235,7 @@ export class MovhaciendaComponent {
   }) 
   }
 
-  marcaFila1(checked : boolean){
+marcaFila1(checked : boolean){
 if (checked){
   this.formMovH.controls['marca1'].setValue(1)
 } else {
@@ -236,7 +243,7 @@ if (checked){
 }
 }
 
-  marcaFila2(checked : boolean){
+marcaFila2(checked : boolean){
 if (checked){
   this.formMovH.controls['marca2'].setValue(1)
 } else {
@@ -244,7 +251,7 @@ if (checked){
 }
 }
 
-  marcaFila3(checked : boolean){
+marcaFila3(checked : boolean){
 if (checked){
   this.formMovH.controls['marca3'].setValue(1)
 } else {
@@ -252,14 +259,20 @@ if (checked){
 }
 }
 
+
+
+
 onSelectionChangeHacienda(event: any) {
 
-    this.selHacienda = this.ctiposh.findIndex(h => h.nombre === event.value);
+    var indh = this.ctiposh.findIndex(h => h.nombre === event.value);
+    this.selHacienda = this.ctiposh[indh].idhacienda;
     console.log("Hacienda seleccionada: "+this.selHacienda+" - "+this.ctiposh[this.selHacienda].nombre);
 }
 
 onSelectionChangeCampo(event: any) {
-   this.selCampo = this.ccampos.findIndex(c => c.nombre === event.value);
+   var indc = this.ccampos.findIndex(c => c.nombre === event.value);
+   this.selCampo = this.ccampos[indc].idcampo;
+   this.selAbrev = this.ccampos[indc].abrev;
    console.log("Campo seleccionado: "+this.selCampo+" - "+this.ccampos[this.selCampo].nombre);
 }
 

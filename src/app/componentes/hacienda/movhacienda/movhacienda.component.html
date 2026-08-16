@@ -51,29 +51,27 @@
                   </mat-option>            
               </mat-select>
             </mat-form-field>
-          </div>
-           
+          </div>           
       </div>   
-       <div class="row g-1 mb-1">
-       
+      <div class="row g-1 mb-1">
         <div class="col-5 ms-auto">
           <mat-checkbox 
             [checked]="formMovH.controls['marca1'].value!==0"
             (change)="marcaFila1($event.checked)">
               Marca1
           </mat-checkbox>
-         <mat-checkbox 
-           [checked]="formMovH.controls['marca2'].value!==0"
-           (change)="marcaFila2($event.checked)">
+          <mat-checkbox 
+            [checked]="formMovH.controls['marca2'].value!==0"
+            (change)="marcaFila2($event.checked)">
               Marca2
-            </mat-checkbox>
-         <mat-checkbox 
-           [checked]="formMovH.controls['marca3'].value!==0"
-           (change)="marcaFila3($event.checked)">
+          </mat-checkbox>
+          <mat-checkbox 
+            [checked]="formMovH.controls['marca3'].value!==0"
+            (change)="marcaFila3($event.checked)">
               Marca3
-            </mat-checkbox>
+          </mat-checkbox>
         </div>
-      </div>  
+      </div>
       <div class="row justify-content-between g-1 mb-1"> 
          <div class="col-2">
             <mat-form-field class="w-100" appearance="fill">
@@ -99,7 +97,7 @@
             </mat-form-field>
           </div>   
            <div class="col-3">           
-           <mat-form-field class="w-100" appearance="fill">
+             <mat-form-field class="w-100" appearance="fill">
                  <mat-label>Potrero</mat-label>
                  <input matInput formControlName="potrero" style="text-align: left;">	
             </mat-form-field>    
@@ -112,7 +110,7 @@
                  <input matInput formControlName="observ" style="text-align: left;">	
             </mat-form-field>    
           </div>  
-        </div>
+        </div>  
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 
                        [disabled]="formMovH.invalid || data.accion != 'A'" 

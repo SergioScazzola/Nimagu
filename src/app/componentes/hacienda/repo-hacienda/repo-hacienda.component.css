@@ -35,25 +35,41 @@
   max-width: 80vw;      /* opcional */
 }
 
+.tabla-fija {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .tabla-matriz th,
 .tabla-matriz td {
   padding: 4px 8px;     /* reduce el tamaño visual */
   font-size: 16px;      /* texto más chico */
 }
-/* Contenedor de la tabla */
+/* Contenedor de la tabla 
 .table-container {
   flex: 1;
   overflow: auto;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
+}*/
 
+.table-container {
+  flex: 1;
+  height: 350px;
+  overflow-y: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 /* Estilos de la tabla */
 .mat-mdc-table {
   table-layout: fixed;
   width: 100%;
 }
-
+/* Estilos para las celdas */
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  padding: 0 8px;
+}
 .mat-mdc-header-row {
   background-color: #b6c1dd;
   height: 24px;
@@ -63,7 +79,78 @@
   top: 0;
   z-index: 10;
 }
+.mat-mdc-row {
+  height: auto;
+  min-height: 10px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+.mat-mdc-header-cell {
+  white-space: nowrap;
+  overflow: visible !important;
+  text-overflow: clip;
+  padding: 0 8px;
+}
 
+
+
+.mat-column-fecha {
+  flex: 0 0 50px;   /* ancho fijo razonable */
+  width: 50px;
+  white-space: nowrap;
+  text-align: left;
+}
+.mat-column-cantidad {
+  flex: 0 0 30px;   /* ancho fijo razonable */
+  width: 30px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.mat-column-nhacienda {
+  flex: 0 0 50px;   /* ancho fijo razonable */
+  width: 50px;
+  white-space: nowrap;
+  text-align: left;
+}
+.mat-column-tipomov {
+   flex: 0 0 50px;   /* ancho fijo razonable */
+  width: 50px;
+  white-space: nowrap;
+  text-align: left;
+}
+.mat-column-abrev {
+    flex: 0 0 20px;   /* ancho fijo razonable */
+  width: 20px;
+  white-space: nowrap;
+  text-align: left;
+}
+.mat-column-ncampo {
+    flex: 0 0 50px;   /* ancho fijo razonable */
+  width: 50px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.mat-column-ineg {
+  flex: 0 0 20px;   /* ancho fijo razonable */
+  width: 20px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.mat-column-potrero {
+  flex: 0 0 50px;   /* ancho fijo razonable */
+  width: 50px;
+  white-space: nowrap;
+  text-align: left;
+}
+.mat-column-observ {
+  flex: 0 0 100px;   /* ancho fijo razonable */
+  width: 100px;
+  white-space: nowrap;
+  text-align: left;
+}
 .centrado {
   text-align: center;
 }

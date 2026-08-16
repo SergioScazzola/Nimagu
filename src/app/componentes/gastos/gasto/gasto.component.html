@@ -113,6 +113,13 @@
                   <input matInput formControlName="observ">	
                  </mat-form-field>                   
             </div> 
+            <div class="col-4">
+              <mat-checkbox 
+                [checked]="formGas.controls['marca1'].value!==0"
+                (change)="marcaFila($event.checked)">
+                   Marca
+              </mat-checkbox>
+            </div>
            </div>
         
            <div class="botonera">            

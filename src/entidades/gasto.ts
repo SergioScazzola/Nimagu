@@ -12,6 +12,7 @@ export interface gasto {
      precioun       : number;
      tiva           : number;
      importe        : number;
+     marca1         : number;
      observ         : string;
 }
 

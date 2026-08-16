@@ -25,6 +25,7 @@ import { compVtaDTO, intCompVta } from '../../../../entidades/compVta';
 import { proveedorDTO } from '../../../../entidades/proveedorDTO';
 import { producto, tipoprod } from '../../../../entidades/producto';
 import { gasto, intGasto } from '../../../../entidades/gasto';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -47,6 +48,7 @@ export const DATE_FORMATS : MatDateFormats = {
     ReactiveFormsModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCheckboxModule,
     MatIconModule,
     CommonModule,
     FormsModule,
@@ -159,6 +161,7 @@ importeformat   : string = "";
       precioun      : [0,[Validators.required,Validators.min(1)]],
       tiva          : [21,[Validators.required,Validators.min(1)]],
       importe       : [''],    
+      marca1        : [0],
       observ        : ['']
     })    
   }
@@ -187,6 +190,7 @@ prepararModi(){
   this.formGas.controls['ncomp'].setValue(this.gastoo.ncomp);
   this.formGas.controls['precioun'].setValue(this.gastoo.precioun);
   this.formGas.controls['importe'].setValue(this.gastoo.importe);
+  this.formGas.controls['marca1'].setValue(this.gastoo.marca1);
   this.formGas.controls['observ'].setValue(this.gastoo.observ);
   this.prodSel = this.gastoo.idproducto;
   this.provSel = this.gastoo.idprov;
@@ -209,7 +213,8 @@ AgregarGasto(){
         cantidad        : this.formGas.controls['cantidad'].value,        
         precioun        : this.formGas.controls['precioun'].value,
         tiva            : this.formGas.controls['tiva'].value,
-        importe         : this.formGas.controls['importe'].value,        
+        importe         : this.formGas.controls['importe'].value,     
+        marca1          : this.formGas.controls['marca1'].value,     
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -240,7 +245,8 @@ ModificarGasto(){
         cantidad        : this.formGas.controls['cantidad'].value,        
         precioun        : this.formGas.controls['precioun'].value,
         tiva            : this.formGas.controls['tiva'].value,
-        importe         : this.formGas.controls['importe'].value,        
+        importe         : this.formGas.controls['importe'].value,    
+        marca1          : this.formGas.controls['marca1'].value,    
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -290,7 +296,13 @@ modPrecioUn(){
    var importe = this.redondearAdos(preciva*cant);
    this.formGas.controls['importe'].setValue(importe);
 }
-
+marcaFila(checked : boolean){
+if (checked){
+  this.formGas.controls['marca1'].setValue(1)
+} else {
+  this.formGas.controls['marca1'].setValue(0)
+}
+}
 onSelectionChangeProveedor(event : any){
   // guarda en provSel el id proveedor seleccionado
    const indp   = this.cproveedores.findIndex(p=>p.nombre==event.value);

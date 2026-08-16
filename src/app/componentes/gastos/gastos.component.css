@@ -124,8 +124,9 @@
 
 .mat-column-cantidad {
  width: 40px;
-  min-width: 50px;
-  max-width: 50px;
+  min-width: 40px;
+  max-width: 40px;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -151,9 +152,9 @@
   white-space: nowrap;
 }
 .mat-column-ncomp{
- width: 50px;
-  min-width: 50px;
-  max-width: 50px;
+ width: 40px;
+  min-width: 40px;
+  max-width: 40px;
   white-space: nowrap;
 }
 
@@ -165,9 +166,9 @@
 }
 
 .mat-column-tiva{
- width: 20px;
-  min-width: 20px;
-  max-width: 20px;
+ width: 30px;
+  min-width: 30px;
+  max-width: 30px;
   white-space: nowrap;
 }
 
@@ -176,6 +177,7 @@
  width: 50px;
   min-width: 50px;
   max-width: 50px;
+  text-align: right;
   white-space: nowrap;
 }
 
@@ -254,4 +256,10 @@
 
 .centrado {
   text-align : center
+}
+
+.celda-marca1 {
+  background-color: yellow;
+  color : black;
+  font-weight: 400;
 }
