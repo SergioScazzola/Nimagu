@@ -72,7 +72,7 @@ proxGas         : number;
 cproductos      : producto[]=[];
 ctiposprod      : tipoprod[]=[];
 cproveedores    : proveedorDTO[]=[];
-
+cfpago          : string[]=["CDO","CC"] ;  
 gastoo          : gasto;
 prodSel         : number;
 tprodSel        : string;
@@ -159,9 +159,10 @@ importeformat   : string = "";
       nprov         : [''],              
       ncomp         : [''],     
       precioun      : [0,[Validators.required,Validators.min(1)]],
-      tiva          : [21,[Validators.required,Validators.min(1)]],
+      tiva          : [21],
       importe       : [''],    
       marca1        : [0],
+      fpago         : ['CDO'],
       observ        : ['']
     })    
   }
@@ -173,7 +174,7 @@ prepararAlta(){
   this.formGas.controls['ntipo'].setValue(this.cproductos[0].tipoprod);
   this.formGas.controls['nprov'].setValue(this.cproveedores[0].nombre);
   this.formGas.controls['precioun'].setValue(0);
-  this.formGas.controls['importe'].setValue(0);
+  this.formGas.controls['importe'].setValue(0);  
   this.formGas.controls['observ'].setValue("");
 
   this.provSel = this.cproveedores[0].idProv; // nro de proveedor
@@ -190,6 +191,7 @@ prepararModi(){
   this.formGas.controls['ncomp'].setValue(this.gastoo.ncomp);
   this.formGas.controls['precioun'].setValue(this.gastoo.precioun);
   this.formGas.controls['importe'].setValue(this.gastoo.importe);
+  this.formGas.controls['tiva'].setValue(this.gastoo.tiva);
   this.formGas.controls['marca1'].setValue(this.gastoo.marca1);
   this.formGas.controls['observ'].setValue(this.gastoo.observ);
   this.prodSel = this.gastoo.idproducto;
@@ -215,6 +217,7 @@ AgregarGasto(){
         tiva            : this.formGas.controls['tiva'].value,
         importe         : this.formGas.controls['importe'].value,     
         marca1          : this.formGas.controls['marca1'].value,     
+        fpago           : this.formGas.controls['fpago'].value,
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -247,6 +250,7 @@ ModificarGasto(){
         tiva            : this.formGas.controls['tiva'].value,
         importe         : this.formGas.controls['importe'].value,    
         marca1          : this.formGas.controls['marca1'].value,    
+        fpago           : this.formGas.controls['fpago'].value,    
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                

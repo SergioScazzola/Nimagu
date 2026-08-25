@@ -13,6 +13,7 @@ export interface gasto {
      tiva           : number;
      importe        : number;
      marca1         : number;
+     fpago          : string;
      observ         : string;
 }
 

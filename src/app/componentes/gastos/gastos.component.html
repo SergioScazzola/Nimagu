@@ -86,7 +86,7 @@
       </ng-container>
       <!-- Columna tiva -->
       <ng-container matColumnDef="tiva">
-        <th mat-header-cell *matHeaderCellDef class="izq">T.Iva</th>
+        <th mat-header-cell *matHeaderCellDef class="centrado">T.Iva</th>
         <td mat-cell *matCellDef="let renGas">{{ renGas.tiva | number:'1.2-2'}}</td>
       </ng-container>
 
@@ -97,7 +97,11 @@
 
         </td>
       </ng-container>
-
+      <!-- Columna fpago -->
+      <ng-container matColumnDef="fpago">
+        <th mat-header-cell *matHeaderCellDef>FPag</th>
+        <td mat-cell *matCellDef="let renGas">{{ renGas.fpago }}</td>
+      </ng-container>
        <!-- Columna observ -->
       <ng-container matColumnDef="observ">
         <th mat-header-cell *matHeaderCellDef>Observaciones</th>

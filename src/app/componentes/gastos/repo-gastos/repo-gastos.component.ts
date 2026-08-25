@@ -357,6 +357,7 @@ armarYTotalizarXProveedor(){
              tiva        : 0,
              importe     : total,      
              marca1      : 0,       
+             fpago       : " ",
              observ      : " ",
           };
           this.cgastos.push(totales);
@@ -393,6 +394,7 @@ calcTotalesXProducto(){  // Totalizar x Producto
                 tiva      : this.cgastos[i].tiva,
                 importe   : this.cgastos[i].importe,    
                 marca1    : 0,         
+                fpago   : this.cgastos[i].fpago,    
                 observ    : this.cgastos[i].observ,
               };
               this.cgasagrup.push(item);                   
@@ -415,8 +417,9 @@ calcTotalesXProducto(){  // Totalizar x Producto
              precioun    : 0,
              tiva        : 0,
              importe     : totprod,      
-             marca1      : 0,     
-             observ    : " ",
+             marca1      : 0,  
+             fpago       : " ",   
+             observ      : " ",
            };
            this.cgasagrup.push(subtprod);
            totprod       = 0;
@@ -438,6 +441,7 @@ calcTotalesXProducto(){  // Totalizar x Producto
              tiva        : 0,
              importe     : total,     
              marca1      : 0,        
+             fpago       : " ",
              observ      : " ",
           };
           this.cgasagrup.push(totales);
@@ -474,6 +478,7 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
                 tiva      : this.cgastos[i].tiva,
                 importe   : this.cgastos[i].importe,    
                 marca1    : this.cgastos[i].marca1,             
+                fpago     : this.cgastos[i].fpago,             
                 observ    : this.cgastos[i].observ,
               };
               this.cgasagrup.push(item);                   
@@ -497,6 +502,7 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
              tiva        : 0,
              importe     : tottprod,          
              marca1      : 0,   
+             fpago       : " ",  
              observ    : " ",
            };
            this.cgasagrup.push(subttprod);
@@ -518,7 +524,8 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
              precioun    : 0,
              tiva        : 0,
              importe     : total,     
-             marca1      : 0,        
+             marca1      : 0,    
+             fpago       : " ",      
              observ      : " ",
           };
           this.cgasagrup.push(totales);
@@ -554,7 +561,8 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
                 precioun  : this.cgastos[i].precioun,
                 tiva      : this.cgastos[i].tiva,
                 importe   : this.cgastos[i].importe,     
-                marca1    : this.cgastos[i].marca1,     
+                marca1    : this.cgastos[i].marca1,    
+                fpago     : this.cgastos[i].fpago,    
                 observ    : this.cgastos[i].observ,
               };
               this.cgasagrup.push(item);                   
@@ -578,6 +586,7 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
              tiva        : 0,
              importe     : totprov,             
              marca1      : 0,
+             fpago       : " ",  
              observ      : " ",
            };
            this.cgasagrup.push(subtprov);
@@ -599,7 +608,8 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
              precioun    : 0,
              tiva        : 0,
              importe     : total,    
-             marca1      : 0,         
+             marca1      : 0,       
+             fpago       : " ",  
              observ      : " ",
           };
           this.cgasagrup.push(totales);}

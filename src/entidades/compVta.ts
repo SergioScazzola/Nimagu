@@ -12,6 +12,7 @@ export interface compVtaDTO {
     preunit   : number;
     importe   : number;
     proced    : string;
+    marca1    : number;
     observ    : string;
 }
 

@@ -276,7 +276,7 @@ armarYTotalizarXCYV(){
      { header: 'Promedio', dataKey: 'promedio' },
      { header: 'Pre.Unit', dataKey: 'preunit' },
      { header: 'Importe', dataKey: 'importe' },
-     { header: 'Proced.', dataKey: 'proced' },
+     { header: 'Proced.', dataKey: 'proced' },     
      { header: 'Observaciones', dataKey: 'observ' }
    ];
                 
@@ -443,6 +443,7 @@ calcTotalesXCliProv(){  // Totalizar x cliente/Proveedor
              preunit   : this.ccomvtas[i].preunit,
              importe   : this.ccomvtas[i].importe,
              proced    : this.ccomvtas[i].proced,
+             marca1    : this.ccomvtas[i].marca1,
              observ    : this.ccomvtas[i].observ,
            };
            this.ccyvagrup.push(item);
@@ -466,6 +467,7 @@ calcTotalesXCliProv(){  // Totalizar x cliente/Proveedor
              preunit   : 0,
              importe   : totcp,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
            };
            this.ccyvagrup.push(subtcp);
@@ -487,6 +489,7 @@ calcTotalesXCliProv(){  // Totalizar x cliente/Proveedor
              preunit   : 0,
              importe   : total,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
            };
         this.ccyvagrup.push(totales);
@@ -526,6 +529,7 @@ calcTotalesXCategoria(){  // Totalizar x Categoria
              preunit   : this.ccomvtas[i].preunit,
              importe   : this.ccomvtas[i].importe,
              proced    : this.ccomvtas[i].proced,
+             marca1    : this.ccomvtas[i].marca1,
              observ    : this.ccomvtas[i].observ,
            };
            this.ccyvagrup.push(item);
@@ -549,6 +553,7 @@ calcTotalesXCategoria(){  // Totalizar x Categoria
              preunit   : 0,
              importe   : totcat,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
            };
            this.ccyvagrup.push(subtcp);
@@ -570,6 +575,7 @@ calcTotalesXCategoria(){  // Totalizar x Categoria
              preunit   : 0,
              importe   : total,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
            };
         this.ccyvagrup.push(totales);
@@ -610,6 +616,7 @@ calcTotalesXProcedencia(){  // Totalizar x Procedencia
              preunit   : this.ccomvtas[i].preunit,
              importe   : this.ccomvtas[i].importe,
              proced    : this.ccomvtas[i].proced,
+             marca1    : this.ccomvtas[i].marca1,
              observ    : this.ccomvtas[i].observ,
            };
            this.ccyvagrup.push(item);
@@ -633,6 +640,7 @@ calcTotalesXProcedencia(){  // Totalizar x Procedencia
              preunit   : 0,
              importe   : totproc,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
            };
            this.ccyvagrup.push(subtcp);
@@ -654,6 +662,7 @@ calcTotalesXProcedencia(){  // Totalizar x Procedencia
              preunit   : 0,
              importe   : total,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
            };
         this.ccyvagrup.push(totales);
@@ -693,6 +702,7 @@ calcTotalesXCYV(){  // Totalizar x Compra y Venta
              preunit   : this.ccomvtas[i].preunit,
              importe   : this.ccomvtas[i].importe,
              proced    : this.ccomvtas[i].proced,
+             marca1    : this.ccomvtas[i].marca1,
              observ    : this.ccomvtas[i].observ,
            };
            this.ccyvagrup.push(item);
@@ -716,6 +726,7 @@ calcTotalesXCYV(){  // Totalizar x Compra y Venta
              preunit   : 0,
              importe   : totcv,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+cantventas+" Compras : "+cantcompras,
            };
            this.ccyvagrup.push(subtcp);
@@ -737,6 +748,7 @@ calcTotalesXCYV(){  // Totalizar x Compra y Venta
              preunit   : 0,
              importe   : total,
              proced    : " ",
+             marca1    : 0,
              observ    : "Ventas : "+totvtas+" Compras : "+totcomp,
            };
         this.ccyvagrup.push(totales);

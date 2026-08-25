@@ -63,7 +63,8 @@
       <!-- Columna nprovcli -->
       <ng-container matColumnDef="nprovcli">
         <th mat-header-cell *matHeaderCellDef>Cliente/Proveedor</th>
-        <td mat-cell *matCellDef="let renCli">{{ renCli.nprovcli }}</td>
+        <td mat-cell *matCellDef="let renCV" [ngClass]="{'celda-marca1': renCV.marca1!=0}">{{ renCV.nprovcli }}          
+        </td>
       </ng-container>
 
       <!-- Columna nroliq -->

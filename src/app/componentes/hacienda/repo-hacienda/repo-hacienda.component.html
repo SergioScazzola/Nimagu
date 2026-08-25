@@ -41,7 +41,7 @@
         </div>       
         <div class="col-auto">
         <mat-form-field class="w-100" appearance="fill">
-          <mat-label>Elija un tipo de informe</mat-label>
+          <mat-label>Tipo de informe</mat-label>
           <mat-select  (selectionChange)="onSelectionTipoInf($event)">                         
                  @for (tipoi of this.totalesPor; let i=$index; track tipoi){
                 <mat-option [value]="i">                 
@@ -77,11 +77,8 @@
         <th mat-header-cell *matHeaderCellDef class="centrado">Fecha</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.fecha | date : "dd/MM/yyyy" }}</td>
       </ng-container>
-      <ng-container matColumnDef="cantidad">
-        <th mat-header-cell *matHeaderCellDef class="centrado">Cant.</th>
-        <td mat-cell *matCellDef="let renInfo">{{ renInfo.cantidad }}</td>
-      </ng-container>
-      <ng-container matColumnDef="nhacienda">
+
+       <ng-container matColumnDef="nhacienda">
         <th mat-header-cell *matHeaderCellDef class="centrado">Tipo Hacienda</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.nhacienda }}</td>
       </ng-container>
@@ -89,6 +86,14 @@
         <th mat-header-cell *matHeaderCellDef>T.Movimiento</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.tipomov }}</td>
       </ng-container>
+      <ng-container matColumnDef="ineg">
+        <th mat-header-cell *matHeaderCellDef>I/E</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ineg }}</td>
+      </ng-container>
+      <ng-container matColumnDef="cantidad">
+        <th mat-header-cell *matHeaderCellDef class="centrado">Cant.</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.cantidad }}</td>
+      </ng-container>                
       <ng-container matColumnDef="ncampo">
         <th mat-header-cell *matHeaderCellDef class="centrado">Campo</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.ncampo }}</td>
@@ -109,8 +114,8 @@
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.observ }}</td>
       </ng-container>
         <!-- Definición de filas -->
-      <tr mat-header-row *matHeaderRowDef="colHacienda; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; let index = index; columns: colHacienda"
+      <tr mat-header-row *matHeaderRowDef="colHacH; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; let index = index; columns: colHacH"
                 [ngClass]="{'fila-totales': cmovsHac[index].nhacienda.includes('TOTA')}"></tr>
     </table>
    
@@ -136,6 +141,10 @@
       <ng-container matColumnDef="tipomov">
         <th mat-header-cell *matHeaderCellDef>T.Movimiento</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.tipomov }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ineg">
+        <th mat-header-cell *matHeaderCellDef>I/E</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ineg }}</td>
       </ng-container>
       <ng-container matColumnDef="cantidad">
         <th mat-header-cell *matHeaderCellDef class="centrado">Cant.</th>
@@ -186,6 +195,10 @@
       <ng-container matColumnDef="tipomov">
         <th mat-header-cell *matHeaderCellDef>T.Movimiento</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.tipomov }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ineg">
+        <th mat-header-cell *matHeaderCellDef>I/E</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.ineg }}</td>
       </ng-container>
       <ng-container matColumnDef="cantidad">
         <th mat-header-cell *matHeaderCellDef class="centrado">Cant.</th>

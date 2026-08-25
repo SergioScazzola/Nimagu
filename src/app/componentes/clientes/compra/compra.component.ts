@@ -23,6 +23,7 @@ import { categoria } from '../../../../entidades/categoria';
 import { procedencia } from '../../../../entidades/procedencia';
 import { compVtaDTO, intCompVta } from '../../../../entidades/compVta';
 import { proveedorDTO } from '../../../../entidades/proveedorDTO';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -44,6 +45,7 @@ export const DATE_FORMATS : MatDateFormats = {
     MatInputModule,
     ReactiveFormsModule,
     MatDatepickerModule,
+    MatCheckboxModule,
     MatNativeDateModule,
     MatIconModule,
     CommonModule,
@@ -152,6 +154,7 @@ importeformat   : string = "";
       preunit       : [0],
       importe       : [0],
       proced        : [''],
+      marca1        : [0],
       observ        : ['']
     })    
   }
@@ -179,6 +182,7 @@ importeformat   : string = "";
     this.formCom.controls['preunit'].setValue(this.compraa.preunit);
     this.formCom.controls['importe'].setValue(this.compraa.importe);
     this.formCom.controls['proced'].setValue(this.compraa.proced);
+    this.formCom.controls['marca1'].setValue(this.compraa.marca1);
     this.formCom.controls['observ'].setValue(this.compraa.observ);
 
     setTimeout(() => { // formatea importes en campos numericos
@@ -236,6 +240,7 @@ importeformat   : string = "";
         preunit         : this.formCom.controls['preunit'].value,
         importe         : this.formCom.controls['importe'].value,
         proced          : this.formCom.controls['proced'].value,       
+        marca1          : this.formCom.controls['marca1'].value,
         observ          : this.formCom.controls['observ'].value,
     }
     console.log("compraaaaa : "+JSON.stringify(compra));                
@@ -249,7 +254,7 @@ importeformat   : string = "";
                                     "Aceptar","mensaje",500);                          
                this.dialogRef.close({ clicked : "Alta"})
                 }))                  
-           .subscribe((data : any): void => {});   
+           .subscribe((data : any): void => {resu=data});   
    
   }
 
@@ -268,6 +273,7 @@ importeformat   : string = "";
         preunit         : this.formCom.controls['preunit'].value,
         importe         : this.formCom.controls['importe'].value,
         proced          : this.formCom.controls['proced'].value,       
+        marca1          : this.formCom.controls['marca1'].value,       
         observ          : this.formCom.controls['observ'].value,
     }
     console.log("Ventaaaaa : "+JSON.stringify(compra));                
@@ -281,7 +287,7 @@ importeformat   : string = "";
                                     "Aceptar","mensaje",500);                          
                this.dialogRef.close({ clicked : "Modi"})
                 }))                  
-           .subscribe((data : any): void => {});   
+           .subscribe((data : any): void => {resu=data});   
    
 
   }
@@ -345,5 +351,13 @@ modPrecioUn(){ // recalcula importe
   const preun   = this.formCom.controls['preunit'].value;
   const impo    = this.redondearAdos(preun * totalk);
   this.formCom.controls['importe'].setValue(impo);
+}
+
+marcaFila(checked : boolean){
+if (checked){
+  this.formCom.controls['marca1'].setValue(1)
+} else {
+  this.formCom.controls['marca1'].setValue(0)
+}
 }
 }

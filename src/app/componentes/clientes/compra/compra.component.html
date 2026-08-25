@@ -115,12 +115,19 @@
               </mat-select>
             </mat-form-field>                
             </div> 
-            <div class="col-8">
+            <div class="col-6">
                 <mat-form-field class="w-100" appearance="fill">
                   <mat-label>Observaciones</mat-label>
                   <input matInput formControlName="observ">	
                  </mat-form-field>                   
             </div> 
+             <div class="col-2">
+              <mat-checkbox 
+                [checked]="formCom.controls['marca1'].value!==0"
+                (change)="marcaFila($event.checked)">
+                   Marca
+              </mat-checkbox>
+            </div>
         </div>
         
         <div class="botonera">            

@@ -422,10 +422,13 @@ public getTiposMovimiento() {
    public getMovsHacienda() {
     return this.http.get<movHac[]>(this.apiUrl + `hacienda/movhs`);
   }
-  
+
+  public getMovsHaciendaxAbC(feci : String,fecf : String) {
+    return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovhxAbC?feci=`+feci+`&fecf=`+fecf);
+  } 
 
   public getMovsHaciendaxFecha(feci : String,fecf : String) {
-    return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovh?feci=`+feci+`&fecf=`+fecf);
+    return this.http.get<movHac[]>(this.apiUrl + `hacienda/DetMovhxF?feci=`+feci+`&fecf=`+fecf);
   }
 
   public getMovsHaciendaxTipoHac(feci : String,fecf : String) {

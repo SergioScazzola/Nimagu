@@ -16,13 +16,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
-import {registerLocaleData } from '@angular/common';
+
 
 
 import { clienteDTO } from '../../../../entidades/clienteDTO';
 import { categoria } from '../../../../entidades/categoria';
 import { procedencia } from '../../../../entidades/procedencia';
 import { compVtaDTO, intCompVta } from '../../../../entidades/compVta';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -44,6 +45,7 @@ export const DATE_FORMATS : MatDateFormats = {
     MatInputModule,
     ReactiveFormsModule,
     MatDatepickerModule,
+    MatCheckboxModule,
     MatNativeDateModule,
     MatIconModule,
     CommonModule,
@@ -152,6 +154,7 @@ importeformat   : string = "";
       preunit       : [0],
       importe       : [0],
       proced        : [''],
+      marca1        : [0],
       observ        : ['']
     })    
   }
@@ -179,6 +182,7 @@ importeformat   : string = "";
     this.formVta.controls['preunit'].setValue(this.ventaa.preunit);
     this.formVta.controls['importe'].setValue(this.ventaa.importe);
     this.formVta.controls['proced'].setValue(this.ventaa.proced);
+    this.formVta.controls['marca1'].setValue(this.ventaa.marca1);
     this.formVta.controls['observ'].setValue(this.ventaa.observ);
     setTimeout(() => { // formatea importes en campos numericos
        this.importes.forEach(i => i.refrescar());
@@ -233,7 +237,8 @@ importeformat   : string = "";
         promedio        : this.formVta.controls['promedio'].value,
         preunit         : this.formVta.controls['preunit'].value,
         importe         : this.formVta.controls['importe'].value,
-        proced          : this.formVta.controls['proced'].value,       
+        proced          : this.formVta.controls['proced'].value,   
+        marca1          : this.formVta.controls['marca1'].value,       
         observ          : this.formVta.controls['observ'].value,
     }
     console.log("Ventaaaaa : "+JSON.stringify(venta));                
@@ -247,7 +252,7 @@ importeformat   : string = "";
                                     "Aceptar","mensaje",500);                          
                this.dialogRef.close({ clicked : "Alta"})
                 }))                  
-           .subscribe((data : any): void => {});   
+           .subscribe((data : any): void => {resu=data});   
    
   }
 
@@ -266,6 +271,7 @@ importeformat   : string = "";
         preunit         : this.formVta.controls['preunit'].value,
         importe         : this.formVta.controls['importe'].value,
         proced          : this.formVta.controls['proced'].value,       
+        marca1          : this.formVta.controls['marca1'].value,  
         observ          : this.formVta.controls['observ'].value,
     }
     console.log("Ventaaaaa : "+JSON.stringify(venta));                
@@ -279,7 +285,7 @@ importeformat   : string = "";
                                     "Aceptar","mensaje",500);                          
                this.dialogRef.close({ clicked : "Modi"})
                 }))                  
-           .subscribe((data : any): void => {});   
+           .subscribe((data : any): void => {resu=data});   
    
 
   }
@@ -345,6 +351,13 @@ modPrecioUn(){ // recalcula importe
   this.formVta.controls['importe'].setValue(impo);
 }
   
+marcaFila(checked : boolean){
+if (checked){
+  this.formVta.controls['marca1'].setValue(1)
+} else {
+  this.formVta.controls['marca1'].setValue(0)
+}
+}
 }
 
   

@@ -245,3 +245,9 @@
 .centrado {
   text-align : center
 }
+
+.celda-marca1 {
+  background-color: yellow;
+  color : black;
+  font-weight: 400;
+}

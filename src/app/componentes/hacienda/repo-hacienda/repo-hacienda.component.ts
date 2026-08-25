@@ -64,9 +64,9 @@ export class RepoHaciendaComponent {
   mmatriz              : boolean = false;
 
  
- colHacienda : string[] = ["fecha","cantidad","nhacienda","tipomov","ncampo","potrero","abrev","observ"];
- colHacH     : string[] = ["fecha","nhacienda","tipomov","cantidad","ncampo","potrero","abrev","observ"];
- colHacC     : string[] = ["fecha","ncampo","tipomov","cantidad","nhacienda","potrero","abrev","observ"];
+ colHacienda : string[] = ["fecha","cantidad","nhacienda","tipomov","ineg","ncampo","potrero","abrev","observ"];
+ colHacH     : string[] = ["fecha","nhacienda","tipomov","ineg","cantidad","ncampo","potrero","abrev","observ"];
+ colHacC     : string[] = ["fecha","ncampo","tipomov","ineg","cantidad","nhacienda","potrero","abrev","observ"];
 
   constructor(private servicio     : ServiciosService,
                private rutaActiva  : ActivatedRoute,
@@ -116,7 +116,7 @@ export class RepoHaciendaComponent {
   leerMovimientosDeHacienda(){
     var subs : Subscription;
   
-    subs = this.servicio.getMovsHaciendaxFecha(this.dfec,this.hfec)
+    subs = this.servicio.getMovsHaciendaxAbC(this.dfec,this.hfec) // ordenado por Ab.de campo
        .pipe(
           finalize(() => {             
             subs.unsubscribe();
