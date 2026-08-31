@@ -180,13 +180,9 @@
 .mat-column-M,
  .mat-column-B
  {
-  width: 50px !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
-  padding: 0 !important;
-  flex: 0 0 50px !important;
-  text-align: center !important;
-  overflow: visible !important;
+   width: 10px;
+  text-align: center;  
+ 
 }
 
 /* Añadimos el centrado de texto */
@@ -198,11 +194,11 @@
   align-items: center !important;
 }
 
-/* Botones de acción */
+/* Estilos para botones de acción */
 .action-btn {
   background-color: rgb(130, 130, 141) !important;
-  width: 32px !important;
-  height: 32px !important;
+  width: 24px !important;
+  height: 24px !important;
   padding: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -210,7 +206,6 @@
   color: white !important;
   border: none !important;
   border-radius: 2px !important;
-  margin: 0 auto !important;
 }
 
 .action-btn:hover {

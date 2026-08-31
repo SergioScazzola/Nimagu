@@ -81,7 +81,7 @@
 
       <!-- Columna precioun -->
       <ng-container matColumnDef="precioun">
-        <th mat-header-cell *matHeaderCellDef>Precio Unitario</th>
+        <th mat-header-cell *matHeaderCellDef class="centrado">Precio Unitario</th>
         <td mat-cell *matCellDef="let renGas">{{ renGas.precioun | number:'1.2-2'}}</td>
       </ng-container>
       <!-- Columna tiva -->
@@ -92,7 +92,7 @@
 
       <!-- Columna importe -->
       <ng-container matColumnDef="importe">
-        <th mat-header-cell *matHeaderCellDef>Importe</th>
+        <th mat-header-cell *matHeaderCellDef class="centrado">Importe</th>
         <td mat-cell *matCellDef="let renGas">{{ renGas.importe | number:'1.2-2'}}
 
         </td>
@@ -104,10 +104,38 @@
       </ng-container>
        <!-- Columna observ -->
       <ng-container matColumnDef="observ">
-        <th mat-header-cell *matHeaderCellDef>Observaciones</th>
+        <th mat-header-cell *matHeaderCellDef class="centrado">Observaciones</th>
         <td mat-cell *matCellDef="let renGas">{{ renGas.observ }}</td>
       </ng-container>
 
+      <!-- Columna Forma de Pago -->
+      <ng-container matColumnDef="FP">
+        <th mat-header-cell *matHeaderCellDef>FP</th>
+        <td mat-cell *matCellDef="let renGas">
+          <div class="text-center">
+            @if (renGas.fpago!=0){
+            <button
+              mat-icon-button
+              class="action-btn btn-fpago"
+              title="modificar f.pago"
+              (click)="modificarFP(renGas.fpago,renGas.idgasto)"
+            >
+              <i class="bi bi-currency-dollar"></i>
+            </button>
+            } @else {
+              <button
+              mat-icon-button
+              class="action-btn btn-sinpago"
+              title="agregar f.pago"
+              (click)="agregarFP(renGas.fpago,renGas.idgasto)"
+            >
+              <i class="bi bi-arrow-up"></i>
+            </button>
+            }
+          </div>
+        </td>
+      </ng-container>
+      
       <!-- Columna Modificar -->
       <ng-container matColumnDef="M">
         <th mat-header-cell *matHeaderCellDef>Mod</th>
@@ -144,7 +172,13 @@
           
       <!-- Definición de filas -->
       <tr mat-header-row *matHeaderRowDef="colGastos; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; let index; columns: colGastos"></tr>
+      <tr mat-row *matRowDef="let row; let i=$index; columns: colGastos"
+          [matTooltip]="row.descrip!=null?'F.de Pago : '+row.descrip:''"></tr>
     </table>
   </div>
+   <!-- Sección inferior fija -->
+  <div class="fixed-section footer-container">
+     <div class="footer">         
+     </div>      
+  </div>  
 </div>

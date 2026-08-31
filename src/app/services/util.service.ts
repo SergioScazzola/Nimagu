@@ -140,5 +140,15 @@ private TresCifras(nro3:number):string{
      }
      return nstr9;
     }
+
+   redondearAdos(nro : number): number{  
+    var numero : number = nro+0.005;
+    // está redondeado a dos decimales, pero tiene mas de 2 decimales
+    // convierto a cadena y le saco los decimales que no necesito
+    var cade : string = String(numero);  
+    var posi : number = cade.indexOf(".");
+    numero = Number(cade.substring(0,posi+3));  
+    return numero
+  } 
   
 }

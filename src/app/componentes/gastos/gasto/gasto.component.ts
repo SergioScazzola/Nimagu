@@ -1,5 +1,5 @@
 import { Component, Inject,NgZone,ChangeDetectorRef, QueryList, ViewChildren} from '@angular/core';
-import { SelecTextDirective } from '../../../Directivas/selec-text.directive';
+
 import { ImporteDirective } from '../../../Directivas/importeDirective';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatFormField, MatLabel, MatSelectModule } from '@angular/material/select';
@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MAT_DATE_FORMATS, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
+import { MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 
@@ -16,12 +16,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { NotiserviceService } from '../../../services/notiservice.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
-import {registerLocaleData } from '@angular/common';
 
-import { clienteDTO } from '../../../../entidades/clienteDTO';
 
-import { procedencia } from '../../../../entidades/procedencia';
-import { compVtaDTO, intCompVta } from '../../../../entidades/compVta';
+
 import { proveedorDTO } from '../../../../entidades/proveedorDTO';
 import { producto, tipoprod } from '../../../../entidades/producto';
 import { gasto, intGasto } from '../../../../entidades/gasto';
@@ -54,7 +51,7 @@ export const DATE_FORMATS : MatDateFormats = {
     FormsModule,
     MatSelectModule,
     DragDropModule,
-    ImporteDirective, SelecTextDirective],
+    ImporteDirective],
     providers: [
     DatePipe,
     CurrencyPipe
@@ -75,7 +72,7 @@ cproveedores    : proveedorDTO[]=[];
 cfpago          : string[]=["CDO","CC"] ;  
 gastoo          : gasto;
 prodSel         : number;
-tprodSel        : string;
+tprodSel        : number;
 provSel         : number
 
 hoy             : Date = new Date;
@@ -161,8 +158,7 @@ importeformat   : string = "";
       precioun      : [0,[Validators.required,Validators.min(1)]],
       tiva          : [21],
       importe       : [''],    
-      marca1        : [0],
-      fpago         : ['CDO'],
+      marca1        : [0],  
       observ        : ['']
     })    
   }
@@ -179,6 +175,7 @@ prepararAlta(){
 
   this.provSel = this.cproveedores[0].idProv; // nro de proveedor
   this.prodSel = this.cproductos[0].idproducto; // nro de producto
+  this.tprodSel = this.cproductos[0].idtipo;
   
 }
 prepararModi(){
@@ -196,6 +193,7 @@ prepararModi(){
   this.formGas.controls['observ'].setValue(this.gastoo.observ);
   this.prodSel = this.gastoo.idproducto;
   this.provSel = this.gastoo.idprov;
+  this.tprodSel = this.gastoo.idtipo;
   setTimeout(() => { // formatea importes en campos numericos
        this.importes.forEach(i => i.refrescar());
   })
@@ -207,7 +205,7 @@ AgregarGasto(){
         fecha           : this.formGas.controls['fecha'].value,
         idproducto      : this.prodSel,
         nprod           : this.formGas.controls['nprod'].value,
-        idtipo          : this.cproductos[this.cproductos.findIndex(p=>p.idproducto==this.prodSel)].idtipo,
+        idtipo          : this.tprodSel,
         ntipo           : this.formGas.controls['ntipo'].value,
         idprov          : this.provSel,        
         nprov           : this.formGas.controls['nprov'].value,
@@ -217,7 +215,7 @@ AgregarGasto(){
         tiva            : this.formGas.controls['tiva'].value,
         importe         : this.formGas.controls['importe'].value,     
         marca1          : this.formGas.controls['marca1'].value,     
-        fpago           : this.formGas.controls['fpago'].value,
+        fpago           : 0,
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -240,7 +238,7 @@ ModificarGasto(){
         fecha           : this.formGas.controls['fecha'].value,
         idproducto      : this.prodSel,
         nprod           : this.formGas.controls['nprod'].value,
-        idtipo          : this.cproductos[this.cproductos.findIndex(p=>p.idproducto==this.prodSel)].idtipo,
+        idtipo          : this.tprodSel,
         ntipo           : this.formGas.controls['ntipo'].value,
         idprov          : this.provSel,        
         nprov           : this.formGas.controls['nprov'].value,
@@ -250,7 +248,7 @@ ModificarGasto(){
         tiva            : this.formGas.controls['tiva'].value,
         importe         : this.formGas.controls['importe'].value,    
         marca1          : this.formGas.controls['marca1'].value,    
-        fpago           : this.formGas.controls['fpago'].value,    
+        fpago           : this.gastoo.fpago,   
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -317,7 +315,8 @@ onSelectionChangeProducto(event : any){
     // cambia el tipo de producto y guarda el idproducto en prodSel
     const nomprod = event.value;
     const indp = this.cproductos.findIndex(p=>p.nombre==nomprod);
-    this.prodSel = this.cproductos[indp].idproducto;    
+    this.prodSel  = this.cproductos[indp].idproducto;    
+    this.tprodSel =  this.cproductos[indp].idtipo; // el prod. determina el tipo de producto    
     this.formGas.controls['ntipo'].setValue(this.cproductos[indp].tipoprod);
 
 

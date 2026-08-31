@@ -29,9 +29,10 @@ import { saldoCta } from '../../entidades/saldoCta';
 import { movHac } from '../../entidades/movHac';
 import { hacienda } from '../../entidades/hacienda';
 import { campo } from '../../entidades/campo';
-import { gasto } from '../../entidades/gasto';
+import { gasto, gastofp } from '../../entidades/gasto';
 import { producto, tipoprod } from '../../entidades/producto';
 import { tipomovH } from '../../entidades/tipomovH';
+import { fpago } from '../../entidades/fpago';
 
 @Injectable({
   providedIn: 'root',
@@ -500,23 +501,23 @@ public getTiposMovimiento() {
 
   // GASTOS,PRODUCTOS Y TIPOS PRODUCTOS
   public getGastos() {
-    return this.http.get<gasto[]>(this.apiUrl + `gasto/gastos`);
+    return this.http.get<gastofp[]>(this.apiUrl + `gasto/gastosfp`);
   }  
 
    public getGastosxFecha(fechi : string, fechf : string) {
-    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxfecha?feci=`+fechi+`&fecf=`+fechf);    
+    return this.http.get<gastofp[]>(this.apiUrl + `gasto/detxfecha?feci=`+fechi+`&fecf=`+fechf);    
   }  
 
   public getGastosxProd(fechi : string, fechf : string) {
-    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxprod?feci=`+fechi+`&fecf=`+fechf);    
+    return this.http.get<gastofp[]>(this.apiUrl + `gasto/detxprod?feci=`+fechi+`&fecf=`+fechf);    
   }  
 
   public getGastosxTProd(fechi : string, fechf : string) {
-    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxtprod?feci=`+fechi+`&fecf=`+fechf);
+    return this.http.get<gastofp[]>(this.apiUrl + `gasto/detxtprod?feci=`+fechi+`&fecf=`+fechf);
   }  
 
   public getGastosxProv(fechi : string, fechf : string) {
-    return this.http.get<gasto[]>(this.apiUrl + `gasto/detxprov?feci=`+fechi+`&fecf=`+fechf);
+    return this.http.get<gastofp[]>(this.apiUrl + `gasto/detxprov?feci=`+fechi+`&fecf=`+fechf);
   }  
 
     public getMaxGasto() {
@@ -534,6 +535,40 @@ public getTiposMovimiento() {
     public borrarGasto(idgasto: number) {
     return this.http.delete(environment.apiUrl + `gasto/gasto/delete?id=`+idgasto);
   }
+
+// FORMAS DE PAGO
+
+ public getFormasdePago() {
+    return this.http.get<fpago[]>(this.apiUrl + `gasto/fpago/fpagos`);
+  }  
+
+  public getMaxFP() {
+    return this.http.get<number>(this.apiUrl + `gasto/fpago/maxid` );
+  }
+
+  public leerFPago(idgasto : number) {
+    return this.http.get<fpago>(this.apiUrl + `gasto/fpago?idgasto=` + idgasto);
+  }
+
+  public agregarFPago( fpago : fpago) {
+    return this.http.post<fpago>(this.apiUrl + `gasto/fpago/nuevo`, fpago);
+  }
+
+   public updateFPago(fpago : fpago) {
+    return this.http.put<fpago>(environment.apiUrl + `gasto/fpago/actualizar`, fpago);
+  }
+
+    
+/*  @PutMapping(value="/fpago/actualizar")
+    public ResponseEntity<String> updateFPago(@RequestBody Fpago fpago){
+      try {
+        int resultado = nimaguRepository.actualizarFPago(fpago);    
+        return new ResponseEntity<>(Integer.toString(resultado), HttpStatus.OK);
+      } catch (Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+     
+      } 
+    }*/
 
    public getProductos() {
     return this.http.get<producto[]>(this.apiUrl + `prods/prods`);

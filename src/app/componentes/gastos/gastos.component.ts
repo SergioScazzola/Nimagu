@@ -9,17 +9,19 @@ import { finalize, forkJoin, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatTableModule,MatTableDataSource } from '@angular/material/table';
 
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { intCobranza } from '../../../entidades/cobroDTO';
-import { gasto, intGasto } from '../../../entidades/gasto';
+import { gasto, gastofp, intGasto } from '../../../entidades/gasto';
 import { GastoComponent } from './gasto/gasto.component';
 import { intProducto } from '../../../entidades/producto';
 import { ProductoComponent } from './producto/producto.component';
+import { fpago, intfpago } from '../../../entidades/fpago';
+import { FpagoComponent } from './fpago/fpago.component';
 
 @Component({
   selector: 'app-gastos',
-  imports: [CommonModule, MatTableModule],
+  imports: [CommonModule, MatTableModule,MatTooltipModule],
   templateUrl: './gastos.component.html',
   styleUrl: './gastos.component.css'
 })
@@ -31,7 +33,9 @@ export class GastosComponent {
   public   filtro : string;
   //public inputRef = viewChild.required<ElementRef>('filtroInput');
   
-  public cgastos : gasto[]=[];
+  public cgastos : gastofp[]=[];
+  //public cfpagos : fpago[]=[];
+
      
   cantgastos       : number;
   formgasto        : boolean;
@@ -39,7 +43,7 @@ export class GastosComponent {
   maxGasto         : number;
   maxProd          : number;
   colGastos: string[] = ["fecha", "cantidad","nprod","ntipo","nprov","ncomp","precioun","tiva","importe",
-                         "fpago","observ","M","B"];
+                         "observ","FP","M","B"];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";
@@ -68,12 +72,14 @@ ngOnInit(){
         forkJoin({
                     gastoss    : this.servicio.getGastos(),                
                     maxgastos  : this.servicio.getMaxGasto(),
-                    maxprods   : this.servicio.getMaxProductos()
+                    maxprods   : this.servicio.getMaxProductos(),
+                    //fpagoss    : this.servicio.getFormasdePago()
         
                 }).subscribe(res => {   
                     this.cgastos    = res.gastoss;
                     this.maxGasto   = res.maxgastos;
                     this.maxProd    = res.maxprods;
+                    //this.cfpagos    = res.fpagoss;
     
                     if (this.cgastos!==null && this.cgastos.length>0){
                        this.cantgastos = this.cgastos.length;
@@ -187,5 +193,63 @@ ngOnInit(){
  }
   volver(){
     this.router.navigate(['/ppal']);
+ }
+
+ agregarFP(idfp : number,idg : number){
+ const data  : intfpago = {
+      idfpago    : idfp,
+      idgasto    : idg,
+      descrip    : "",
+      accion     : "A"
+      }       
+      const dialogConfig = new MatDialogConfig();   
+      dialogConfig.autoFocus = false;
+      dialogConfig.data = data;
+      dialogConfig.width =  '900';         // ancho máximo de la ventana
+      dialogConfig.maxWidth = '95vw' //'95vw';      
+      dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+      dialogConfig.panelClass = 'custom-dialog-container';
+      dialogConfig.disableClose =  false; // opcional según necesidad
+  
+      const dialogRef =  this.dialog.open(FpagoComponent, dialogConfig);
+      dialogRef.afterClosed().subscribe( // 
+            (data:any) => { if (data.clicked === 'Alta'){                                     
+                   this.leerGastos (); // refrescar                 
+                
+                         }})
+ }
+/*mostrarFormaPago(gasto: any): string {
+  const indfp = this.cfpagos.find(
+    fp => fp.idgasto === gasto.idgasto
+  );
+
+  if (!indfp) {
+    return 'Sin forma de pago';
+  }
+
+  return `Forma de pago: ${indfp.descrip}`;
+}*/
+ modificarFP(idfp : number,idg : number){
+  const data  : intfpago = {
+      idfpago    : idfp,
+      idgasto    : idg,
+      descrip    : "",
+      accion     : "M"
+      }       
+      const dialogConfig = new MatDialogConfig();   
+      dialogConfig.autoFocus = false;
+      dialogConfig.data = data;
+      dialogConfig.width =  '900';         // ancho máximo de la ventana
+      dialogConfig.maxWidth = '95vw' //'95vw';      
+      dialogConfig.height   = 'auto';        // altura se ajusta al contenido
+      dialogConfig.panelClass = 'custom-dialog-container';
+      dialogConfig.disableClose =  false; // opcional según necesidad
+  
+      const dialogRef =  this.dialog.open(FpagoComponent, dialogConfig);
+      dialogRef.afterClosed().subscribe( // 
+            (data:any) => { if (data.clicked === 'Modi'){                                     
+                   this.leerGastos (); // refrescar                 
+                
+                         }})
  }
 }

@@ -18,7 +18,8 @@ import { NotiserviceService } from '../../../services/notiservice.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { compVtaDTO, resCyV } from '../../../../entidades/compVta';
-import { gasto } from '../../../../entidades/gasto';
+import { gasto, gastofp, gastofpsi } from '../../../../entidades/gasto';
+import { UtilService } from '../../../services/util.service';
 
 export const DATE_FORMATS : MatDateFormats = {
 
@@ -54,8 +55,10 @@ export const DATE_FORMATS : MatDateFormats = {
 })
 export class RepoGastosComponent {
 public formGas   : FormGroup;
-public cgastos   : gasto[]=[];
-public cgasagrup : gasto[]=[];
+public cgastos   : gastofp[]=[];
+public cgastosr  : gastofpsi[]=[];
+public cgasagrup : gastofp[]=[];
+public cgasagrupr: gastofpsi[]=[];
 
 public   dfecha    : Date;
 public   hfecha    : Date = new Date();
@@ -70,13 +73,14 @@ public   mostrarresumen : boolean;
 public   mostraragrup   : boolean;
 
 
- colGastos : string[] = ["fecha","cantidad","nprod", "ntipo", "nprov","precioun","tiva","importe","observ"];
+ colGastos : string[] = ["fecha","cantidad","nprod", "ntipo", "nprov","precioun","tiva","importesi","importe","observ"];
 
  totalesPor : string[] = ["Detallado x fecha","Producto","Tipo Producto","Proveedor"];                          
  
  colResumen : string[] = ["D","cant","impo"];  
 
- constructor(private   servicio : ServiciosService,
+ constructor(  private   servicio : ServiciosService,
+               private   util     : UtilService, 
                private router   : Router,
                public  fb       : FormBuilder,
                public datepipe  : DatePipe,
@@ -230,8 +234,10 @@ armarYTotalizarXProveedor(){
 
  onSelectionTipoInf(event : any){
     this.tipoinf = event.value;
-    this.cgastos  =[];
-    this.cgasagrup =[];
+    this.cgastos    = [];
+    this.cgastosr   = [];
+    this.cgasagrupr = [];
+    this.cgasagrup  = [];
 
  }
 
@@ -247,11 +253,13 @@ armarYTotalizarXProveedor(){
      { header: 'Nro.Comp', dataKey: 'ncomp' },
      { header: 'Precio Unit.', dataKey: 'precioun' },
      { header: 'T.IVA', dataKey: 'tiva' },    
+     { header: 'Imp.S/I', dataKey: 'importesi' },    
      { header: 'Importe', dataKey: 'importe' },  
-     { header: 'Observaciones', dataKey: 'observ' }
+     { header: 'Observaciones', dataKey: 'observ'},
+     { header: 'F.Pago', dataKey: 'descrip'},
    ];
                 
-       const doc = new jsPDF('p','mm','A4');
+       const doc = new jsPDF('l','mm','A4');
        var pageNumber : number = 0;
         var fd = this.datepipe.transform(this.formGas.controls['dfecha'].value,"dd/MM/yyyy");
         var fh = this.datepipe.transform(this.formGas.controls['hfecha'].value,"dd/MM/yyyy");
@@ -262,7 +270,7 @@ armarYTotalizarXProveedor(){
        const fechaStr = fecha.toLocaleDateString('es-AR');
        const totalPagesExp = '{total_pages_count_string}';
                 
-       filas = this.cgastos.map((item)=> [
+       filas = this.cgastosr.map((item)=> [
          this.datepipe.transform(item.fecha,"dd/MM/yyyy"),   
          this.currencyPipe.transform(item.cantidad, 'ARS','code','1.2-2')?.replace('ARS',''), 
          item.nprod,
@@ -271,8 +279,10 @@ armarYTotalizarXProveedor(){
          item.ncomp,
          this.currencyPipe.transform(item.precioun, 'ARS','code','1.2-2')?.replace('ARS',''),         
          item.tiva,        
+         this.currencyPipe.transform(item.importesi, 'ARS','code','1.2-2')?.replace('ARS',''),         
          this.currencyPipe.transform(item.importe, 'ARS','code','1.2-2')?.replace('ARS',''),         
-         item.observ               
+         item.observ,       
+         item.descrip        
        ]);      
         
        autoTable(doc, 
@@ -292,8 +302,10 @@ armarYTotalizarXProveedor(){
              ncomp             : { halign: 'center' },                
              precioun          : { halign: 'right' },
              tiva              : { halign: 'right' },
+             importesi         : { halign: 'right' },
              importe           : { halign: 'right' },            
-             observ            : { halign: 'left' }
+             observ            : { halign: 'left' },
+             descrip           : { halign: 'left' }
              
           },
               
@@ -336,13 +348,45 @@ armarYTotalizarXProveedor(){
 
      // Calculo de totales cuando se elije informe detallado y genera el resumen
      calcTotales(){
-       var total    : number=0;
-       var totcant  : number=0;              
+       var total      : number=0;
+       var totalsi    : number=0;
+       var totcant    : number=0;   
+       var importeesi : number=0;          
        for (let i=0;i<this.cgastos.length;i++){         
            total   += this.cgastos[i].importe;           
-           totcant += this.cgastos[i].cantidad;                              
+           if (this.cgastos[i].tiva!=0){
+                  importeesi = this.util.redondearAdos(this.cgastos[i].importe/(1+(this.cgastos[i].tiva)/100));
+                  totalsi += importeesi;
+              } else {
+                  importeesi = this.cgastos[i].importe;
+                  totalsi   +=   importeesi 
+            }
+           
+            totcant += this.cgastos[i].cantidad;                              
+            var item : gastofpsi = {
+                idgasto   : this.cgastos[i].idgasto,
+                fecha     : this.cgastos[i].fecha,          
+                cantidad  : this.cgastos[i].cantidad,
+                idproducto: this.cgastos[i].idproducto,
+                nprod     : this.cgastos[i].nprod,
+                idtipo    : this.cgastos[i].idtipo,
+                ntipo     : this.cgastos[i].ntipo,
+                idprov    :  this.cgastos[i].idprov,
+                nprov     : this.cgastos[i].nprov,
+                ncomp     : this.cgastos[i].ncomp,
+                precioun  : this.cgastos[i].precioun,
+                tiva      : this.cgastos[i].tiva,
+                importesi : importeesi,
+                importe   : this.cgastos[i].importe,    
+                marca1    : 0,         
+                fpago   : this.cgastos[i].fpago,    
+                observ    : this.cgastos[i].observ,
+                descrip   : this.cgastos[i].descrip,
+              };
+              this.cgastosr.push(item)
         }
-        var totales : gasto = {
+        var totiva =  this.currencyPipe.transform(total-totalsi, 'ARS','code','1.2-2')?.replace('ARS','');
+        var totales : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : totcant,
@@ -355,22 +399,27 @@ armarYTotalizarXProveedor(){
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : totalsi,
              importe     : total,      
              marca1      : 0,       
-             fpago       : " ",
-             observ      : " ",
+             fpago       : 0,
+             observ      : "Tot.IVA : "+totiva, //==undefined?" ":totiva,
+             descrip     : " "
           };
-          this.cgastos.push(totales);
+          this.cgastosr.push(totales);
           this.totalgas = total;                       
      }
 calcTotalesXProducto(){  // Totalizar x Producto      
        var totprod       : number=0;
+
        var cantprod      : number=0;
       
 
        var total     : number = 0;
+       var totalsi   : number = 0;
+
        var canttotal : number = 0;
-      
+       var importeesi : number =0;
        var i = 0;
        this.cgasagrup = [];
        while (i<this.cgastos.length){
@@ -378,8 +427,15 @@ calcTotalesXProducto(){  // Totalizar x Producto
          while (i<this.cgastos.length && this.cgastos[i].idproducto==nroprod){          
               totprod += this.cgastos[i].importe;  
               cantprod += this.cgastos[i].cantidad;    
-
-              var item : gasto = {
+              if (this.cgastos[i].tiva!=0){
+                 importeesi = this.util.redondearAdos(this.cgastos[i].importe/(1+(this.cgastos[i].tiva)/100));
+                  totalsi += importeesi;
+              } else {
+                  importeesi = this.cgastos[i].importe;
+                  totalsi   +=   importeesi 
+              }
+              
+              var item : gastofpsi = {
                 idgasto   :  this.cgastos[i].idgasto,
                 fecha     : this.cgastos[i].fecha,          
                 cantidad  : this.cgastos[i].cantidad,
@@ -392,18 +448,20 @@ calcTotalesXProducto(){  // Totalizar x Producto
                 ncomp     : this.cgastos[i].ncomp,
                 precioun  : this.cgastos[i].precioun,
                 tiva      : this.cgastos[i].tiva,
+                importesi : importeesi,
                 importe   : this.cgastos[i].importe,    
                 marca1    : 0,         
                 fpago   : this.cgastos[i].fpago,    
                 observ    : this.cgastos[i].observ,
+                descrip   : this.cgastos[i].descrip,
               };
-              this.cgasagrup.push(item);                   
+              this.cgasagrupr.push(item);                   
               i++;
           }
           // Corte por producto
           total      += totprod;
           canttotal  += cantprod;
-          var subtprod : gasto = {
+          var subtprod : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : cantprod,
@@ -416,17 +474,20 @@ calcTotalesXProducto(){  // Totalizar x Producto
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : 0,
              importe     : totprod,      
              marca1      : 0,  
-             fpago       : " ",   
+             fpago       : 0,   
              observ      : " ",
+             descrip     : " "
            };
-           this.cgasagrup.push(subtprod);
+           this.cgasagrupr.push(subtprod);
            totprod       = 0;
            cantprod      = 0;
            
          } // while externo
-         var totales : gasto = {
+         var totiva =  this.currencyPipe.transform(total-totalsi, 'ARS','code','1.2-2')?.replace('ARS','');
+         var totales : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : canttotal,
@@ -439,31 +500,40 @@ calcTotalesXProducto(){  // Totalizar x Producto
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : totalsi,
              importe     : total,     
              marca1      : 0,        
-             fpago       : " ",
-             observ      : " ",
+             fpago       : 0,
+             observ      : "Total IVA : "+totiva,
+             descrip     : " "
           };
-          this.cgasagrup.push(totales);
+          this.cgasagrupr.push(totales);
          
 }
 calcTotalesXTprod(){  // Totalizar x Tipo de producto     
        var tottprod       : number=0;
+       var totalsi        : number=0;
        var canttprod      : number=0;
       
 
-       var total     : number = 0;
-       var canttotal : number = 0;
-      
+       var total      : number = 0;
+       var canttotal  : number = 0;
+       var importeesi : number = 0;
        var i = 0;
-       this.cgasagrup = [];
+       this.cgasagrup = [];       
        while (i<this.cgastos.length){
-         var nrotprod = this.cgastos[i].idtipo;                 
-         while (i<this.cgastos.length && this.cgastos[i].idtipo==nrotprod){          
+         var tprod = this.cgastos[i].ntipo;                 
+         while (i<this.cgastos.length && this.cgastos[i].ntipo==tprod){          
               tottprod  += this.cgastos[i].importe;  
               canttprod += this.cgastos[i].cantidad;    
-
-              var item : gasto = {
+              if (this.cgastos[i].tiva!=0){
+                  importeesi = this.util.redondearAdos(this.cgastos[i].importe/(1+(this.cgastos[i].tiva)/100));
+                  totalsi += importeesi;
+              } else {
+                  importeesi = this.cgastos[i].importe;
+                  totalsi   +=   importeesi 
+              }
+              var item : gastofpsi = {
                 idgasto   :  this.cgastos[i].idgasto,
                 fecha     : this.cgastos[i].fecha,          
                 cantidad  : this.cgastos[i].cantidad,
@@ -476,18 +546,20 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
                 ncomp     : this.cgastos[i].ncomp,
                 precioun  : this.cgastos[i].precioun,
                 tiva      : this.cgastos[i].tiva,
+                importesi : importeesi,
                 importe   : this.cgastos[i].importe,    
                 marca1    : this.cgastos[i].marca1,             
                 fpago     : this.cgastos[i].fpago,             
                 observ    : this.cgastos[i].observ,
+                descrip   : this.cgastos[i].descrip,
               };
-              this.cgasagrup.push(item);                   
+              this.cgasagrupr.push(item);                   
               i++;
           }
           // Corte por tipo producto
           total      += tottprod;
           canttotal  += canttprod;
-          var subttprod : gasto = {
+          var subttprod : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : canttprod,
@@ -500,17 +572,20 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : 0,
              importe     : tottprod,          
              marca1      : 0,   
-             fpago       : " ",  
-             observ    : " ",
+             fpago       : 0,  
+             observ      : " ",
+             descrip     : " "
            };
-           this.cgasagrup.push(subttprod);
+           this.cgasagrupr.push(subttprod);
            tottprod       = 0;
            canttprod      = 0;
            
          } // while externo
-         var totales : gasto = {
+         var totiva =  this.currencyPipe.transform(total-totalsi, 'ARS','code','1.2-2')?.replace('ARS','');
+         var totales : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : canttotal,
@@ -523,21 +598,25 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : totalsi,
              importe     : total,     
              marca1      : 0,    
-             fpago       : " ",      
-             observ      : " ",
+             fpago       : 0,      
+             observ      : "Total IVA : "+totiva,
+             descrip     : " "
           };
-          this.cgasagrup.push(totales);
+          this.cgasagrupr.push(totales);
 }
 
 calcTotalesXProveedor(){  // Totalizar x Proveedor     
       var totprov       : number=0;
+      var totalsi       : number=0;
       var cantprov      : number=0;
       
 
        var total     : number = 0;
        var canttotal : number = 0;
+       var importeesi: number = 0;
       
        var i = 0;
        this.cgasagrup = [];
@@ -546,8 +625,14 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
          while (i<this.cgastos.length && this.cgastos[i].idprov==nroprov){          
               totprov  += this.cgastos[i].importe;  
               cantprov += this.cgastos[i].cantidad;    
-
-              var item : gasto = {
+              if (this.cgastos[i].tiva!=0){
+                  importeesi = this.util.redondearAdos(this.cgastos[i].importe/(1+(this.cgastos[i].tiva)/100));
+                  totalsi += importeesi;
+              } else {
+                  importeesi = this.cgastos[i].importe;
+                  totalsi   +=   importeesi 
+              }
+              var item : gastofpsi = {
                 idgasto   :  this.cgastos[i].idgasto,
                 fecha     : this.cgastos[i].fecha,          
                 cantidad  : this.cgastos[i].cantidad,
@@ -560,18 +645,20 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
                 ncomp     : this.cgastos[i].ncomp,
                 precioun  : this.cgastos[i].precioun,
                 tiva      : this.cgastos[i].tiva,
+                importesi : importeesi,
                 importe   : this.cgastos[i].importe,     
                 marca1    : this.cgastos[i].marca1,    
                 fpago     : this.cgastos[i].fpago,    
                 observ    : this.cgastos[i].observ,
+                descrip   : this.cgastos[i].descrip
               };
-              this.cgasagrup.push(item);                   
+              this.cgasagrupr.push(item);                   
               i++;
           }
           // Corte por proveedor
           total      += totprov;
           canttotal  += cantprov;
-          var subtprov : gasto = {
+          var subtprov : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : cantprov,
@@ -584,17 +671,20 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : 0,
              importe     : totprov,             
              marca1      : 0,
-             fpago       : " ",  
+             fpago       : 0,  
              observ      : " ",
+             descrip     : " "
            };
-           this.cgasagrup.push(subtprov);
+           this.cgasagrupr.push(subtprov);
            totprov       = 0;
            cantprov      = 0;
            
          } // while externo
-         var totales : gasto = {
+         var totiva =  this.currencyPipe.transform(total-totalsi, 'ARS','code','1.2-2')?.replace('ARS','');  
+         var totales : gastofpsi = {
              idgasto     : 0,             
              fecha       : null,
              cantidad    : canttotal,
@@ -607,12 +697,14 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
              ncomp       : " ",
              precioun    : 0,
              tiva        : 0,
+             importesi   : totalsi,
              importe     : total,    
              marca1      : 0,       
-             fpago       : " ",  
-             observ      : " ",
+             fpago       : 0,  
+             observ      : "Total IVA : "+totiva,
+             descrip     : " "
           };
-          this.cgasagrup.push(totales);}
+          this.cgasagrupr.push(totales);}
 
 
 desplegarInforme(){

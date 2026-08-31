@@ -66,13 +66,13 @@
       
   </form>   
   <!-- Tabla detallada -->
-  @if(cgastos!=null && cgastos.length>0 && mostrardetalle){
+  @if(cgastosr!=null && cgastosr.length>0 && mostrardetalle){
   <div class="table-container" style="overflow-x: auto">
     
      <table  
       mat-table
       class="mat-elevation-z8"
-      [dataSource]="cgastos"
+      [dataSource]="cgastosr"
       style="width: 100%"
       >
       <ng-container matColumnDef="fecha">
@@ -106,6 +106,11 @@
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.tiva | number : "1.2-2" }}</td>
       </ng-container>
 
+       <ng-container matColumnDef="importesi">
+        <th mat-header-cell *matHeaderCellDef class="centrado">Imp.S/IVA</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.importesi | number : "1.2-2" }}</td>
+      </ng-container>
+
       <ng-container matColumnDef="importe">
         <th mat-header-cell *matHeaderCellDef class="centrado">Importe</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.importe | number : "1.2-2" }}</td>
@@ -118,19 +123,19 @@
         <!-- Definición de filas -->
       <tr mat-header-row *matHeaderRowDef="colGastos; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; let index = index; columns: colGastos"
-                [ngClass]="{'fila-totales': cgastos[index].nprod.includes('TOTA')}"></tr>
+                [ngClass]="{'fila-totales': cgastosr[index].nprod.includes('TOTA')}"></tr>
     </table>
    
   </div>
   }
    <!-- Tabla Agrupada -->
-  @if(cgasagrup!=null && cgasagrup.length>0 && mostraragrup){
+  @if(cgasagrupr!=null && cgasagrupr.length>0 && mostraragrup){
   <div class="table-container" style="overflow-x: auto">
     
      <table  
       mat-table
       class="mat-elevation-z8"
-      [dataSource]="cgasagrup"
+      [dataSource]="cgasagrupr"
       style="width: 100%"
       >
       <ng-container matColumnDef="fecha">
@@ -156,12 +161,17 @@
           
        <ng-container matColumnDef="precioun">
         <th mat-header-cell *matHeaderCellDef>Precio Unit.</th>
-        <td mat-cell *matCellDef="let renInfo">{{ renInfo.preciou | number : "1.2-2" }}</td>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.precioun | number : "1.2-2" }}</td>
       </ng-container>
 
       <ng-container matColumnDef="tiva">
         <th mat-header-cell *matHeaderCellDef>T.IVA</th>
         <td mat-cell *matCellDef="let renInfo">{{ renInfo.tiva | number : "1.2-2" }}</td>
+      </ng-container>
+
+       <ng-container matColumnDef="importesi">
+        <th mat-header-cell *matHeaderCellDef class="centrado">Imp.S/IVA</th>
+        <td mat-cell *matCellDef="let renInfo">{{ renInfo.importesi | number : "1.2-2" }}</td>
       </ng-container>
 
       <ng-container matColumnDef="importe">
@@ -176,7 +186,7 @@
         <!-- Definición de filas -->
       <tr mat-header-row *matHeaderRowDef="colGastos; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; let index = index; columns: colGastos"
-                [ngClass]="{'fila-totales': cgasagrup[index].nprod.includes('TOT')}"></tr>
+                [ngClass]="{'fila-totales': cgasagrupr[index].nprod.includes('TOT')}"></tr>
     </table>
   </div>
   }

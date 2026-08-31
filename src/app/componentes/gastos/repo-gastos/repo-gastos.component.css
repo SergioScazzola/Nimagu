@@ -154,9 +154,10 @@
 }
 
 .mat-column-precioun,
- .mat-column-importe {
+ .mat-column-importe,
+  .mat-column-importesi {
   padding-left: 0;
-  width: 100px;
+  width: 90px;
   text-align: right;
   white-space: nowrap;
   overflow: hidden;
