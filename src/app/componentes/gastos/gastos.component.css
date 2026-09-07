@@ -132,9 +132,9 @@
 
 .mat-column-nprod
  {
- width: 90px;
-  min-width: 90px;
-  max-width: 90px;
+ width: 80px;
+  min-width: 80px;
+  max-width: 80px;
   white-space: nowrap;
 }
 
@@ -146,9 +146,9 @@
 }
 
 .mat-column-nprov {
- width: 90px;
-  min-width: 90px;
-  max-width: 90px;
+ width: 80px;
+  min-width: 80px;
+  max-width: 80px;
   white-space: nowrap;
 }
 .mat-column-ncomp{
@@ -158,6 +158,13 @@
   white-space: nowrap;
 }
 
+.mat-column-destino{
+ width: 20px;
+  min-width: 20px;
+  max-width: 20px;
+  text-align: center;
+  white-space: nowrap;
+}
 .mat-column-ntipo{
   width: 40px;
   min-width: 40px;

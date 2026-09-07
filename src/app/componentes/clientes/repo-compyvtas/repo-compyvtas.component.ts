@@ -18,6 +18,7 @@ import { NotiserviceService } from '../../../services/notiservice.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { compVtaDTO, resCyV } from '../../../../entidades/compVta';
+import { utils, writeFileXLSX } from 'xlsx';
 
 export const DATE_FORMATS : MatDateFormats = {
 
@@ -812,5 +813,100 @@ desplegarInforme(){
     default : {}
   }
 }
+exportarExcel(): void {
+var filas : any;  
+if (this.ccyvagrup!==undefined && this.ccyvagrup.length !== 0){
+  filas = this.ccyvagrup.map(item => [
+         item.fecha ? new Date(String(item.fecha).substring(0, 10)) : null,
+         item.compvta,        
+         item.nprovcli,
+         item.nroliq,
+         item.categoria,
+         item.cantidad,
+         item.totalk,
+         item.promedio,
+         item.preunit,
+         item.importe,
+         item.proced,
+         item.observ        
+  ]);
+} else {
+   filas = this.ccomvtas.map(item => [
+    item.fecha,   
+    item.compvta,        
+    item.nprovcli,
+    item.nroliq,
+    item.categoria,
+    item.cantidad,
+    item.totalk,
+    item.promedio,
+    item.preunit,
+    item.importe,
+    item.proced,
+    item.observ    
+  ]);
+}
 
+  const encabezados = [
+    'Fecha',
+    'Comp/Vta',
+    'Proveedor/Cliente',
+    'Nro.Liq',
+    'Categoria',
+    'Cantidad',
+    'Total K',
+    'Promedio',
+    'Precio Un.',
+    'Importe',
+    'Procedencia',
+    'Observaciones'
+  ];
+
+  const datos = [
+    encabezados,
+    ...filas
+  ];
+  // Ancho de columnas 
+  
+ 
+  const ws = utils.aoa_to_sheet(datos);
+
+ws['!cols'] = [ 
+  { wch: 12 }, 
+  { wch: 10 }, 
+  { wch: 30 }, 
+  { wch: 10 }, 
+  { wch: 15 }, 
+  { wch: 8 },
+  { wch: 8 }, 
+  { wch: 8 }, 
+  { wch: 10 },
+  { wch: 12 }, 
+  { wch: 10 },
+  { wch: 30 } ];
+  
+   // Formato de fecha
+ for (let i = 2; i <= filas.length + 1; i++) { 
+    const celdaFecha = ws[`A${i}`];
+    if (celdaFecha) {
+       celdaFecha.z = 'dd/mm/yyyy'}
+  };
+
+// Formato numérico
+const columnasNumericas = ['F', 'G', 'H', 'I', 'J'];
+for (const columna of columnasNumericas) { 
+  for (let i = 2; i <= filas.length + 1; i++) {
+     const celda = ws[`${columna}${i}`];
+     if (celda) {
+       celda.z = '#,##0.00'; 
+    } 
+  }
+}
+
+  const wb = utils.book_new();
+
+  utils.book_append_sheet(wb, ws, 'Gastos');
+
+  writeFileXLSX(wb, 'InformeCompVtas'+this.datepipe.transform(new Date(),"dd/MM/yyyy")+'.xlsx');
+}
 }

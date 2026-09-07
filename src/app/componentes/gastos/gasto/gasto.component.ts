@@ -23,6 +23,7 @@ import { proveedorDTO } from '../../../../entidades/proveedorDTO';
 import { producto, tipoprod } from '../../../../entidades/producto';
 import { gasto, intGasto } from '../../../../entidades/gasto';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { campo } from '../../../../entidades/campo';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -68,6 +69,7 @@ public formGas  : FormGroup;
 proxGas         : number;
 cproductos      : producto[]=[];
 ctiposprod      : tipoprod[]=[];
+ccampos         : campo[]=[];
 cproveedores    : proveedorDTO[]=[];
 cfpago          : string[]=["CDO","CC"] ;  
 gastoo          : gasto;
@@ -99,17 +101,19 @@ importeformat   : string = "";
       forkJoin({             
           proveed   : this.servicio.getProveedores(),                           
           producto  : this.servicio.getProductos(),
-          tipoprod  : this.servicio.getTiposProducto()
+          tipoprod  : this.servicio.getTiposProducto(),
+          campos    : this.servicio.getCampos()
    
          }).subscribe(res2 => {
             this.cproveedores      =  res2.proveed,
             this.cproductos        =  res2.producto,
-            this.ctiposprod        =  res2.tipoprod
+            this.ctiposprod        =  res2.tipoprod,
+            this.ccampos           =  res2.campos
       
             if (this.cproveedores!==null && this.cproveedores.length>0){  
               if (this.cproductos!==null && this.cproductos.length>0){  
     
-                this.operacion = "Agregar Gasto Nro.: "+this.data.idgasto ;
+                this.operacion = "Agregar Gasto Nro.: "+this.data.idgasto ;            
                 this.prepararAlta();    
               } else {
                 this.notiService.showNotification("No existen productos registrados",'Aceptar','mensaje',500);  
@@ -123,17 +127,20 @@ importeformat   : string = "";
              proveed   : this.servicio.getProveedores(),                           
              producto  : this.servicio.getProductos(),
              tipoprod  : this.servicio.getTiposProducto(),
+             campos    : this.servicio.getCampos(),
              elgasto   : this.servicio.leerGasto(this.data.idgasto)
    
          }).subscribe(res2 => {
             this.cproveedores   =  res2.proveed,
             this.cproductos     =  res2.producto,
             this.ctiposprod     =  res2.tipoprod,
+            this.ccampos        =  res2.campos,
             this.gastoo         =  res2.elgasto
       
             if (this.cproveedores!==null && this.cproveedores.length>0){        
                if (this.cproductos!==null && this.cproductos.length>0){           
                 this.operacion = "Modificar Gasto Nro.: "+this.data.idgasto;
+               
                 this.prepararModi();    
               } else {
                 this.notiService.showNotification("No existen productos registrados",'Aceptar','mensaje',500);  
@@ -159,6 +166,7 @@ importeformat   : string = "";
       tiva          : [21],
       importe       : [''],    
       marca1        : [0],  
+      destino       : ['S.D'],
       observ        : ['']
     })    
   }
@@ -171,6 +179,7 @@ prepararAlta(){
   this.formGas.controls['nprov'].setValue(this.cproveedores[0].nombre);
   this.formGas.controls['precioun'].setValue(0);
   this.formGas.controls['importe'].setValue(0);  
+  this.formGas.controls['importe'].setValue("S.D");  
   this.formGas.controls['observ'].setValue("");
 
   this.provSel = this.cproveedores[0].idProv; // nro de proveedor
@@ -190,6 +199,7 @@ prepararModi(){
   this.formGas.controls['importe'].setValue(this.gastoo.importe);
   this.formGas.controls['tiva'].setValue(this.gastoo.tiva);
   this.formGas.controls['marca1'].setValue(this.gastoo.marca1);
+  this.formGas.controls['destino'].setValue(this.gastoo.destino);
   this.formGas.controls['observ'].setValue(this.gastoo.observ);
   this.prodSel = this.gastoo.idproducto;
   this.provSel = this.gastoo.idprov;
@@ -216,6 +226,7 @@ AgregarGasto(){
         importe         : this.formGas.controls['importe'].value,     
         marca1          : this.formGas.controls['marca1'].value,     
         fpago           : 0,
+        destino         : this.formGas.controls['destino'].value,
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -249,9 +260,10 @@ ModificarGasto(){
         importe         : this.formGas.controls['importe'].value,    
         marca1          : this.formGas.controls['marca1'].value,    
         fpago           : this.gastoo.fpago,   
+        destino         : this.formGas.controls['destino'].value,    
         observ          : this.formGas.controls['observ'].value,
     }
-    //console.log("gastoo : "+JSON.stringify(gastoo));                
+    console.log("gastoo : "+JSON.stringify(gastoo,null,2));                
     var subscri : Subscription;
     var resu = "";
     subscri = this.servicio.updateGasto(gastoo)

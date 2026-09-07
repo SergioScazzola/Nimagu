@@ -519,6 +519,9 @@ public getTiposMovimiento() {
   public getGastosxProv(fechi : string, fechf : string) {
     return this.http.get<gastofp[]>(this.apiUrl + `gasto/detxprov?feci=`+fechi+`&fecf=`+fechf);
   }  
+  public getGastosxDestino(fechi : string, fechf : string) {
+    return this.http.get<gastofp[]>(this.apiUrl + `gasto/detxdest?feci=`+fechi+`&fecf=`+fechf);
+  }  
 
     public getMaxGasto() {
     return this.http.get<number>(this.apiUrl + `gasto/maxid` );

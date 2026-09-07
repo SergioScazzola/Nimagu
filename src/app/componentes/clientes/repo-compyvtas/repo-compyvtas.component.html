@@ -57,6 +57,16 @@
          <i class="bi bi-printer"></i>               
         </button>
       </div>  
+      <div class="col-auto">
+           <button 
+             mat-icon-button
+             class="action-btn btn-xls"
+             [disabled]="ccomvtas==null || ccomvtas.length==0"
+             title="exportar Ventas y Compras a Excel"
+             (click)="exportarExcel()">
+             <i class="bi bi-filetype-xlsx"></i>               
+        </button>
+        </div>
 
        <div class="col-auto ms-auto">
           <button class="btn btn-secondary btn-sm add-button ms-auto" (click)="volver()">
@@ -233,5 +243,13 @@
    </div>
   </div>
   </div>
+  }
+    <!-- Sección inferior fija -->
+  @if ((ccomvtas!==null && ccomvtas.length>0) ||
+     (ccyvagrup!==null && ccyvagrup.length>0)) {
+  <div class="fixed-section footer-container">
+     <div class="footer">         
+     </div>      
+  </div> 
   }
 

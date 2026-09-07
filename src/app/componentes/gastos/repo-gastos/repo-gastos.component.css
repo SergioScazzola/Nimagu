@@ -111,7 +111,7 @@
   .mat-column-nprov
  {
   padding-left: 0;
-  width: 200px;
+  width: 150px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
@@ -121,7 +121,7 @@
 .mat-column-observ {
   padding-left: 0;
   width: 200px;
-  text-align: center;
+  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -137,8 +137,17 @@
 
 .mat-column-ntipo{
   padding-left: 0;
-  width: 100px;
+  width: 80px;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-column-destino{
+padding-left: 0;
+  width: 30px;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -197,4 +206,8 @@
 
 .centrado {
   text-align : center
+}
+
+.btn-xls {
+  color:green
 }

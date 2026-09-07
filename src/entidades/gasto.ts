@@ -14,6 +14,7 @@ export interface gasto {
      importe        : number;
      marca1         : number;
      fpago          : number;
+     destino        : string;
      observ         : string;
 }
 
@@ -33,6 +34,7 @@ export interface gastofp {
      importe        : number;
      marca1         : number;
      fpago          : number;
+     destino        : string;
      observ         : string;
      descrip        : string
 }
@@ -54,6 +56,7 @@ export interface gastofpsi {  // incluye importe s/iva
      importe        : number;     
      marca1         : number;
      fpago          : number;
+     destino        : string;
      observ         : string;
      descrip        : string
 }

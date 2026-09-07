@@ -54,6 +54,16 @@
         </button>
         </div>
         <div class="col-auto">
+           <button 
+             mat-icon-button
+             class="action-btn btn-xls"
+             [disabled]="dispcta==null || dispcta.length==0"
+             title="exportar Cta.Bancaria a Excel"
+             (click)="exportarExcel()">
+             <i class="bi bi-filetype-xlsx"></i>               
+        </button>
+        </div>
+        <div class="col-auto">
           <button class="btn btn-primary btn-sm add-button" (click)="desplegarInforme()">
             <i class="bi bi-plus-circle me-1"></i>Desplegar
           </button>

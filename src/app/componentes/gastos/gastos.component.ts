@@ -43,7 +43,7 @@ export class GastosComponent {
   maxGasto         : number;
   maxProd          : number;
   colGastos: string[] = ["fecha", "cantidad","nprod","ntipo","nprov","ncomp","precioun","tiva","importe",
-                         "observ","FP","M","B"];
+                         "destino","observ","FP","M","B"];
   
   dataSource = new MatTableDataSource<any>();
   //private filtroInicial : string = "";

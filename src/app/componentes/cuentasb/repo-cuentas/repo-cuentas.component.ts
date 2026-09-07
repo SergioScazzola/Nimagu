@@ -20,6 +20,7 @@ import { dispmovcta, movcta } from '../../../../entidades/movcta';
 import { endoso } from '../../../../entidades/endoso';
 import { saldoMov } from '../../../../entidades/saldoMov';
 import { saldoCta } from '../../../../entidades/saldoCta';
+import { utils, writeFileXLSX } from 'xlsx';
 
 
 export const DATE_FORMATS : MatDateFormats = {
@@ -454,12 +455,80 @@ generarRangoFechas(){
       this.fecprmmov = cad!=null?cad:" ";
 
     }
-     
-    
+ }   
+ exportarExcel(): void {
+ var filas : any;  
+ if (this.dispcta!==undefined && this.dispcta.length !== 0) {
+   filas = this.dispcta.map(item => [
+    item.fecha ? new Date(String(item.fecha).substring(0, 10)) : null,
+    item.tipomov,
+    item.nrocheque,
+    item.descrip,
+    item.nroliq,
+    item.impingre,
+    item.impegre,
+    item.saldo, 
+    item.coment
+    ]);
+   
+  }
+ 
+   const encabezados = [
+     'Fecha',
+     'Tipo.Mov',
+     'Nro.Cheque',
+     'Descripción',
+     'Nro.Liq',
+     'Ingreso',
+     'Egreso ',
+     'Saldo  ',
+     'Commentario'
+   ];
+ 
+   const datos = [
+     encabezados,
+     ...filas
+   ];
+   // Ancho de columnas 
+   
+   console.log("Datos a exportar a Excel: ", JSON.stringify(this.dispcta,null,2 ));
+   const ws = utils.aoa_to_sheet(datos);
+ 
+ ws['!cols'] = [ 
+   { wch: 10 }, 
+   { wch: 15 }, 
+   { wch: 10 }, 
+   { wch: 30 }, 
+   { wch: 10 }, 
+   { wch: 12 },
+   { wch: 12 }, 
+   { wch: 12 },    
+   { wch: 30 } ];
+   
+    // Formato de fecha
+  for (let i = 2; i <= filas.length + 1; i++) { 
+     const celdaFecha = ws[`A${i}`];
+     if (celdaFecha) { celdaFecha.z = 'dd/mm/yyyy'}
+   };
+ 
+ // Formato numérico
+ const columnasNumericas = ['F', 'G', 'H'];
+ for (const columna of columnasNumericas) { 
+   for (let i = 2; i <= filas.length + 1; i++) {
+      const celda = ws[`${columna}${i}`]; if (celda) { celda.z = '#,##0.00'; } 
+   }
+ }
+ 
+   const wb = utils.book_new();
+ 
+   utils.book_append_sheet(wb, ws, 'Gastos');
+ 
+   writeFileXLSX(wb, this.cuentaB.banco+this.datepipe.transform(new Date(),"dd/MM/yyyy")+'.xlsx');
+ }   
     
 
     
-}
+
 borrarArreglos(){
   //this.cmovscuenta = [];
   this.dispcta     = [];
