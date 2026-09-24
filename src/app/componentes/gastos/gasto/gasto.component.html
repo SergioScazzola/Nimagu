@@ -119,7 +119,7 @@
               <mat-select formControlName="destino">      
                   <mat-option *ngFor="let cam of this.ccampos"
                     [value]="cam.abrev">
-                    {{ cam.abrev+" - "+cam.nombre }}
+                    {{ cam.abrev+" - "+cam.nombre+" - "+cam.abproc }}
                   </mat-option>            
               </mat-select>
             </mat-form-field>

@@ -3,4 +3,5 @@ export interface campo {
     nombre      : string;
     abrev       : string;
     proced      : string;
+    abproc      : string
 }

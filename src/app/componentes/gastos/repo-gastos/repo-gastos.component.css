@@ -153,6 +153,15 @@ padding-left: 0;
   text-overflow: ellipsis;
 }
 
+.mat-column-proced{
+  padding-left: 0;
+  width: 20px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .mat-column-tiva{
   padding-left: 0;
   width: 40px;

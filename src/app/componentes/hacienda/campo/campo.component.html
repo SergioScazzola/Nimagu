@@ -25,17 +25,24 @@
                 <input matInput formControlName="abrev" style="text-align: left;">	
             </mat-form-field>    
         </div>   
-        <div class="col-6 ms-auto">
+        <div class="col-4 ms-auto">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Procedencia</mat-label>
               <mat-select formControlName="proced">      
                   <mat-option *ngFor="let pro of this.cprocedencias; let i = index"
+                    (click)="seleccionoProced(pro.abproc)"
                     [value]="pro.procedencia">
                     {{ pro.procedencia }}
                   </mat-option>            
               </mat-select>
             </mat-form-field>
           </div>
+              <div class="col-2">           
+           <mat-form-field class="w-100" appearance="fill">
+                 <mat-label>Proc.Abrev</mat-label>
+                 <input matInput [readonly]="true" formControlName="abproc" style="text-align: center;">	
+            </mat-form-field>    
+        </div> 
           <div class="col-6">
             <mat-form-field class="w-100" appearance="fill">
               <mat-label>Campos existentes</mat-label>
@@ -47,7 +54,8 @@
                   </mat-option>            
               </mat-select>
             </mat-form-field>
-          </div>   
+          </div>  
+       
         </div>
         <div class="botonera">            
               <button class="btn btn-sm btn-outline-primary me-5" 

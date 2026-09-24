@@ -210,6 +210,8 @@ prepararModi(){
 }
 
 AgregarGasto(){
+  const desti = this.formGas.controls['destino'].value;
+  const indd = this.ccampos.findIndex(p=>p.abrev=desti);
  var gastoo : gasto = {
         idgasto         : this.formGas.controls['idgasto'].value,        
         fecha           : this.formGas.controls['fecha'].value,
@@ -226,7 +228,8 @@ AgregarGasto(){
         importe         : this.formGas.controls['importe'].value,     
         marca1          : this.formGas.controls['marca1'].value,     
         fpago           : 0,
-        destino         : this.formGas.controls['destino'].value,
+        destino         : desti,
+        proced          : this.ccampos[indd].abproc,
         observ          : this.formGas.controls['observ'].value,
     }
     //console.log("gastoo : "+JSON.stringify(gastoo));                
@@ -244,6 +247,8 @@ AgregarGasto(){
 }
 
 ModificarGasto(){
+ const desti = this.formGas.controls['destino'].value;
+ const indd = this.ccampos.findIndex(p=>p.abrev=desti);
  var gastoo : gasto = {
         idgasto         : this.formGas.controls['idgasto'].value,        
         fecha           : this.formGas.controls['fecha'].value,
@@ -260,7 +265,8 @@ ModificarGasto(){
         importe         : this.formGas.controls['importe'].value,    
         marca1          : this.formGas.controls['marca1'].value,    
         fpago           : this.gastoo.fpago,   
-        destino         : this.formGas.controls['destino'].value,    
+        destino         : desti,
+        proced          : this.ccampos[indd].abproc,
         observ          : this.formGas.controls['observ'].value,
     }
     console.log("gastoo : "+JSON.stringify(gastoo,null,2));                

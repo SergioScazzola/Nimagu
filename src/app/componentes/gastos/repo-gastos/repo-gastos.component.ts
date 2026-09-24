@@ -73,9 +73,11 @@ public   mostrarresumen : boolean;
 public   mostraragrup   : boolean;
 
 
- colGastos : string[] = ["fecha","cantidad","nprod", "ntipo", "nprov","precioun","tiva","importesi","importe","destino","observ"];
+ colGastos : string[] = ["fecha","cantidad","nprod", "ntipo", "nprov","precioun","tiva","importesi","importe",
+                        "destino","proced","observ"];
 
- totalesPor : string[] = ["Detallado x fecha","Agrup.X Producto","Agrup.X Tipo Producto","Agrup.X Proveedor","Agrup.X Destino"];                          
+ totalesPor : string[] = ["Detallado x fecha","Agrup.X Producto","Agrup.X Tipo Producto","Agrup.X Proveedor",
+                          "Agrup.X Destino","Agrup.X Procedencia"];                          
  
  colResumen : string[] = ["D","cant","impo"];  
 
@@ -259,6 +261,35 @@ armarYTotalizarXDestino(){
                  this.cgastos = data;
                }); 
 }
+
+armarYTotalizarXProcedencia(){
+    var subs : Subscription;
+  
+    subs = this.servicio.getGastosxProcedencia(this.dfec,this.hfec)
+       .pipe(
+          finalize(() => {             
+            subs.unsubscribe();
+            if (this.cgastos!=null && this.cgastos.length>0){
+              //this.armarDetconSubtotales(); // Armar arreglo con subtotales para desplegar             
+             
+               this.calcTotalesXProcedencia()
+            } else {
+                var dfec = this.datepipe.transform(this.formGas.controls['dfecha'].value,"dd-MM-yyyy");
+                var hfec = this.datepipe.transform(this.formGas.controls['hfecha'].value,"dd-MM-yyyy");
+                this.notiServicio.showNotification(
+                  'No existen registros de Gastos para ningun cliente desde el '+dfec+' al '+hfec,
+                  'Aceptar',
+                  'mensaje',
+                  500
+                );
+            }
+            
+        })
+        )
+        .subscribe((data: any): void => {
+                 this.cgastos = data;
+               }); 
+}
  onSelectionTipoInf(event : any){
     this.tipoinf = event.value;
     this.cgastos    = [];
@@ -283,6 +314,7 @@ armarYTotalizarXDestino(){
      { header: 'Imp.S/I', dataKey: 'importesi' },    
      { header: 'Importe', dataKey: 'importe' }, 
      { header: 'Dest',dataKey: 'destino' }, 
+     { header: 'Pr',dataKey: 'proced' }, 
      { header: 'Observaciones', dataKey: 'observ'},
      { header: 'F.Pago', dataKey: 'descrip'},
    ];
@@ -310,6 +342,7 @@ armarYTotalizarXDestino(){
          this.currencyPipe.transform(item.importesi, 'ARS','code','1.2-2')?.replace('ARS',''),         
          this.currencyPipe.transform(item.importe, 'ARS','code','1.2-2')?.replace('ARS',''),   
          item.destino,      
+         item.proced,
          item.observ,       
          item.descrip        
        ]);      
@@ -334,6 +367,7 @@ armarYTotalizarXDestino(){
              importesi         : { halign: 'right' },
              importe           : { halign: 'right' },       
              destino           : { halign: 'left' },     
+             proced            : { halign: 'left' },     
              observ            : { halign: 'left' },
              descrip           : { halign: 'left' }
              
@@ -411,6 +445,7 @@ armarYTotalizarXDestino(){
                 marca1    : 0,         
                 fpago     : this.cgastos[i].fpago,    
                 destino   : this.cgastos[i].destino,
+                proced    : this.cgastos[i].proced,
                 observ    : this.cgastos[i].observ,
                 descrip   : this.cgastos[i].descrip,
               };
@@ -435,6 +470,7 @@ armarYTotalizarXDestino(){
              marca1      : 0,       
              fpago       : 0,
              destino     : " ",
+             proced      : " ",
              observ      : "Tot.IVA : "+totiva, //==undefined?" ":totiva,
              descrip     : " "
           };
@@ -485,6 +521,7 @@ calcTotalesXProducto(){  // Totalizar x Producto
                 marca1    : 0,         
                 fpago     : this.cgastos[i].fpago,    
                 destino   : this.cgastos[i].destino,
+                proced    : this.cgastos[i].proced,
                 observ    : this.cgastos[i].observ,
                 descrip   : this.cgastos[i].descrip,
               };
@@ -512,6 +549,7 @@ calcTotalesXProducto(){  // Totalizar x Producto
              marca1      : 0,  
              fpago       : 0,   
              destino     : " ",
+             proced      : " ",
              observ      : " ",
              descrip     : " "
            };
@@ -539,6 +577,7 @@ calcTotalesXProducto(){  // Totalizar x Producto
              marca1      : 0,        
              fpago       : 0,
              destino     : " ",
+             proced      : " ",
              observ      : "Total IVA : "+totiva,
              descrip     : " "
           };
@@ -586,6 +625,7 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
                 marca1    : this.cgastos[i].marca1,             
                 fpago     : this.cgastos[i].fpago,      
                 destino   : this.cgastos[i].destino,       
+                proced    : this.cgastos[i].proced,     
                 observ    : this.cgastos[i].observ,
                 descrip   : this.cgastos[i].descrip,
               };
@@ -613,6 +653,7 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
              marca1      : 0,   
              fpago       : 0,  
              destino     : " ",
+             proced      : " ",
              observ      : " ",
              descrip     : " "
            };
@@ -640,6 +681,7 @@ calcTotalesXTprod(){  // Totalizar x Tipo de producto
              marca1      : 0,    
              fpago       : 0,     
              destino     : " ", 
+             proced      : " ",
              observ      : "Total IVA : "+totiva,
              descrip     : " "
           };
@@ -688,6 +730,7 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
                 marca1    : this.cgastos[i].marca1,    
                 fpago     : this.cgastos[i].fpago,    
                 destino   : this.cgastos[i].destino,
+                proced    : this.cgastos[i].proced,
                 observ    : this.cgastos[i].observ,
                 descrip   : this.cgastos[i].descrip
               };
@@ -715,6 +758,7 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
              marca1      : 0,
              fpago       : 0,  
              destino     : " ",
+             proced      : " ",
              observ      : " ",
              descrip     : " "
            };
@@ -742,6 +786,7 @@ calcTotalesXProveedor(){  // Totalizar x Proveedor
              marca1      : 0,       
              fpago       : 0,  
              destino     : " ",
+             proced      : " ",
              observ      : "Total IVA : "+totiva,
              descrip     : " "
           };
@@ -789,6 +834,7 @@ calcTotalesXDestino(){  // Totalizar x Destino
                 marca1    : this.cgastos[i].marca1,    
                 fpago     : this.cgastos[i].fpago,    
                 destino   : this.cgastos[i].destino,
+                proced    : this.cgastos[i].proced,
                 observ    : this.cgastos[i].observ,
                 descrip   : this.cgastos[i].descrip
               };
@@ -816,6 +862,7 @@ calcTotalesXDestino(){  // Totalizar x Destino
              marca1      : 0,
              fpago       : 0,  
              destino     : " ",
+             proced      : " ",
              observ      : " ",
              descrip     : " "
            };
@@ -843,10 +890,116 @@ calcTotalesXDestino(){  // Totalizar x Destino
              marca1      : 0,       
              fpago       : 0,  
              destino     : " ",
+             proced      : " ",
+             observ      : "Total IVA : "+totiva,
+             descrip     : " "
+          };
+          this.cgasagrupr.push(totales);}      
+          
+calcTotalesXProcedencia(){  // Totalizar x Procedencia     
+      var totproc       : number=0;
+      var totalsi       : number=0;
+      var cantproc      : number=0;
+      
+
+       var total     : number = 0;
+       var canttotal : number = 0;
+       var importeesi: number = 0;
+      
+       var i = 0;
+       this.cgasagrup = [];
+       while (i<this.cgastos.length){
+         var proc = this.cgastos[i].proced;                 
+         while (i<this.cgastos.length && this.cgastos[i].proced==proc){          
+              totproc  += this.cgastos[i].importe;  
+              cantproc += this.cgastos[i].cantidad;    
+              if (this.cgastos[i].tiva!=0){
+                  importeesi = this.util.redondearAdos(this.cgastos[i].importe/(1+(this.cgastos[i].tiva)/100));
+                  totalsi += importeesi;
+              } else {
+                  importeesi = this.cgastos[i].importe;
+                  totalsi   +=   importeesi 
+              }
+              var item : gastofpsi = {
+                idgasto   :  this.cgastos[i].idgasto,
+                fecha     : this.cgastos[i].fecha,          
+                cantidad  : this.cgastos[i].cantidad,
+                idproducto: this.cgastos[i].idproducto,
+                nprod     : this.cgastos[i].nprod,
+                idtipo    : this.cgastos[i].idtipo,
+                ntipo     : this.cgastos[i].ntipo,
+                idprov    :  this.cgastos[i].idprov,
+                nprov     : this.cgastos[i].nprov,
+                ncomp     : this.cgastos[i].ncomp,
+                precioun  : this.cgastos[i].precioun,
+                tiva      : this.cgastos[i].tiva,
+                importesi : importeesi,
+                importe   : this.cgastos[i].importe,     
+                marca1    : this.cgastos[i].marca1,    
+                fpago     : this.cgastos[i].fpago,    
+                destino   : this.cgastos[i].destino,
+                proced    : this.cgastos[i].proced,
+                observ    : this.cgastos[i].observ,
+                descrip   : this.cgastos[i].descrip
+              };
+              this.cgasagrupr.push(item);                   
+              i++;
+          }
+          // Corte por destino
+          total      += totproc;
+          canttotal  += cantproc;
+          var subtprov : gastofpsi = {
+             idgasto     : 0,             
+             fecha       : null,
+             cantidad    : cantproc,
+             idproducto  : 0,
+             nprod       : "TOT: "+this.cgastos[i-1].proced,
+             idtipo      : 0,
+             ntipo       : " ",
+             idprov      : 0,
+             nprov       : " ",
+             ncomp       : " ",
+             precioun    : 0,
+             tiva        : 0,
+             importesi   : 0,
+             importe     : totproc,             
+             marca1      : 0,
+             fpago       : 0,  
+             destino     : " ",
+             proced      : " ",
+             observ      : " ",
+             descrip     : " "
+           };
+           this.cgasagrupr.push(subtprov);
+           totproc       = 0;
+           cantproc      = 0;
+           
+         } // while externo
+         var totiva =  this.currencyPipe.transform(total-totalsi, 'ARS','code','1.2-2')?.replace('ARS','');  
+         var totales : gastofpsi = {
+             idgasto     : 0,             
+             fecha       : null,
+             cantidad    : canttotal,
+             idproducto  : 0,
+             nprod       : "**TOTALES**",
+             idtipo      : 0,
+             ntipo       : " ",
+             idprov      : 0,
+             nprov       : " ",
+             ncomp       : " ",
+             precioun    : 0,
+             tiva        : 0,
+             importesi   : totalsi,
+             importe     : total,    
+             marca1      : 0,       
+             fpago       : 0,  
+             destino     : " ",
+             proced      : " ",
              observ      : "Total IVA : "+totiva,
              descrip     : " "
           };
           this.cgasagrupr.push(totales);}          
+          
 
 desplegarInforme(){
   switch (this.tipoinf) {
@@ -895,6 +1048,15 @@ desplegarInforme(){
           this.mostraragrup   = true;
           break;
     }     
+    case 5 : {
+      if (this.cgastos==null || this.cgastos.length==0){
+             this.armarYTotalizarXProcedencia()
+          };
+          this.mostrardetalle = false;
+          this.mostrarresumen = false;
+          this.mostraragrup   = true;
+          break;
+    } 
     default : {}
   }
 }
@@ -916,6 +1078,7 @@ if (this.cgasagrupr!==undefined && this.cgasagrupr.length !== 0){
     item.importesi,
     item.importe,
     item.destino,
+    item.proced,
     item.observ,
     item.descrip
   ]);
@@ -932,6 +1095,7 @@ if (this.cgasagrupr!==undefined && this.cgasagrupr.length !== 0){
     item.importesi,
     item.importe,
     item.destino,
+    item.proced,
     item.observ,
     item.descrip
   ]);
@@ -949,6 +1113,7 @@ if (this.cgasagrupr!==undefined && this.cgasagrupr.length !== 0){
     'Importe s/IVA',
     'Importe',
     'Destino',
+    'Proced',
     'Observación',
     'Descripción'
   ];
@@ -959,7 +1124,7 @@ if (this.cgasagrupr!==undefined && this.cgasagrupr.length !== 0){
   ];
   // Ancho de columnas 
   
-  console.log("Datos a exportar a Excel: ", JSON.stringify(this.cgasagrupr,null,2 ));
+ 
   const ws = utils.aoa_to_sheet(datos);
 
 ws['!cols'] = [ 
@@ -973,6 +1138,7 @@ ws['!cols'] = [
   { wch: 10 }, 
   { wch: 16 },
   { wch: 16 }, 
+  { wch: 2 }, 
   { wch: 30 },
   { wch: 30 } ];
   

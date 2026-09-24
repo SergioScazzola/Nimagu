@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { SinoService } from '../../../services/sino.service';
 import { NotiserviceService } from '../../../services/notiservice.service';
 
-import { finalize, forkJoin, Subscription } from 'rxjs';
+import { finalize, findIndex, forkJoin, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 import { MatFormField, MatLabel, MatOption,MatSelect, MatSelectModule } from '@angular/material/select';
@@ -67,7 +67,8 @@ export class CampoComponent {
              this.accion = "A";
              this.initFormulario();    
              this.formCampo.controls['idcampo'].setValue(this.data.idcampo);
-             this.formCampo.controls['proced'].setValue(this.cprocedencias[0].procedencia);
+             this.formCampo.controls['proced'].setValue(this.cprocedencias[0].procedencia);             
+             this.formCampo.controls['abproc'].setValue(this.cprocedencias[0].abproc);             
              this.operacion = "Agregar Campo nro.: "+this.data.idcampo;       
              this.isloading = false;
              this.cdr.detectChanges()              
@@ -81,16 +82,19 @@ export class CampoComponent {
           idcampo         : [''], 
           nombre          : ['',[Validators.required]],                   
           abrev           : ['',[Validators.required]],
-          proced          : ['']
+          proced          : [''],
+          abproc          : ['']
         })
   }
 
   AgregarCampo(){
+     const proce = this.formCampo.controls['proced'].value;
      var camp : campo = {
         idcampo  : this.formCampo.controls['idcampo'].value,
         nombre   : this.formCampo.controls['nombre'].value,
         abrev    : this.formCampo.controls['abrev'].value,
         proced   : this.formCampo.controls['proced'].value,
+        abproc   : this.cprocedencias[this.cprocedencias.findIndex(p=>p.procedencia===proce)].abproc
      }
 
      var subscri : Subscription;
@@ -105,11 +109,13 @@ export class CampoComponent {
   }
 
    ModificarCampo(){
+     const proce = this.formCampo.controls['proced'].value;
      var camp : campo = {
         idcampo  : this.formCampo.controls['idcampo'].value,
         nombre   : this.formCampo.controls['nombre'].value,
         abrev    : this.formCampo.controls['abrev'].value,
         proced   : this.formCampo.controls['proced'].value,
+        abproc   : this.cprocedencias[this.cprocedencias.findIndex(p=>p.procedencia===proce)].abproc
      }
 
      var subscri : Subscription;
@@ -153,10 +159,15 @@ seleccionoCampo(idcampo: number){
                   this.formCampo.controls['nombre'].setValue(campo.nombre);
                   this.formCampo.controls['abrev'].setValue(campo.abrev);
                   this.formCampo.controls['proced'].setValue(campo.proced);
+                  this.formCampo.controls['abproc'].setValue(campo.abproc);
                   this.operacion = "Modificar Campo nro.: "+campo.idcampo;
                         }))                  
               .subscribe((data : any): void => {campo=data});   
               
+}
+
+seleccionoProced(abproce : string){
+    this.formCampo.controls['abproc'].setValue(abproce);
 }
   Anular(){
     this.dialogRef.close({ clicked : "Cancelar"})
